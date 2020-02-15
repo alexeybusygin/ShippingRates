@@ -42,18 +42,18 @@ build:
   verbosity: normal
 
 # scripts to run before build
-before_build:
-  - nuget restore Shipping.Rates.sln
-  - ps: $xml = [xml](Get-Content Shipping.Rates.Tests\App.config)
-  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSLicenseNumber"]/@value').'#text' = $env:UPS_LICENSE_NUMBER
-  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSUserId"]/@value').'#text' = $env:UPS_PASSWORD
-  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSPassword"]/@value').'#text' = $env:UPS_USER_ID
-  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExKey"]/@value').'#text' = $env:FEDEX_KEY
-  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExPassword"]/@value').'#text' = $env:FEDEX_PASSWORD
-  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExAccountNumber"]/@value').'#text' = $env:FEDEX_ACCOUNT_NUMBER
-  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExMeterNumber"]/@value').'#text' = $env:FEDEX_METER_NUMBER
-  - ps: $xml.SelectSingleNode('//appSettings/add[@key="USPSUserId"]/@value').'#text' = $env:USPS_USER_ID
-  - ps: set-content Shipping.Rates.Tests\App.config $xml.InnerXml
+#before_build:
+#  - nuget restore Shipping.Rates.sln
+#  - ps: $xml = [xml](Get-Content Shipping.Rates.Tests\App.config)
+#  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSLicenseNumber"]/@value').'#text' = $env:UPS_LICENSE_NUMBER
+#  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSUserId"]/@value').'#text' = $env:UPS_PASSWORD
+#  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSPassword"]/@value').'#text' = $env:UPS_USER_ID
+#  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExKey"]/@value').'#text' = $env:FEDEX_KEY
+#  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExPassword"]/@value').'#text' = $env:FEDEX_PASSWORD
+#  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExAccountNumber"]/@value').'#text' = $env:FEDEX_ACCOUNT_NUMBER
+#  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExMeterNumber"]/@value').'#text' = $env:FEDEX_METER_NUMBER
+#  - ps: $xml.SelectSingleNode('//appSettings/add[@key="USPSUserId"]/@value').'#text' = $env:USPS_USER_ID
+#  - ps: set-content Shipping.Rates.Tests\App.config $xml.InnerXml
 
 # deployment
 #deploy:
