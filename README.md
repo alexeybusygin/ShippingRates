@@ -1,13 +1,13 @@
 # Shipping.Rates
 
-[![Build status](https://ci.appveyor.com/api/projects/status/lom3p3jvvf4e9j3r?svg=true)](https://ci.appveyor.com/project/kylewest/dotnetshipping)
-[![NuGet Version](http://img.shields.io/nuget/v/DotNetShipping.svg?style=flat-square)](https://www.nuget.org/packages/DotNetShipping)
+[![Build status](https://ci.appveyor.com/api/projects/status/gqq8i6nw932bn01v?svg=true)](https://ci.appveyor.com/project/alexeybusygin/shipping-rates/)
+[![NuGet Version](https://img.shields.io/nuget/v/Shipping.Rates.svg?style=flat-square)](https://www.nuget.org/packages/Shipping.Rates)
 
 .NET wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers.
 
 ## How to Install
 
-Available in the [NuGet Gallery](http://nuget.org/packages/DotNetShipping):
+Available in the [NuGet Gallery](http://nuget.org/packages/Shipping.Rates):
 
 ```
 PM> Install-Package Shipping.Rates
@@ -43,7 +43,7 @@ var destination = new Address("", "", "20852", "US"); // US Address
 // Create RateManager
 var rateManager = new RateManager();
 
-// Add desired DotNetShippingProviders
+// Add desired shipping providers
 rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword));
 rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
 rateManager.AddProvider(new USPSProvider(uspsUserId));
@@ -61,7 +61,7 @@ foreach (Rate rate in shipment.Rates)
 }
 ```
 
-DotNetShipping supports requesting a single rate from UPS and USPS.
+Shipping.Rates supports requesting a single rate from UPS and USPS.
 To do so, include the rate description as a parameter of the provider constructor.
 ```CSHARP
 rateManager.AddProvider(new USPSProvider(uspsUserId, "Priority Mail"));
