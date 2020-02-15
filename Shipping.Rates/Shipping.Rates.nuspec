@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/alexeybusygin/Shipping.Rates/blob/master/license.md</licenseUrl>
+    <projectUrl>https://github.com/alexeybusygin/Shipping.Rates</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>.NET wrapper to UPS, FedEx, and USPS shipping rates APIs.</description>
+    <tags>ups fedex usps shipping rates</tags>
+  </metadata>
+</package>

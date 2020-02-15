@@ -1,5 +1,5 @@
 # version format
-version: 0.9.5.{build}
+version: 0.9.6.{build}
 
 # environment variables
 environment:
@@ -35,16 +35,16 @@ nuget:
 
 # build configuration
 build:
-  project: DotNetShipping.sln     # path to Visual Studio solution or project
-  publish_nuget: true             # package projects with .nuspec files and push to artifacts
+  project: Shipping.Rates.sln   # path to Visual Studio solution or project
+  publish_nuget: true           # package projects with .nuspec files and push to artifacts
 
   # MSBuild verbosity level
   verbosity: normal
 
 # scripts to run before build
 before_build:
-  - nuget restore DotNetShipping.sln
-  - ps: $xml = [xml](Get-Content DotNetShipping.Tests\App.config)
+  - nuget restore Shipping.Rates.sln
+  - ps: $xml = [xml](Get-Content Shipping.Rates.Tests\App.config)
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSLicenseNumber"]/@value').'#text' = $env:UPS_LICENSE_NUMBER
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSUserId"]/@value').'#text' = $env:UPS_PASSWORD
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSPassword"]/@value').'#text' = $env:UPS_USER_ID
@@ -53,7 +53,7 @@ before_build:
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExAccountNumber"]/@value').'#text' = $env:FEDEX_ACCOUNT_NUMBER
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExMeterNumber"]/@value').'#text' = $env:FEDEX_METER_NUMBER
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="USPSUserId"]/@value').'#text' = $env:USPS_USER_ID
-  - ps: set-content DotNetShipping.Tests\App.config $xml.InnerXml
+  - ps: set-content Shipping.Rates.Tests\App.config $xml.InnerXml
 
 # deployment
 #deploy:
