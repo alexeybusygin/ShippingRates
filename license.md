@@ -1,6 +1,7 @@
 The MIT License (MIT)
 
 Copyright (c) 2012 Kyle West
+Copyright (c) 2020 Alexey Busygin
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

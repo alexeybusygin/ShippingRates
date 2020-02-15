@@ -1,19 +1,17 @@
-# DotNetShipping
+# Shipping.Rates
 
 [![Build status](https://ci.appveyor.com/api/projects/status/lom3p3jvvf4e9j3r?svg=true)](https://ci.appveyor.com/project/kylewest/dotnetshipping)
 [![NuGet Version](http://img.shields.io/nuget/v/DotNetShipping.svg?style=flat-square)](https://www.nuget.org/packages/DotNetShipping)
 
 .NET wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers.
 
-
 ## How to Install
 
 Available in the [NuGet Gallery](http://nuget.org/packages/DotNetShipping):
 
 ```
-PM> Install-Package DotNetShipping
+PM> Install-Package Shipping.Rates
 ```
-
 
 ## How to Use
 
@@ -89,10 +87,4 @@ Developer documentation is often hard to find. The links below are provided as r
 
 ## Credits
 
-Originally forked from [dotNETShipping](http://dotnetshipping.codeplex.com/).
-
-* [@kylewest](https://github.com/kylewest)
-* [@brettallred](https://github.com/brettallred)
-* [@gkurts](https://github.com/gkurts)
-* [@Soulfire86](https://github.com/Soulfire86)
-* [@StephenPAdams](https://github.com/StephenPAdams) - FedEx SmartPost Support
+Originally forked from [DotNetShipping](https://github.com/kylewest/DotNetShipping) by [@kylewest](https://github.com/kylewest).

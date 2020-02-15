@@ -75,9 +75,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\dotNETShipping\DotNetShipping.csproj">
+    <ProjectReference Include="..\Shipping.Rates\Shipping.Rates.csproj">
       <Project>{0cac6d52-ffa9-4350-8e36-a22a2a4a8b88}</Project>
-      <Name>DotNetShipping</Name>
+      <Name>Shipping.Rates</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

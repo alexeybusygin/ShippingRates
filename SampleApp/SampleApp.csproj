@@ -66,9 +66,9 @@
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\dotNETShipping\DotNetShipping.csproj">
+    <ProjectReference Include="..\Shipping.Rates\Shipping.Rates.csproj">
       <Project>{0CAC6D52-FFA9-4350-8E36-A22A2A4A8B88}</Project>
-      <Name>DotNetShipping</Name>
+      <Name>Shipping.Rates</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

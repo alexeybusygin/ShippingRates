@@ -9,6 +9,7 @@
 packages/
 
 #Visual Studio files
+.vs
 *.[Oo]bj
 *.user
 *.aps
@@ -35,7 +36,6 @@ obj/
 [Bb]in
 [Dd]ebug*/
 [Rr]elease*/
-*.DotSettings
 
 #ncrunch
 *ncrunch*

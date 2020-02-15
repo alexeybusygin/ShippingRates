@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetShipping", "DotNetShipping\DotNetShipping.csproj", "{0CAC6D52-FFA9-4350-8E36-A22A2A4A8B88}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipping.Rates", "Shipping.Rates\Shipping.Rates.csproj", "{0CAC6D52-FFA9-4350-8E36-A22A2A4A8B88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetShipping.Tests", "DotNetShipping.Tests\DotNetShipping.Tests.csproj", "{EC384B8A-DB3C-4225-8E79-C0FA4CDF3D05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shipping.Rates.Tests", "Shipping.Rates.Tests\Shipping.Rates.Tests.csproj", "{EC384B8A-DB3C-4225-8E79-C0FA4CDF3D05}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApp", "SampleApp\SampleApp.csproj", "{D83C0AAE-DAC9-4879-85A4-5CA556587208}"
 EndProject
@@ -30,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {66DCCDF3-6BEE-4E15-B2CF-22A88FDF8914}
 	EndGlobalSection
 EndGlobal
