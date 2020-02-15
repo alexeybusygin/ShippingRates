@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Shipping.Rates.Tests.Features
 {
-    public class UPSRates
+    /*public class UPSRates
     {
         private Address InternationalAddress2;
         private Package Package2;
@@ -245,5 +245,5 @@ namespace Shipping.Rates.Tests.Features
                 }
             }
         }
-    }
+    }*/
 }

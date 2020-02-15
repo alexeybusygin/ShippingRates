@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Shipping.Rates.Tests.Features
 {
-    public class USPSDomesticRates
+    /*public class USPSDomesticRates
     {
         private Package Package2;
         private readonly Address DomesticAddress1;
@@ -170,5 +170,5 @@ namespace Shipping.Rates.Tests.Features
                 }
             }
         }
-    }
+    }*/
 }

@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Shipping.Rates.Tests.Features
 {
-    public class USPSInternationalRates
+    /*public class USPSInternationalRates
     {
         private readonly Address _domesticAddress1;
         private readonly Address _domesticAddress2;
@@ -140,5 +140,5 @@ namespace Shipping.Rates.Tests.Features
             Assert.NotNull(serviceCodes);
             Assert.NotEmpty(serviceCodes);
         }
-    }
+    }*/
 }
