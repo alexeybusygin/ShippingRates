@@ -1,0 +1,62 @@
+# version format
+version: 0.9.5.{build}
+
+# environment variables
+environment:
+  FEDEX_ACCOUNT_NUMBER:
+    secure: LULEmbMONsSAiGcBRUy0gA==
+  FEDEX_KEY:
+    secure: CamE8i+1YL/RrDDAod+bxcXoTQ9J8WJS7Vkzg57oXd0=
+  FEDEX_METER_NUMBER:
+    secure: UvSOUS4CR3Emo+VcQdf6/g==
+  FEDEX_PASSWORD:
+    secure: 7AKP5O0xq3gnqxJ0PhjYxIdwUOSsl9AnbjBrbNprj4U=
+  UPS_LICENSE_NUMBER:
+    secure: PbuU0sZbXmcsCJ3QMtRn4SRYC7CVL5Gnb1eCeByQPPM=
+  UPS_PASSWORD:
+    secure: eXjLQ66giQg8UA+J0yzCZg==
+  UPS_USER_ID:
+    secure: ldywoxukmHJP7rsHAILzsA==
+  USPS_USER_ID:
+    secure: 6F1Pw6IdxUXfMeUs/f4mVw==
+
+# enable patching of AssemblyInfo.* files
+assembly_info:
+  patch: true
+  file: "**\\AssemblyInfo.*"
+  assembly_version: "{version}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
+
+# Automatically register private account and/or project AppVeyor NuGet feeds.
+nuget:
+  account_feed: true
+  project_feed: true
+
+# build configuration
+build:
+  project: DotNetShipping.sln     # path to Visual Studio solution or project
+  publish_nuget: true             # package projects with .nuspec files and push to artifacts
+
+  # MSBuild verbosity level
+  verbosity: normal
+
+# scripts to run before build
+before_build:
+  - nuget restore DotNetShipping.sln
+  - ps: $xml = [xml](Get-Content DotNetShipping.Tests\App.config)
+  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSLicenseNumber"]/@value').'#text' = $env:UPS_LICENSE_NUMBER
+  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSUserId"]/@value').'#text' = $env:UPS_PASSWORD
+  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSPassword"]/@value').'#text' = $env:UPS_USER_ID
+  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExKey"]/@value').'#text' = $env:FEDEX_KEY
+  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExPassword"]/@value').'#text' = $env:FEDEX_PASSWORD
+  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExAccountNumber"]/@value').'#text' = $env:FEDEX_ACCOUNT_NUMBER
+  - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExMeterNumber"]/@value').'#text' = $env:FEDEX_METER_NUMBER
+  - ps: $xml.SelectSingleNode('//appSettings/add[@key="USPSUserId"]/@value').'#text' = $env:USPS_USER_ID
+  - ps: set-content DotNetShipping.Tests\App.config $xml.InnerXml
+
+# deployment
+#deploy:
+#  provider: NuGet
+#  api_key:
+#    secure: D7KgmBhT/48u2T2OPwnNzlwQbZmZYGf7RE3nFRbHBiDpF/ApKC5AhtQjbpfQ1Qr2
