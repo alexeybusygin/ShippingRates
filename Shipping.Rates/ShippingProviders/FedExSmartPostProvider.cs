@@ -4,10 +4,10 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 
-using DotNetShipping.Helpers.Extensions;
-using DotNetShipping.RateServiceWebReference;
+using Shipping.Rates.Helpers.Extensions;
+using Shipping.Rates.RateServiceWebReference;
 
-namespace DotNetShipping.ShippingProviders
+namespace Shipping.Rates.ShippingProviders
 {
     /// <summary>
     ///     Provides SmartPost rates (only) from FedEx (Federal Express).
@@ -92,8 +92,7 @@ namespace DotNetShipping.ShippingProviders
             request.RequestedShipment.ShipTimestampSpecified = true;
             request.RequestedShipment.DropoffType = DropoffType.REGULAR_PICKUP; //Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
             request.RequestedShipment.DropoffTypeSpecified = true;
-            request.RequestedShipment.PackagingType = PackagingType.YOUR_PACKAGING;
-            request.RequestedShipment.PackagingTypeSpecified = true;
+            request.RequestedShipment.PackagingType = "YOUR_PACKAGING";
 
             SetOrigin(request);
             SetDestination(request);
@@ -111,8 +110,7 @@ namespace DotNetShipping.ShippingProviders
         /// <param name="request"></param>
         private void SetSmartPostDetails(RateRequest request)
         {
-            request.RequestedShipment.ServiceType = ServiceType.SMART_POST;
-            request.RequestedShipment.ServiceTypeSpecified = true;
+            request.RequestedShipment.ServiceType = "SMART_POST";
             request.RequestedShipment.SmartPostDetail = new SmartPostShipmentDetail { HubId = _hubId, Indicia = SmartPostIndiciaType.PARCEL_SELECT, IndiciaSpecified = true };
 
             // Handle the various SmartPost Incidia scenarios

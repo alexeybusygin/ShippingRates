@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace DotNetShipping
+namespace Shipping.Rates
 {
     /// <summary>
     ///     Summary description for Shipment.
@@ -11,8 +11,6 @@ namespace DotNetShipping
     {
         public ReadOnlyCollection<Package> Packages;
         public ICollection<IRateAdjuster> RateAdjusters;
-        private readonly List<Rate> _rates;
-        private readonly List<USPSError> _serverErrors;
         public readonly Address DestinationAddress;
         public readonly Address OriginAddress;
 
@@ -21,25 +19,19 @@ namespace DotNetShipping
             OriginAddress = originAddress;
             DestinationAddress = destinationAddress;
             Packages = packages.AsReadOnly();
-            _rates = new List<Rate>();
-            _serverErrors = new List<USPSError>();
+            Rates = new List<Rate>();
+            Errors = new List<Error>();
         }
 
         public int PackageCount
         {
             get { return Packages.Count; }
         }
-        public List<Rate> Rates
-        {
-            get { return _rates; }
-        }
+        public List<Rate> Rates { get; }
         public decimal TotalPackageWeight
         {
             get { return Packages.Sum(x => x.Weight); }
         }
-        public List<USPSError> ServerErrors
-        {
-            get { return _serverErrors; }
-        }
+        public List<Error> Errors { get; }
     }
 }

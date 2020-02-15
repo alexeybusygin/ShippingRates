@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace DotNetShipping
+namespace Shipping.Rates
 {
     public static class Extensions
     {

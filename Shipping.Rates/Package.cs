@@ -1,6 +1,6 @@
 using System;
 
-namespace DotNetShipping
+namespace Shipping.Rates
 {
     /// <summary>
     ///     Summary description for Package.

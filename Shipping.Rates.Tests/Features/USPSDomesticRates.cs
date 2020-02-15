@@ -2,11 +2,11 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 
-using DotNetShipping.ShippingProviders;
+using Shipping.Rates.ShippingProviders;
 
 using Xunit;
 
-namespace DotNetShipping.Tests.Features
+namespace Shipping.Rates.Tests.Features
 {
     public class USPSDomesticRates
     {
@@ -43,7 +43,7 @@ namespace DotNetShipping.Tests.Features
 
             Assert.NotNull(response);
             Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.ServerErrors);
+            Assert.Empty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -66,7 +66,7 @@ namespace DotNetShipping.Tests.Features
 
             Assert.NotNull(response);
             Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.ServerErrors);
+            Assert.Empty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -89,7 +89,7 @@ namespace DotNetShipping.Tests.Features
 
             Assert.NotNull(response);
             Assert.Empty(response.Rates);
-            Assert.Empty(response.ServerErrors);
+            Assert.Empty(response.Errors);
         }
 
         [Fact]
@@ -104,7 +104,7 @@ namespace DotNetShipping.Tests.Features
 
             Assert.NotNull(response);
             Assert.Empty(response.Rates);
-            Assert.Empty(response.ServerErrors);
+            Assert.Empty(response.Errors);
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace DotNetShipping.Tests.Features
 
             Assert.NotNull(response);
             Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.ServerErrors);
+            Assert.Empty(response.Errors);
             Assert.Equal(response.Rates.Count, 1);
             Assert.True(response.Rates.First().TotalCharges > 0);
 
@@ -148,13 +148,13 @@ namespace DotNetShipping.Tests.Features
             // Assert that we have a non-signature response
             Assert.NotNull(nonSignatureResponse);
             Assert.NotEmpty(nonSignatureResponse.Rates);
-            Assert.Empty(nonSignatureResponse.ServerErrors);
+            Assert.Empty(nonSignatureResponse.Errors);
             Assert.True(nonSignatureResponse.Rates.First().TotalCharges > 0);
 
             // Assert that we have a signature response
             Assert.NotNull(signatureResponse);
             Assert.NotEmpty(signatureResponse.Rates);
-            Assert.Empty(signatureResponse.ServerErrors);
+            Assert.Empty(signatureResponse.Errors);
             Assert.True(signatureResponse.Rates.First().TotalCharges > 0);
 
             // Now compare prices

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace DotNetShipping
+namespace Shipping.Rates
 {
     public class Address
     {

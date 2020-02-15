@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace DotNetShipping.Tests.Units
+namespace Shipping.Rates.Tests.Units
 {
     public class RateManagerFactoryTests
     {

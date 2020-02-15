@@ -1,6 +1,6 @@
-﻿namespace DotNetShipping
+﻿namespace Shipping.Rates
 {
-    public class USPSError
+    public class Error
     {
         public string Number { get; set; }
         public string Source { get; set; }

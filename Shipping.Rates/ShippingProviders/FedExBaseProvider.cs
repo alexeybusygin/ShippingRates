@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Web.Services.Protocols;
 
-using DotNetShipping.RateServiceWebReference;
+using Shipping.Rates.RateServiceWebReference;
 
-namespace DotNetShipping.ShippingProviders
+namespace Shipping.Rates.ShippingProviders
 {
     public abstract class FedExBaseProvider : AbstractShippingProvider
     {
@@ -124,6 +124,7 @@ namespace DotNetShipping.ShippingProviders
                 {
                     ProcessReply(reply);
                 }
+                ProcessErrors(reply);
                 ShowNotifications(reply);
             }
             catch (SoapException e)
@@ -197,19 +198,30 @@ namespace DotNetShipping.ShippingProviders
             var i = 0;
             foreach (var package in Shipment.Packages)
             {
-                request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem();
-                request.RequestedShipment.RequestedPackageLineItems[i].SequenceNumber = (i + 1).ToString();
-                request.RequestedShipment.RequestedPackageLineItems[i].GroupPackageCount = "1";
-                // package weight
-                request.RequestedShipment.RequestedPackageLineItems[i].Weight = new Weight();
-                request.RequestedShipment.RequestedPackageLineItems[i].Weight.Units = WeightUnits.LB;
-                request.RequestedShipment.RequestedPackageLineItems[i].Weight.Value = package.RoundedWeight;
-                // package dimensions
-                request.RequestedShipment.RequestedPackageLineItems[i].Dimensions = new Dimensions();
-                request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Length = package.RoundedLength.ToString();
-                request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Width = package.RoundedWidth.ToString();
-                request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Height = package.RoundedHeight.ToString();
-                request.RequestedShipment.RequestedPackageLineItems[i].Dimensions.Units = LinearUnits.IN;
+                request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem()
+                {
+                    SequenceNumber = (i + 1).ToString(),
+                    GroupPackageCount = "1",
+
+                    // Package weight
+                    Weight = new Weight()
+                    {
+                        Units = WeightUnits.LB,
+                        UnitsSpecified = true,
+                        Value = package.RoundedWeight,
+                        ValueSpecified = true
+                    },
+
+                    // Package dimensions
+                    Dimensions = new Dimensions()
+                    {
+                        Length = package.RoundedLength.ToString(),
+                        Width = package.RoundedWidth.ToString(),
+                        Height = package.RoundedHeight.ToString(),
+                        Units = LinearUnits.IN,
+                        UnitsSpecified = true
+                    }
+                };
 
                 if (_allowInsuredValues)
                 {
@@ -232,7 +244,7 @@ namespace DotNetShipping.ShippingProviders
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Outputs the notifications to the debug console
         /// </summary>
         /// <param name="reply"></param>
@@ -247,6 +259,33 @@ namespace DotNetShipping.ShippingProviders
                 Debug.WriteLine(" Code: {0}", notification.Code);
                 Debug.WriteLine(" Message: {0}", notification.Message);
                 Debug.WriteLine(" Source: {0}", notification.Source);
+            }
+        }
+
+        private void ProcessErrors(RateReply reply)
+        {
+            var errorTypes = new NotificationSeverityType[]
+            {
+                NotificationSeverityType.ERROR,
+                NotificationSeverityType.FAILURE
+            };
+
+            if (reply.Notifications != null && reply.Notifications.Any())
+            {
+                var errors = reply.Notifications
+                    .Where(e => !e.SeveritySpecified || errorTypes.Contains(e.Severity))
+                    .Select(error =>
+                    new Error
+                    {
+                        Description = error.Message,
+                        Source = error.Source,
+                        Number = error.Code
+                    });
+
+                foreach (var err in errors)
+                {
+                    AddError(err);
+                }
             }
         }
     }

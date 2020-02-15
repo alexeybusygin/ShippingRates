@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace DotNetShipping.ShippingProviders
+namespace Shipping.Rates.ShippingProviders
 {
     /// <summary>
     ///     A base implementation of the <see cref="IShippingProvider" /> interface.
@@ -16,9 +16,9 @@ namespace DotNetShipping.ShippingProviders
         public string Name { get; set; }
         public Shipment Shipment { get; set; }
 
-        protected void AddError(USPSError error)
+        protected void AddError(Error error)
         {
-            Shipment.ServerErrors.Add(error);
+            Shipment.Errors.Add(error);
         }
 
         protected void AddRate(string providerCode, string name, decimal totalCharges, DateTime delivery)

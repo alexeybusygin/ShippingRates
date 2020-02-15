@@ -1,4 +1,4 @@
-namespace DotNetShipping
+namespace Shipping.Rates
 {
     public interface IRateAdjuster
     {

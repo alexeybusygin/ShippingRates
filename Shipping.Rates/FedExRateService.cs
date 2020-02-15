@@ -1,4 +1,4 @@
-﻿namespace DotNetShipping.RateServiceWebReference
+﻿namespace Shipping.Rates.RateServiceWebReference
 {
     public partial class RateService
     {

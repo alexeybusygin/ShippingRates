@@ -2,11 +2,11 @@
 using System.Configuration;
 using System.Linq;
 
-using DotNetShipping.ShippingProviders;
+using Shipping.Rates.ShippingProviders;
 
 using Xunit;
 
-namespace DotNetShipping.Tests.Features
+namespace Shipping.Rates.Tests.Features
 {
     public abstract class FedExShipRatesTestsBase : IDisposable
     {

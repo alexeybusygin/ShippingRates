@@ -1,4 +1,4 @@
-namespace DotNetShipping.ShippingProviders
+namespace Shipping.Rates.ShippingProviders
 {
     /// <summary>
     ///     Defines a standard interface for all shipping providers.

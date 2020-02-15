@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 
-using DotNetShipping.ShippingProviders;
+using Shipping.Rates.ShippingProviders;
 
-namespace DotNetShipping.SampleApp
+namespace Shipping.Rates.SampleApp
 {
     internal class Program
     {
@@ -29,9 +29,11 @@ namespace DotNetShipping.SampleApp
             var uspsUserId = appSettings["USPSUserId"];
 
             // Setup package and destination/origin addresses
-            var packages = new List<Package>();
-            packages.Add(new Package(12, 12, 12, 35, 150));
-            packages.Add(new Package(4, 4, 6, 15, 250));
+            var packages = new List<Package>
+            {
+                new Package(12, 12, 12, 35, 150),
+                new Package(4, 4, 6, 15, 250)
+            };
 
             var origin = new Address("", "", "06405", "US");
             var destination = new Address("", "", "20852", "US"); // US Address
@@ -61,7 +63,19 @@ namespace DotNetShipping.SampleApp
                 Console.WriteLine(rate);
             }
 
-            Console.ReadLine();
+            // Iterate through the errors returned
+            if (shipment.Errors.Count > 0)
+            {
+                Console.WriteLine("Errors:");
+                foreach (var error in shipment.Errors)
+                {
+                    Console.WriteLine(error.Number);
+                    Console.WriteLine(error.Source);
+                    Console.WriteLine(error.Description);
+                }
+            }
+
+            Console.WriteLine("Done!");
         }
     }
 }

@@ -5,10 +5,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web.Services.Protocols;
 
-using DotNetShipping.Helpers.Extensions;
-using DotNetShipping.RateServiceWebReference;
+using Shipping.Rates.Helpers.Extensions;
+using Shipping.Rates.RateServiceWebReference;
 
-namespace DotNetShipping.ShippingProviders
+namespace Shipping.Rates.ShippingProviders
 {
     /// <summary>
     ///     Provides rates from FedEx (Federal Express) excluding SmartPost. Please use <see cref="FedExSmartPostProvider"/> for SmartPost rates.
@@ -91,8 +91,7 @@ namespace DotNetShipping.ShippingProviders
             request.RequestedShipment.ShipTimestampSpecified = true;
             request.RequestedShipment.DropoffType = DropoffType.REGULAR_PICKUP; //Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
             request.RequestedShipment.DropoffTypeSpecified = true;
-            request.RequestedShipment.PackagingType = PackagingType.YOUR_PACKAGING;
-            request.RequestedShipment.PackagingTypeSpecified = true;
+            request.RequestedShipment.PackagingType = "YOUR_PACKAGING";
 
             SetOrigin(request);
 

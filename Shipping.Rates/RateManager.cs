@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
-using DotNetShipping.ShippingProviders;
+using Shipping.Rates.ShippingProviders;
 
-namespace DotNetShipping
+namespace Shipping.Rates
 {
     /// <summary>
     ///     Responsible for coordinating the retrieval of rates from the specified providers for a specified shipment.

@@ -3,11 +3,11 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 
-using DotNetShipping.ShippingProviders;
+using Shipping.Rates.ShippingProviders;
 
 using Xunit;
 
-namespace DotNetShipping.Tests.Features
+namespace Shipping.Rates.Tests.Features
 {
     public class USPSInternationalRates
     {
@@ -48,7 +48,7 @@ namespace DotNetShipping.Tests.Features
 
             Assert.NotNull(response);
             Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.ServerErrors);
+            Assert.Empty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -71,7 +71,7 @@ namespace DotNetShipping.Tests.Features
 
             Assert.NotNull(response);
             Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.ServerErrors);
+            Assert.Empty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -124,7 +124,7 @@ namespace DotNetShipping.Tests.Features
 
             Assert.NotNull(response);
             Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.ServerErrors);
+            Assert.Empty(response.Errors);
             Assert.Equal(response.Rates.Count, 1);
             Assert.True(response.Rates.First().TotalCharges > 0);
 

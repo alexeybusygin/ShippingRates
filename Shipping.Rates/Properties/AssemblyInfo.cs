@@ -4,12 +4,12 @@
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("DotNetShipping")]
+[assembly: AssemblyTitle("Shipping.Rates")]
 [assembly: AssemblyDescription(".NET wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Kyle West")]
-[assembly: AssemblyProduct("DotNetShipping")]
-[assembly: AssemblyCopyright("Copyright © 2012")]
+[assembly: AssemblyCompany("Alexey Busygin, Kyle West")]
+[assembly: AssemblyProduct("Shipping.Rates")]
+[assembly: AssemblyCopyright("Copyright © 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

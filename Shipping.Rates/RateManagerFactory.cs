@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Reflection;
 
-using DotNetShipping.ShippingProviders;
+using Shipping.Rates.ShippingProviders;
 
-namespace DotNetShipping
+namespace Shipping.Rates
 {
     public class RateManagerFactory
     {

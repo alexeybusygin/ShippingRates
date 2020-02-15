@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using DotNetShipping.ShippingProviders;
+using Shipping.Rates.ShippingProviders;
 
 using Xunit;
 
-namespace DotNetShipping.Tests.Features
+namespace Shipping.Rates.Tests.Features
 {
     public abstract class FedExSmartPostShipRatesTestsBase : IDisposable
     {

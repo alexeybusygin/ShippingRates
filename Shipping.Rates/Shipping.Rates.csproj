@@ -89,7 +89,7 @@
     <Compile Include="ShippingProviders\UPSProvider.cs" />
     <Compile Include="ShippingProviders\USPSInternationalProvider.cs" />
     <Compile Include="ShippingProviders\USPSProvider.cs" />
-    <Compile Include="USPSError.cs" />
+    <Compile Include="Error.cs" />
     <Compile Include="Web References\RateServiceWebReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

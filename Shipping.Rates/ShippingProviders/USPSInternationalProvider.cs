@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace DotNetShipping.ShippingProviders
+namespace Shipping.Rates.ShippingProviders
 {
     /// <summary>
     /// </summary>
@@ -213,7 +213,7 @@ namespace DotNetShipping.ShippingProviders
             {
                 var errors = from item in document.Descendants("Error")
                     select
-                        new USPSError
+                        new Error
                         {
                             Description = item.Element("Description").ToString(),
                             Source = item.Element("Source").ToString(),

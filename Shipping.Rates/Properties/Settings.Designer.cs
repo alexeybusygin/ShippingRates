@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DotNetShipping.Properties {
+namespace Shipping.Rates.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -27,9 +27,9 @@ namespace DotNetShipping.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("https://wsbeta.fedex.com:443/web-services/rate")]
-        public string DotNetShipping_RateServiceWebReference_RateService {
+        public string Shipping_Rates_RateServiceWebReference_RateService {
             get {
-                return ((string)(this["DotNetShipping_RateServiceWebReference_RateService"]));
+                return ((string)(this["Shipping_Rates_RateServiceWebReference_RateService"]));
             }
         }
     }

@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace DotNetShipping.RateServiceWebReference {
+namespace Shipping.Rates.RateServiceWebReference {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -23,10 +23,10 @@ namespace DotNetShipping.RateServiceWebReference {
     
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.3062.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Web.Services.WebServiceBindingAttribute(Name="RateServiceSoapBinding", Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Web.Services.WebServiceBindingAttribute(Name="RateServiceSoapBinding", Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RateService : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
         private System.Threading.SendOrPostCallback getRatesOperationCompleted;
@@ -35,7 +35,7 @@ namespace DotNetShipping.RateServiceWebReference {
         
         /// <remarks/>
         public RateService() {
-            this.Url = global::DotNetShipping.Properties.Settings.Default.DotNetShipping_RateServiceWebReference_RateService;
+            this.Url = global::Shipping.Rates.Properties.Settings.Default.Shipping_Rates_RateServiceWebReference_RateService;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
@@ -73,9 +73,9 @@ namespace DotNetShipping.RateServiceWebReference {
         public event getRatesCompletedEventHandler getRatesCompleted;
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://fedex.com/ws/rate/v13/getRates", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
-        [return: System.Xml.Serialization.XmlElementAttribute("RateReply", Namespace="http://fedex.com/ws/rate/v13")]
-        public RateReply getRates([System.Xml.Serialization.XmlElementAttribute(Namespace="http://fedex.com/ws/rate/v13")] RateRequest RateRequest) {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://fedex.com/ws/rate/v26/getRates", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
+        [return: System.Xml.Serialization.XmlElementAttribute("RateReply", Namespace="http://fedex.com/ws/rate/v26")]
+        public RateReply getRates([System.Xml.Serialization.XmlElementAttribute(Namespace="http://fedex.com/ws/rate/v26")] RateRequest RateRequest) {
             object[] results = this.Invoke("getRates", new object[] {
                         RateRequest});
             return ((RateReply)(results[0]));
@@ -122,11 +122,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RateRequest {
         
         private WebAuthenticationDetail webAuthenticationDetailField;
@@ -144,6 +144,8 @@ namespace DotNetShipping.RateServiceWebReference {
         private CarrierCodeType[] carrierCodesField;
         
         private ServiceOptionType[] variableOptionsField;
+        
+        private ConsolidationKey consolidationKeyField;
         
         private RequestedShipment requestedShipmentField;
         
@@ -231,6 +233,16 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
+        public ConsolidationKey ConsolidationKey {
+            get {
+                return this.consolidationKeyField;
+            }
+            set {
+                this.consolidationKeyField = value;
+            }
+        }
+        
+        /// <remarks/>
         public RequestedShipment RequestedShipment {
             get {
                 return this.requestedShipmentField;
@@ -242,14 +254,26 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class WebAuthenticationDetail {
         
+        private WebAuthenticationCredential parentCredentialField;
+        
         private WebAuthenticationCredential userCredentialField;
+        
+        /// <remarks/>
+        public WebAuthenticationCredential ParentCredential {
+            get {
+                return this.parentCredentialField;
+            }
+            set {
+                this.parentCredentialField = value;
+            }
+        }
         
         /// <remarks/>
         public WebAuthenticationCredential UserCredential {
@@ -263,11 +287,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class WebAuthenticationCredential {
         
         private string keyField;
@@ -296,11 +320,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class PackageRateDetail {
         
         private ReturnedRateType rateTypeField;
@@ -576,10 +600,13 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ReturnedRateType {
+        
+        /// <remarks/>
+        NEGOTIATED,
         
         /// <remarks/>
         PAYOR_ACCOUNT_PACKAGE,
@@ -606,22 +633,13 @@ namespace DotNetShipping.RateServiceWebReference {
         PREFERRED_LIST_SHIPMENT,
         
         /// <remarks/>
-        RATED_ACCOUNT_PACKAGE,
-        
-        /// <remarks/>
-        RATED_ACCOUNT_SHIPMENT,
-        
-        /// <remarks/>
-        RATED_LIST_PACKAGE,
-        
-        /// <remarks/>
-        RATED_LIST_SHIPMENT,
+        PREFERRED_NEGOTIATED,
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RatedWeightMethod {
         
         /// <remarks/>
@@ -632,6 +650,9 @@ namespace DotNetShipping.RateServiceWebReference {
         
         /// <remarks/>
         BALLOON,
+        
+        /// <remarks/>
+        DEFAULT_WEIGHT_APPLIED,
         
         /// <remarks/>
         DIM,
@@ -662,9 +683,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum MinimumChargeType {
         
         /// <remarks/>
@@ -684,16 +705,20 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Weight {
         
         private WeightUnits unitsField;
         
+        private bool unitsFieldSpecified;
+        
         private decimal valueField;
+        
+        private bool valueFieldSpecified;
         
         /// <remarks/>
         public WeightUnits Units {
@@ -706,6 +731,17 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool UnitsSpecified {
+            get {
+                return this.unitsFieldSpecified;
+            }
+            set {
+                this.unitsFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
         public decimal Value {
             get {
                 return this.valueField;
@@ -714,12 +750,23 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.valueField = value;
             }
         }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ValueSpecified {
+            get {
+                return this.valueFieldSpecified;
+            }
+            set {
+                this.valueFieldSpecified = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum WeightUnits {
         
         /// <remarks/>
@@ -730,11 +777,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Money {
         
         private string currencyField;
@@ -776,11 +823,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RateDiscount {
         
         private RateDiscountType rateDiscountTypeField;
@@ -859,9 +906,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RateDiscountType {
         
         /// <remarks/>
@@ -881,11 +928,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Rebate {
         
         private RebateType rebateTypeField;
@@ -964,9 +1011,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RebateType {
         
         /// <remarks/>
@@ -980,11 +1027,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Surcharge {
         
         private SurchargeType surchargeTypeField;
@@ -1063,13 +1110,19 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum SurchargeType {
         
         /// <remarks/>
+        ACCOUNT_NUMBER_PROCESSING_FEE,
+        
+        /// <remarks/>
         ADDITIONAL_HANDLING,
+        
+        /// <remarks/>
+        ADDRESS_CORRECTION,
         
         /// <remarks/>
         ANCILLARY_FEE,
@@ -1147,6 +1200,9 @@ namespace DotNetShipping.RateServiceWebReference {
         FREIGHT_ON_VALUE,
         
         /// <remarks/>
+        FREIGHT_TO_COLLECT,
+        
+        /// <remarks/>
         FUEL,
         
         /// <remarks/>
@@ -1201,6 +1257,9 @@ namespace DotNetShipping.RateServiceWebReference {
         ON_CALL_PICKUP,
         
         /// <remarks/>
+        ON_DEMAND_CARE,
+        
+        /// <remarks/>
         OTHER,
         
         /// <remarks/>
@@ -1214,6 +1273,21 @@ namespace DotNetShipping.RateServiceWebReference {
         
         /// <remarks/>
         OVER_DIMENSION,
+        
+        /// <remarks/>
+        OVER_LENGTH,
+        
+        /// <remarks/>
+        PEAK,
+        
+        /// <remarks/>
+        PEAK_ADDITIONAL_HANDLING,
+        
+        /// <remarks/>
+        PEAK_OVERSIZE,
+        
+        /// <remarks/>
+        PEAK_RESIDENTIAL_DELIVERY,
         
         /// <remarks/>
         PIECE_COUNT_VERIFICATION,
@@ -1232,6 +1306,12 @@ namespace DotNetShipping.RateServiceWebReference {
         
         /// <remarks/>
         REGIONAL_MALL_PICKUP,
+        
+        /// <remarks/>
+        REROUTE,
+        
+        /// <remarks/>
+        RESCHEDULE,
         
         /// <remarks/>
         RESIDENTIAL_DELIVERY,
@@ -1262,9 +1342,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum SurchargeLevelType {
         
         /// <remarks/>
@@ -1275,11 +1355,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Tax {
         
         private TaxType taxTypeField;
@@ -1333,9 +1413,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum TaxType {
         
         /// <remarks/>
@@ -1361,11 +1441,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class VariableHandlingCharges {
         
         private Money variableHandlingChargeField;
@@ -1418,11 +1498,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RatedPackageDetail {
         
         private TrackingId[] trackingIdsField;
@@ -1514,11 +1594,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class TrackingId {
         
         private TrackingIdType trackingIdTypeField;
@@ -1572,9 +1652,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum TrackingIdType {
         
         /// <remarks/>
@@ -1591,9 +1671,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum OversizeClassType {
         
         /// <remarks/>
@@ -1607,11 +1687,88 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class AncillaryFeeAndTax {
+        
+        private AncillaryFeeAndTaxType typeField;
+        
+        private bool typeFieldSpecified;
+        
+        private string descriptionField;
+        
+        private Money amountField;
+        
+        /// <remarks/>
+        public AncillaryFeeAndTaxType Type {
+            get {
+                return this.typeField;
+            }
+            set {
+                this.typeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool TypeSpecified {
+            get {
+                return this.typeFieldSpecified;
+            }
+            set {
+                this.typeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Description {
+            get {
+                return this.descriptionField;
+            }
+            set {
+                this.descriptionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public Money Amount {
+            get {
+                return this.amountField;
+            }
+            set {
+                this.amountField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum AncillaryFeeAndTaxType {
+        
+        /// <remarks/>
+        CLEARANCE_ENTRY_FEE,
+        
+        /// <remarks/>
+        GOODS_AND_SERVICES_TAX,
+        
+        /// <remarks/>
+        HARMONIZED_SALES_TAX,
+        
+        /// <remarks/>
+        OTHER,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class EdtTaxDetail {
         
         private EdtTaxType taxTypeField;
@@ -1727,9 +1884,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum EdtTaxType {
         
         /// <remarks/>
@@ -1779,11 +1936,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class EdtCommodityTax {
         
         private string harmonizedCodeField;
@@ -1813,11 +1970,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class FreightRateNotation {
         
         private string codeField;
@@ -1846,11 +2003,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class FreightBaseCharge {
         
         private FreightClassType freightClassField;
@@ -1990,9 +2147,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum FreightClassType {
         
         /// <remarks/>
@@ -2051,9 +2208,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum FreightChargeBasisType {
         
         /// <remarks/>
@@ -2067,11 +2224,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class FreightRateDetail {
         
         private string quoteNumberField;
@@ -2164,9 +2321,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum FreightRateQuoteType {
         
         /// <remarks/>
@@ -2177,9 +2334,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum FreightBaseChargeCalculationType {
         
         /// <remarks/>
@@ -2190,11 +2347,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ShipmentLegRateDetail {
         
         private string legDescriptionField;
@@ -2716,11 +2873,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Address {
         
         private string[] streetLinesField;
@@ -2740,6 +2897,8 @@ namespace DotNetShipping.RateServiceWebReference {
         private bool residentialField;
         
         private bool residentialFieldSpecified;
+        
+        private string geographicCoordinatesField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("StreetLines")]
@@ -2832,12 +2991,22 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.residentialFieldSpecified = value;
             }
         }
+        
+        /// <remarks/>
+        public string GeographicCoordinates {
+            get {
+                return this.geographicCoordinatesField;
+            }
+            set {
+                this.geographicCoordinatesField = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum PricingCodeType {
         
         /// <remarks/>
@@ -2881,11 +3050,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class CurrencyExchangeRate {
         
         private string fromCurrencyField;
@@ -2939,10 +3108,13 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum SpecialRatingAppliedType {
+        
+        /// <remarks/>
+        FEDEX_ONE_RATE,
         
         /// <remarks/>
         FIXED_FUEL_SURCHARGE,
@@ -2952,9 +3124,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RateDimensionalDivisorType {
         
         /// <remarks/>
@@ -2974,11 +3146,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ShipmentRateDetail {
         
         private ReturnedRateType rateTypeField;
@@ -3037,6 +3209,10 @@ namespace DotNetShipping.RateServiceWebReference {
         
         private Money totalDutiesAndTaxesField;
         
+        private Money totalAncillaryFeesAndTaxesField;
+        
+        private Money totalDutiesTaxesAndFeesField;
+        
         private Money totalNetChargeWithDutiesAndTaxesField;
         
         private ShipmentLegRateDetail[] shipmentLegRateDetailsField;
@@ -3052,6 +3228,8 @@ namespace DotNetShipping.RateServiceWebReference {
         private Tax[] taxesField;
         
         private EdtCommodityTax[] dutiesAndTaxesField;
+        
+        private AncillaryFeeAndTax[] ancillaryFeesAndTaxesField;
         
         private VariableHandlingCharges variableHandlingChargesField;
         
@@ -3346,6 +3524,26 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
+        public Money TotalAncillaryFeesAndTaxes {
+            get {
+                return this.totalAncillaryFeesAndTaxesField;
+            }
+            set {
+                this.totalAncillaryFeesAndTaxesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public Money TotalDutiesTaxesAndFees {
+            get {
+                return this.totalDutiesTaxesAndFeesField;
+            }
+            set {
+                this.totalDutiesTaxesAndFeesField = value;
+            }
+        }
+        
+        /// <remarks/>
         public Money TotalNetChargeWithDutiesAndTaxes {
             get {
                 return this.totalNetChargeWithDutiesAndTaxesField;
@@ -3432,6 +3630,17 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("AncillaryFeesAndTaxes")]
+        public AncillaryFeeAndTax[] AncillaryFeesAndTaxes {
+            get {
+                return this.ancillaryFeesAndTaxesField;
+            }
+            set {
+                this.ancillaryFeesAndTaxesField = value;
+            }
+        }
+        
+        /// <remarks/>
         public VariableHandlingCharges VariableHandlingCharges {
             get {
                 return this.variableHandlingChargesField;
@@ -3453,11 +3662,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RatedShipmentDetail {
         
         private Money effectiveNetDiscountField;
@@ -3511,11 +3720,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Distance {
         
         private decimal valueField;
@@ -3570,9 +3779,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum DistanceUnits {
         
         /// <remarks/>
@@ -3583,11 +3792,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class FreightServiceCenterDetail {
         
         private string interlineCarrierCodeField;
@@ -3598,9 +3807,7 @@ namespace DotNetShipping.RateServiceWebReference {
         
         private bool additionalDaysFieldSpecified;
         
-        private ServiceType localServiceField;
-        
-        private bool localServiceFieldSpecified;
+        private string localServiceField;
         
         private Distance localDistanceField;
         
@@ -3660,23 +3867,12 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        public ServiceType LocalService {
+        public string LocalService {
             get {
                 return this.localServiceField;
             }
             set {
                 this.localServiceField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool LocalServiceSpecified {
-            get {
-                return this.localServiceFieldSpecified;
-            }
-            set {
-                this.localServiceFieldSpecified = value;
             }
         }
         
@@ -3765,79 +3961,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum ServiceType {
-        
-        /// <remarks/>
-        EUROPE_FIRST_INTERNATIONAL_PRIORITY,
-        
-        /// <remarks/>
-        FEDEX_1_DAY_FREIGHT,
-        
-        /// <remarks/>
-        FEDEX_2_DAY,
-        
-        /// <remarks/>
-        FEDEX_2_DAY_AM,
-        
-        /// <remarks/>
-        FEDEX_2_DAY_FREIGHT,
-        
-        /// <remarks/>
-        FEDEX_3_DAY_FREIGHT,
-        
-        /// <remarks/>
-        FEDEX_EXPRESS_SAVER,
-        
-        /// <remarks/>
-        FEDEX_FIRST_FREIGHT,
-        
-        /// <remarks/>
-        FEDEX_FREIGHT_ECONOMY,
-        
-        /// <remarks/>
-        FEDEX_FREIGHT_PRIORITY,
-        
-        /// <remarks/>
-        FEDEX_GROUND,
-        
-        /// <remarks/>
-        FIRST_OVERNIGHT,
-        
-        /// <remarks/>
-        GROUND_HOME_DELIVERY,
-        
-        /// <remarks/>
-        INTERNATIONAL_ECONOMY,
-        
-        /// <remarks/>
-        INTERNATIONAL_ECONOMY_FREIGHT,
-        
-        /// <remarks/>
-        INTERNATIONAL_FIRST,
-        
-        /// <remarks/>
-        INTERNATIONAL_PRIORITY,
-        
-        /// <remarks/>
-        INTERNATIONAL_PRIORITY_FREIGHT,
-        
-        /// <remarks/>
-        PRIORITY_OVERNIGHT,
-        
-        /// <remarks/>
-        SMART_POST,
-        
-        /// <remarks/>
-        STANDARD_OVERNIGHT,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum FreightServiceSchedulingType {
         
         /// <remarks/>
@@ -3851,9 +3977,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum DayOfWeekType {
         
         /// <remarks/>
@@ -3879,11 +4005,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ContactAndAddress {
         
         private Contact contactField;
@@ -3912,11 +4038,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Contact {
         
         private string contactIdField;
@@ -4041,11 +4167,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class FreightCommitDetail {
         
         private FreightServiceCenterDetail originDetailField;
@@ -4086,11 +4212,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class DelayDetail {
         
         private System.DateTime dateField;
@@ -4233,9 +4359,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum DelayLevelType {
         
         /// <remarks/>
@@ -4261,9 +4387,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum DelayPointType {
         
         /// <remarks/>
@@ -4283,9 +4409,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum CommitmentDelayType {
         
         /// <remarks/>
@@ -4323,22 +4449,136 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class CleansedAddressAndLocationDetail {
+        
+        private string countryCodeField;
+        
+        private string stateOrProvinceCodeField;
+        
+        private string postalCodeField;
+        
+        private string serviceAreaField;
+        
+        private string locationIdField;
+        
+        private int locationNumberField;
+        
+        private bool locationNumberFieldSpecified;
+        
+        private string airportIdField;
+        
+        /// <remarks/>
+        public string CountryCode {
+            get {
+                return this.countryCodeField;
+            }
+            set {
+                this.countryCodeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string StateOrProvinceCode {
+            get {
+                return this.stateOrProvinceCodeField;
+            }
+            set {
+                this.stateOrProvinceCodeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string PostalCode {
+            get {
+                return this.postalCodeField;
+            }
+            set {
+                this.postalCodeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ServiceArea {
+            get {
+                return this.serviceAreaField;
+            }
+            set {
+                this.serviceAreaField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string LocationId {
+            get {
+                return this.locationIdField;
+            }
+            set {
+                this.locationIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int LocationNumber {
+            get {
+                return this.locationNumberField;
+            }
+            set {
+                this.locationNumberField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool LocationNumberSpecified {
+            get {
+                return this.locationNumberFieldSpecified;
+            }
+            set {
+                this.locationNumberFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string AirportId {
+            get {
+                return this.airportIdField;
+            }
+            set {
+                this.airportIdField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class CommitDetail {
         
         private string commodityNameField;
         
-        private ServiceType serviceTypeField;
+        private string serviceTypeField;
         
-        private bool serviceTypeFieldSpecified;
+        private ServiceDescription serviceDescriptionField;
         
         private ServiceOptionType[] appliedOptionsField;
         
         private ServiceSubOptionDetail appliedSubOptionsField;
+        
+        private SignatureOptionDetail derivedShipmentSignatureOptionField;
+        
+        private SignatureOptionDetail[] derivedPackageSignatureOptionsField;
+        
+        private CleansedAddressAndLocationDetail derivedOriginDetailField;
+        
+        private CleansedAddressAndLocationDetail derivedDestinationDetailField;
         
         private System.DateTime commitTimestampField;
         
@@ -4405,7 +4645,7 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        public ServiceType ServiceType {
+        public string ServiceType {
             get {
                 return this.serviceTypeField;
             }
@@ -4415,13 +4655,12 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ServiceTypeSpecified {
+        public ServiceDescription ServiceDescription {
             get {
-                return this.serviceTypeFieldSpecified;
+                return this.serviceDescriptionField;
             }
             set {
-                this.serviceTypeFieldSpecified = value;
+                this.serviceDescriptionField = value;
             }
         }
         
@@ -4443,6 +4682,47 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.appliedSubOptionsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public SignatureOptionDetail DerivedShipmentSignatureOption {
+            get {
+                return this.derivedShipmentSignatureOptionField;
+            }
+            set {
+                this.derivedShipmentSignatureOptionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("DerivedPackageSignatureOptions")]
+        public SignatureOptionDetail[] DerivedPackageSignatureOptions {
+            get {
+                return this.derivedPackageSignatureOptionsField;
+            }
+            set {
+                this.derivedPackageSignatureOptionsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CleansedAddressAndLocationDetail DerivedOriginDetail {
+            get {
+                return this.derivedOriginDetailField;
+            }
+            set {
+                this.derivedOriginDetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CleansedAddressAndLocationDetail DerivedDestinationDetail {
+            get {
+                return this.derivedDestinationDetailField;
+            }
+            set {
+                this.derivedDestinationDetailField = value;
             }
         }
         
@@ -4733,10 +5013,128 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ServiceDescription {
+        
+        private string serviceTypeField;
+        
+        private string codeField;
+        
+        private ProductName[] namesField;
+        
+        private string descriptionField;
+        
+        private string astraDescriptionField;
+        
+        /// <remarks/>
+        public string ServiceType {
+            get {
+                return this.serviceTypeField;
+            }
+            set {
+                this.serviceTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Code {
+            get {
+                return this.codeField;
+            }
+            set {
+                this.codeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Names")]
+        public ProductName[] Names {
+            get {
+                return this.namesField;
+            }
+            set {
+                this.namesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Description {
+            get {
+                return this.descriptionField;
+            }
+            set {
+                this.descriptionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string AstraDescription {
+            get {
+                return this.astraDescriptionField;
+            }
+            set {
+                this.astraDescriptionField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ProductName {
+        
+        private string typeField;
+        
+        private string encodingField;
+        
+        private string valueField;
+        
+        /// <remarks/>
+        public string Type {
+            get {
+                return this.typeField;
+            }
+            set {
+                this.typeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Encoding {
+            get {
+                return this.encodingField;
+            }
+            set {
+                this.encodingField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Value {
+            get {
+                return this.valueField;
+            }
+            set {
+                this.valueField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ServiceOptionType {
+        
+        /// <remarks/>
+        FEDEX_ONE_RATE,
         
         /// <remarks/>
         FREIGHT_GUARANTEE,
@@ -4752,11 +5150,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ServiceSubOptionDetail {
         
         private FreightGuaranteeType freightGuaranteeField;
@@ -4823,9 +5221,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum FreightGuaranteeType {
         
         /// <remarks/>
@@ -4836,9 +5234,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum SmartPostIndiciaType {
         
         /// <remarks/>
@@ -4858,9 +5256,77 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class SignatureOptionDetail {
+        
+        private SignatureOptionType optionTypeField;
+        
+        private bool optionTypeFieldSpecified;
+        
+        private string signatureReleaseNumberField;
+        
+        /// <remarks/>
+        public SignatureOptionType OptionType {
+            get {
+                return this.optionTypeField;
+            }
+            set {
+                this.optionTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool OptionTypeSpecified {
+            get {
+                return this.optionTypeFieldSpecified;
+            }
+            set {
+                this.optionTypeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string SignatureReleaseNumber {
+            get {
+                return this.signatureReleaseNumberField;
+            }
+            set {
+                this.signatureReleaseNumberField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum SignatureOptionType {
+        
+        /// <remarks/>
+        ADULT,
+        
+        /// <remarks/>
+        DIRECT,
+        
+        /// <remarks/>
+        INDIRECT,
+        
+        /// <remarks/>
+        NO_SIGNATURE_REQUIRED,
+        
+        /// <remarks/>
+        SERVICE_DEFAULT,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum TransitTimeType {
         
         /// <remarks/>
@@ -4928,11 +5394,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Notification {
         
         private NotificationSeverityType severityField;
@@ -5023,9 +5489,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum NotificationSeverityType {
         
         /// <remarks/>
@@ -5045,11 +5511,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class NotificationParameter {
         
         private string idField;
@@ -5078,9 +5544,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum InternationalDocumentContentType {
         
         /// <remarks/>
@@ -5091,9 +5557,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RequiredShippingDocumentType {
         
         /// <remarks/>
@@ -5116,20 +5582,18 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RateReplyDetail {
         
-        private ServiceType serviceTypeField;
+        private string serviceTypeField;
         
-        private bool serviceTypeFieldSpecified;
+        private ServiceDescription serviceDescriptionField;
         
-        private PackagingType packagingTypeField;
-        
-        private bool packagingTypeFieldSpecified;
+        private string packagingTypeField;
         
         private ServiceOptionType[] appliedOptionsField;
         
@@ -5176,7 +5640,7 @@ namespace DotNetShipping.RateServiceWebReference {
         private RatedShipmentDetail[] ratedShipmentDetailsField;
         
         /// <remarks/>
-        public ServiceType ServiceType {
+        public string ServiceType {
             get {
                 return this.serviceTypeField;
             }
@@ -5186,34 +5650,22 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ServiceTypeSpecified {
+        public ServiceDescription ServiceDescription {
             get {
-                return this.serviceTypeFieldSpecified;
+                return this.serviceDescriptionField;
             }
             set {
-                this.serviceTypeFieldSpecified = value;
+                this.serviceDescriptionField = value;
             }
         }
         
         /// <remarks/>
-        public PackagingType PackagingType {
+        public string PackagingType {
             get {
                 return this.packagingTypeField;
             }
             set {
                 this.packagingTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool PackagingTypeSpecified {
-            get {
-                return this.packagingTypeFieldSpecified;
-            }
-            set {
-                this.packagingTypeFieldSpecified = value;
             }
         }
         
@@ -5449,61 +5901,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum PackagingType {
-        
-        /// <remarks/>
-        FEDEX_10KG_BOX,
-        
-        /// <remarks/>
-        FEDEX_25KG_BOX,
-        
-        /// <remarks/>
-        FEDEX_BOX,
-        
-        /// <remarks/>
-        FEDEX_ENVELOPE,
-        
-        /// <remarks/>
-        FEDEX_PAK,
-        
-        /// <remarks/>
-        FEDEX_TUBE,
-        
-        /// <remarks/>
-        YOUR_PACKAGING,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum SignatureOptionType {
-        
-        /// <remarks/>
-        ADULT,
-        
-        /// <remarks/>
-        DIRECT,
-        
-        /// <remarks/>
-        INDIRECT,
-        
-        /// <remarks/>
-        NO_SIGNATURE_REQUIRED,
-        
-        /// <remarks/>
-        SERVICE_DEFAULT,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RateReply {
         
         private NotificationSeverityType highestSeverityField;
@@ -5570,11 +5972,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class TransactionDetail {
         
         private string customerTransactionIdField;
@@ -5603,11 +6005,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Localization {
         
         private string languageCodeField;
@@ -5636,11 +6038,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class VersionId {
         
         private string serviceIdField;
@@ -5653,7 +6055,7 @@ namespace DotNetShipping.RateServiceWebReference {
         
         public VersionId() {
             this.serviceIdField = "crs";
-            this.majorField = 13;
+            this.majorField = 26;
             this.intermediateField = 0;
             this.minorField = 0;
         }
@@ -5700,11 +6102,32 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ShipperConveyanceDetail {
+        
+        private string idField;
+        
+        /// <remarks/>
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ContentRecord {
         
         private string partNumberField;
@@ -5758,11 +6181,58 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class AlcoholDetail {
+        
+        private AlcoholRecipientType recipientTypeField;
+        
+        private bool recipientTypeFieldSpecified;
+        
+        /// <remarks/>
+        public AlcoholRecipientType RecipientType {
+            get {
+                return this.recipientTypeField;
+            }
+            set {
+                this.recipientTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool RecipientTypeSpecified {
+            get {
+                return this.recipientTypeFieldSpecified;
+            }
+            set {
+                this.recipientTypeFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum AlcoholRecipientType {
+        
+        /// <remarks/>
+        CONSUMER,
+        
+        /// <remarks/>
+        LICENSEE,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class PriorityAlertDetail {
         
         private PriorityAlertEnhancementType[] enhancementTypesField;
@@ -5793,9 +6263,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum PriorityAlertEnhancementType {
         
         /// <remarks/>
@@ -5803,51 +6273,140 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class SignatureOptionDetail {
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class BatteryClassificationDetail {
         
-        private SignatureOptionType optionTypeField;
+        private BatteryMaterialType materialField;
         
-        private string signatureReleaseNumberField;
+        private bool materialFieldSpecified;
+        
+        private BatteryPackingType packingField;
+        
+        private bool packingFieldSpecified;
+        
+        private BatteryRegulatorySubType regulatorySubTypeField;
+        
+        private bool regulatorySubTypeFieldSpecified;
         
         /// <remarks/>
-        public SignatureOptionType OptionType {
+        public BatteryMaterialType Material {
             get {
-                return this.optionTypeField;
+                return this.materialField;
             }
             set {
-                this.optionTypeField = value;
+                this.materialField = value;
             }
         }
         
         /// <remarks/>
-        public string SignatureReleaseNumber {
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool MaterialSpecified {
             get {
-                return this.signatureReleaseNumberField;
+                return this.materialFieldSpecified;
             }
             set {
-                this.signatureReleaseNumberField = value;
+                this.materialFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public BatteryPackingType Packing {
+            get {
+                return this.packingField;
+            }
+            set {
+                this.packingField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool PackingSpecified {
+            get {
+                return this.packingFieldSpecified;
+            }
+            set {
+                this.packingFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public BatteryRegulatorySubType RegulatorySubType {
+            get {
+                return this.regulatorySubTypeField;
+            }
+            set {
+                this.regulatorySubTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool RegulatorySubTypeSpecified {
+            get {
+                return this.regulatorySubTypeFieldSpecified;
+            }
+            set {
+                this.regulatorySubTypeFieldSpecified = value;
             }
         }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum BatteryMaterialType {
+        
+        /// <remarks/>
+        LITHIUM_ION,
+        
+        /// <remarks/>
+        LITHIUM_METAL,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum BatteryPackingType {
+        
+        /// <remarks/>
+        CONTAINED_IN_EQUIPMENT,
+        
+        /// <remarks/>
+        PACKED_WITH_EQUIPMENT,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum BatteryRegulatorySubType {
+        
+        /// <remarks/>
+        IATA_SECTION_II,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class PackageSpecialServicesRequested {
         
-        private PackageSpecialServiceType[] specialServiceTypesField;
+        private string[] specialServiceTypesField;
         
         private CodDetail codDetailField;
         
         private DangerousGoodsDetail dangerousGoodsDetailField;
+        
+        private BatteryClassificationDetail[] batteryDetailsField;
         
         private Weight dryIceWeightField;
         
@@ -5855,9 +6414,11 @@ namespace DotNetShipping.RateServiceWebReference {
         
         private PriorityAlertDetail priorityAlertDetailField;
         
+        private AlcoholDetail alcoholDetailField;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("SpecialServiceTypes")]
-        public PackageSpecialServiceType[] SpecialServiceTypes {
+        public string[] SpecialServiceTypes {
             get {
                 return this.specialServiceTypesField;
             }
@@ -5883,6 +6444,17 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.dangerousGoodsDetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("BatteryDetails")]
+        public BatteryClassificationDetail[] BatteryDetails {
+            get {
+                return this.batteryDetailsField;
+            }
+            set {
+                this.batteryDetailsField = value;
             }
         }
         
@@ -5915,45 +6487,24 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.priorityAlertDetailField = value;
             }
         }
+        
+        /// <remarks/>
+        public AlcoholDetail AlcoholDetail {
+            get {
+                return this.alcoholDetailField;
+            }
+            set {
+                this.alcoholDetailField = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum PackageSpecialServiceType {
-        
-        /// <remarks/>
-        ALCOHOL,
-        
-        /// <remarks/>
-        APPOINTMENT_DELIVERY,
-        
-        /// <remarks/>
-        COD,
-        
-        /// <remarks/>
-        DANGEROUS_GOODS,
-        
-        /// <remarks/>
-        DRY_ICE,
-        
-        /// <remarks/>
-        NON_STANDARD_CONTAINER,
-        
-        /// <remarks/>
-        PRIORITY_ALERT,
-        
-        /// <remarks/>
-        SIGNATURE_OPTION,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class CodDetail {
         
         private Money codCollectionAmountField;
@@ -5961,6 +6512,8 @@ namespace DotNetShipping.RateServiceWebReference {
         private CodAddTransportationChargesDetail addTransportationChargesDetailField;
         
         private CodCollectionType collectionTypeField;
+        
+        private bool collectionTypeFieldSpecified;
         
         private Party codRecipientField;
         
@@ -6001,6 +6554,17 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.collectionTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool CollectionTypeSpecified {
+            get {
+                return this.collectionTypeFieldSpecified;
+            }
+            set {
+                this.collectionTypeFieldSpecified = value;
             }
         }
         
@@ -6067,11 +6631,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class CodAddTransportationChargesDetail {
         
         private RateTypeBasisType rateTypeBasisField;
@@ -6151,9 +6715,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RateTypeBasisType {
         
         /// <remarks/>
@@ -6164,9 +6728,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum CodAddTransportationChargeBasisType {
         
         /// <remarks/>
@@ -6183,9 +6747,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ChargeBasisLevelType {
         
         /// <remarks/>
@@ -6196,9 +6760,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum CodCollectionType {
         
         /// <remarks/>
@@ -6212,11 +6776,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Party {
         
         private string accountNumberField;
@@ -6270,18 +6834,28 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class TaxpayerIdentification {
         
         private TinType tinTypeField;
         
+        private bool tinTypeFieldSpecified;
+        
         private string numberField;
         
         private string usageField;
+        
+        private System.DateTime effectiveDateField;
+        
+        private bool effectiveDateFieldSpecified;
+        
+        private System.DateTime expirationDateField;
+        
+        private bool expirationDateFieldSpecified;
         
         /// <remarks/>
         public TinType TinType {
@@ -6290,6 +6864,17 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.tinTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool TinTypeSpecified {
+            get {
+                return this.tinTypeFieldSpecified;
+            }
+            set {
+                this.tinTypeFieldSpecified = value;
             }
         }
         
@@ -6312,12 +6897,54 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.usageField = value;
             }
         }
+        
+        /// <remarks/>
+        public System.DateTime EffectiveDate {
+            get {
+                return this.effectiveDateField;
+            }
+            set {
+                this.effectiveDateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool EffectiveDateSpecified {
+            get {
+                return this.effectiveDateFieldSpecified;
+            }
+            set {
+                this.effectiveDateFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public System.DateTime ExpirationDate {
+            get {
+                return this.expirationDateField;
+            }
+            set {
+                this.expirationDateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ExpirationDateSpecified {
+            get {
+                return this.expirationDateFieldSpecified;
+            }
+            set {
+                this.expirationDateFieldSpecified = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum TinType {
         
         /// <remarks/>
@@ -6334,9 +6961,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum CodReturnReferenceIndicatorType {
         
         /// <remarks/>
@@ -6353,12 +6980,16 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class DangerousGoodsDetail {
+        
+        private HazardousCommodityRegulationType regulationField;
+        
+        private bool regulationFieldSpecified;
         
         private DangerousGoodsAccessibilityType accessibilityField;
         
@@ -6391,6 +7022,27 @@ namespace DotNetShipping.RateServiceWebReference {
         private string additionalHandlingField;
         
         private RadioactivityDetail radioactivityDetailField;
+        
+        /// <remarks/>
+        public HazardousCommodityRegulationType Regulation {
+            get {
+                return this.regulationField;
+            }
+            set {
+                this.regulationField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool RegulationSpecified {
+            get {
+                return this.regulationFieldSpecified;
+            }
+            set {
+                this.regulationFieldSpecified = value;
+            }
+        }
         
         /// <remarks/>
         public DangerousGoodsAccessibilityType Accessibility {
@@ -6559,9 +7211,28 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum HazardousCommodityRegulationType {
+        
+        /// <remarks/>
+        ADR,
+        
+        /// <remarks/>
+        DOT,
+        
+        /// <remarks/>
+        IATA,
+        
+        /// <remarks/>
+        ORMD,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum DangerousGoodsAccessibilityType {
         
         /// <remarks/>
@@ -6572,16 +7243,19 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum HazardousCommodityOptionType {
+        
+        /// <remarks/>
+        BATTERY,
         
         /// <remarks/>
         HAZARDOUS_MATERIALS,
         
         /// <remarks/>
-        LITHIUM_BATTERY_EXCEPTION,
+        LIMITED_QUANTITIES_COMMODITIES,
         
         /// <remarks/>
         ORM_D,
@@ -6594,9 +7268,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum DangerousGoodsPackingOptionType {
         
         /// <remarks/>
@@ -6604,11 +7278,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class DangerousGoodsContainer {
         
         private HazardousContainerPackingType packingTypeField;
@@ -6701,9 +7375,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum HazardousContainerPackingType {
         
         /// <remarks/>
@@ -6711,9 +7385,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RadioactiveContainerClassType {
         
         /// <remarks/>
@@ -6742,20 +7416,24 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class HazardousCommodityContent {
         
         private HazardousCommodityDescription descriptionField;
         
         private HazardousCommodityQuantityDetail quantityField;
         
+        private HazardousCommodityInnerReceptacleDetail[] innerReceptaclesField;
+        
         private HazardousCommodityOptionDetail optionsField;
         
         private RadionuclideDetail radionuclideDetailField;
+        
+        private NetExplosiveDetail netExplosiveDetailField;
         
         /// <remarks/>
         public HazardousCommodityDescription Description {
@@ -6778,6 +7456,17 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("InnerReceptacles")]
+        public HazardousCommodityInnerReceptacleDetail[] InnerReceptacles {
+            get {
+                return this.innerReceptaclesField;
+            }
+            set {
+                this.innerReceptaclesField = value;
+            }
+        }
+        
+        /// <remarks/>
         public HazardousCommodityOptionDetail Options {
             get {
                 return this.optionsField;
@@ -6796,14 +7485,24 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.radionuclideDetailField = value;
             }
         }
+        
+        /// <remarks/>
+        public NetExplosiveDetail NetExplosiveDetail {
+            get {
+                return this.netExplosiveDetailField;
+            }
+            set {
+                this.netExplosiveDetailField = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class HazardousCommodityDescription {
         
         private string idField;
@@ -7006,9 +7705,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum HazardousCommodityPackingGroupType {
         
         /// <remarks/>
@@ -7025,11 +7724,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class HazardousCommodityPackingDetail {
         
         private bool cargoAircraftOnlyField;
@@ -7071,9 +7770,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum HazardousCommodityDescriptionProcessingOptionType {
         
         /// <remarks/>
@@ -7081,11 +7780,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class HazardousCommodityQuantityDetail {
         
         private decimal amountField;
@@ -7152,9 +7851,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum HazardousCommodityQuantityType {
         
         /// <remarks/>
@@ -7165,11 +7864,32 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class HazardousCommodityInnerReceptacleDetail {
+        
+        private HazardousCommodityQuantityDetail quantityField;
+        
+        /// <remarks/>
+        public HazardousCommodityQuantityDetail Quantity {
+            get {
+                return this.quantityField;
+            }
+            set {
+                this.quantityField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class HazardousCommodityOptionDetail {
         
         private HazardousCommodityLabelTextOptionType labelTextOptionField;
@@ -7211,9 +7931,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum HazardousCommodityLabelTextOptionType {
         
         /// <remarks/>
@@ -7227,11 +7947,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RadionuclideDetail {
         
         private string radionuclideField;
@@ -7322,11 +8042,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RadionuclideActivity {
         
         private decimal valueField;
@@ -7381,9 +8101,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RadioactivityUnitOfMeasure {
         
         /// <remarks/>
@@ -7406,9 +8126,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum PhysicalFormType {
         
         /// <remarks/>
@@ -7425,11 +8145,101 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class NetExplosiveDetail {
+        
+        private NetExplosiveClassificationType typeField;
+        
+        private bool typeFieldSpecified;
+        
+        private decimal amountField;
+        
+        private bool amountFieldSpecified;
+        
+        private string unitsField;
+        
+        /// <remarks/>
+        public NetExplosiveClassificationType Type {
+            get {
+                return this.typeField;
+            }
+            set {
+                this.typeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool TypeSpecified {
+            get {
+                return this.typeFieldSpecified;
+            }
+            set {
+                this.typeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public decimal Amount {
+            get {
+                return this.amountField;
+            }
+            set {
+                this.amountField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool AmountSpecified {
+            get {
+                return this.amountFieldSpecified;
+            }
+            set {
+                this.amountFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Units {
+            get {
+                return this.unitsField;
+            }
+            set {
+                this.unitsField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum NetExplosiveClassificationType {
+        
+        /// <remarks/>
+        NET_EXPLOSIVE_CONTENT,
+        
+        /// <remarks/>
+        NET_EXPLOSIVE_MASS,
+        
+        /// <remarks/>
+        NET_EXPLOSIVE_QUANTITY,
+        
+        /// <remarks/>
+        NET_EXPLOSIVE_WEIGHT,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class HazardousCommodityPackagingDetail {
         
         private string countField;
@@ -7459,11 +8269,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class DangerousGoodsSignatory {
         
         private string contactNameField;
@@ -7504,11 +8314,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RadioactivityDetail {
         
         private decimal transportIndexField;
@@ -7600,11 +8410,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Dimensions {
         
         private string lengthField;
@@ -7614,6 +8424,8 @@ namespace DotNetShipping.RateServiceWebReference {
         private string heightField;
         
         private LinearUnits unitsField;
+        
+        private bool unitsFieldSpecified;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger")]
@@ -7657,12 +8469,23 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.unitsField = value;
             }
         }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool UnitsSpecified {
+            get {
+                return this.unitsFieldSpecified;
+            }
+            set {
+                this.unitsFieldSpecified = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum LinearUnits {
         
         /// <remarks/>
@@ -7673,14 +8496,16 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class CustomerReference {
         
         private CustomerReferenceType customerReferenceTypeField;
+        
+        private bool customerReferenceTypeFieldSpecified;
         
         private string valueField;
         
@@ -7691,6 +8516,17 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.customerReferenceTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool CustomerReferenceTypeSpecified {
+            get {
+                return this.customerReferenceTypeFieldSpecified;
+            }
+            set {
+                this.customerReferenceTypeFieldSpecified = value;
             }
         }
         
@@ -7706,9 +8542,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum CustomerReferenceType {
         
         /// <remarks/>
@@ -7746,11 +8582,32 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class AssociatedFreightLineItemDetail {
+        
+        private string idField;
+        
+        /// <remarks/>
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RequestedPackageLineItem {
         
         private string sequenceNumberField;
@@ -7771,13 +8628,19 @@ namespace DotNetShipping.RateServiceWebReference {
         
         private bool physicalPackagingFieldSpecified;
         
+        private AssociatedFreightLineItemDetail[] associatedFreightLineItemsField;
+        
         private string itemDescriptionField;
+        
+        private string itemDescriptionForClearanceField;
         
         private CustomerReference[] customerReferencesField;
         
         private PackageSpecialServicesRequested specialServicesRequestedField;
         
         private ContentRecord[] contentRecordsField;
+        
+        private ShipperConveyanceDetail conveyanceDetailField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(DataType="positiveInteger")]
@@ -7874,12 +8737,33 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("AssociatedFreightLineItems")]
+        public AssociatedFreightLineItemDetail[] AssociatedFreightLineItems {
+            get {
+                return this.associatedFreightLineItemsField;
+            }
+            set {
+                this.associatedFreightLineItemsField = value;
+            }
+        }
+        
+        /// <remarks/>
         public string ItemDescription {
             get {
                 return this.itemDescriptionField;
             }
             set {
                 this.itemDescriptionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ItemDescriptionForClearance {
+            get {
+                return this.itemDescriptionForClearanceField;
+            }
+            set {
+                this.itemDescriptionForClearanceField = value;
             }
         }
         
@@ -7914,14 +8798,24 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.contentRecordsField = value;
             }
         }
+        
+        /// <remarks/>
+        public ShipperConveyanceDetail ConveyanceDetail {
+            get {
+                return this.conveyanceDetailField;
+            }
+            set {
+                this.conveyanceDetailField = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class VariableHandlingChargeDetail {
         
         private Money fixedValueField;
@@ -8013,9 +8907,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RateElementBasisType {
         
         /// <remarks/>
@@ -8032,9 +8926,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum PhysicalPackagingType {
         
         /// <remarks/>
@@ -8108,11 +9002,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ReturnInstructionsDetail {
         
         private ShippingDocumentFormat formatField;
@@ -8141,11 +9035,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ShippingDocumentFormat {
         
         private ShippingDocumentDispositionDetail[] dispositionsField;
@@ -8163,6 +9057,8 @@ namespace DotNetShipping.RateServiceWebReference {
         private bool provideInstructionsField;
         
         private bool provideInstructionsFieldSpecified;
+        
+        private DocumentFormatOptionType[] optionsRequestedField;
         
         private Localization localizationField;
         
@@ -8251,6 +9147,17 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("Options", IsNullable=false)]
+        public DocumentFormatOptionType[] OptionsRequested {
+            get {
+                return this.optionsRequestedField;
+            }
+            set {
+                this.optionsRequestedField = value;
+            }
+        }
+        
+        /// <remarks/>
         public Localization Localization {
             get {
                 return this.localizationField;
@@ -8262,11 +9169,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ShippingDocumentDispositionDetail {
         
         private ShippingDocumentDispositionType dispositionTypeField;
@@ -8345,13 +9252,16 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ShippingDocumentDispositionType {
         
         /// <remarks/>
         CONFIRMED,
+        
+        /// <remarks/>
+        DEFERRED_QUEUED,
         
         /// <remarks/>
         DEFERRED_RETURNED,
@@ -8373,9 +9283,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ShippingDocumentGroupingType {
         
         /// <remarks/>
@@ -8386,11 +9296,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ShippingDocumentEMailDetail {
         
         private ShippingDocumentEMailRecipient[] eMailRecipientsField;
@@ -8398,6 +9308,8 @@ namespace DotNetShipping.RateServiceWebReference {
         private ShippingDocumentEMailGroupingType groupingField;
         
         private bool groupingFieldSpecified;
+        
+        private Localization localizationField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("EMailRecipients")]
@@ -8430,14 +9342,24 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.groupingFieldSpecified = value;
             }
         }
+        
+        /// <remarks/>
+        public Localization Localization {
+            get {
+                return this.localizationField;
+            }
+            set {
+                this.localizationField = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ShippingDocumentEMailRecipient {
         
         private EMailNotificationRecipientType recipientTypeField;
@@ -8479,9 +9401,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum EMailNotificationRecipientType {
         
         /// <remarks/>
@@ -8498,9 +9420,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ShippingDocumentEMailGroupingType {
         
         /// <remarks/>
@@ -8511,11 +9433,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ShippingDocumentPrintDetail {
         
         private string printerIdField;
@@ -8532,11 +9454,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class LinearMeasure {
         
         private decimal valueField;
@@ -8591,13 +9513,10 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ShippingDocumentImageType {
-        
-        /// <remarks/>
-        DPL,
         
         /// <remarks/>
         EPL2,
@@ -8613,9 +9532,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ShippingDocumentStockType {
         
         /// <remarks/>
@@ -8652,16 +9571,38 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum DocumentFormatOptionType {
+        
+        /// <remarks/>
+        SUPPRESS_ADDITIONAL_LANGUAGES,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class DangerousGoodsShippersDeclarationDetail {
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class FreightAddressLabelDetail {
         
         private ShippingDocumentFormat formatField;
         
-        private CustomerImageUsage[] customerImageUsagesField;
+        private string copiesField;
+        
+        private PageQuadrantType startingPositionField;
+        
+        private bool startingPositionFieldSpecified;
+        
+        private DocTabContent docTabContentField;
+        
+        private RelativeVerticalPositionType customContentPositionField;
+        
+        private bool customContentPositionFieldSpecified;
+        
+        private CustomLabelDetail customContentField;
         
         /// <remarks/>
         public ShippingDocumentFormat Format {
@@ -8670,871 +9611,190 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.formatField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("CustomerImageUsages")]
-        public CustomerImageUsage[] CustomerImageUsages {
-            get {
-                return this.customerImageUsagesField;
-            }
-            set {
-                this.customerImageUsagesField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class CustomerImageUsage {
-        
-        private CustomerImageUsageType typeField;
-        
-        private bool typeFieldSpecified;
-        
-        private ImageId idField;
-        
-        private bool idFieldSpecified;
-        
-        /// <remarks/>
-        public CustomerImageUsageType Type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool TypeSpecified {
-            get {
-                return this.typeFieldSpecified;
-            }
-            set {
-                this.typeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public ImageId Id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool IdSpecified {
-            get {
-                return this.idFieldSpecified;
-            }
-            set {
-                this.idFieldSpecified = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum CustomerImageUsageType {
-        
-        /// <remarks/>
-        LETTER_HEAD,
-        
-        /// <remarks/>
-        SIGNATURE,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum ImageId {
-        
-        /// <remarks/>
-        IMAGE_1,
-        
-        /// <remarks/>
-        IMAGE_2,
-        
-        /// <remarks/>
-        IMAGE_3,
-        
-        /// <remarks/>
-        IMAGE_4,
-        
-        /// <remarks/>
-        IMAGE_5,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class Op900Detail {
-        
-        private ShippingDocumentFormat formatField;
-        
-        private CustomerReferenceType referenceField;
-        
-        private bool referenceFieldSpecified;
-        
-        private CustomerImageUsage[] customerImageUsagesField;
-        
-        private string signatureNameField;
-        
-        /// <remarks/>
-        public ShippingDocumentFormat Format {
-            get {
-                return this.formatField;
-            }
-            set {
-                this.formatField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public CustomerReferenceType Reference {
-            get {
-                return this.referenceField;
-            }
-            set {
-                this.referenceField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ReferenceSpecified {
-            get {
-                return this.referenceFieldSpecified;
-            }
-            set {
-                this.referenceFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("CustomerImageUsages")]
-        public CustomerImageUsage[] CustomerImageUsages {
-            get {
-                return this.customerImageUsagesField;
-            }
-            set {
-                this.customerImageUsagesField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string SignatureName {
-            get {
-                return this.signatureNameField;
-            }
-            set {
-                this.signatureNameField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class NaftaProducer {
-        
-        private string idField;
-        
-        private Party producerField;
-        
-        /// <remarks/>
-        public string Id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public Party Producer {
-            get {
-                return this.producerField;
-            }
-            set {
-                this.producerField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class NaftaCertificateOfOriginDetail {
-        
-        private ShippingDocumentFormat formatField;
-        
-        private DateRange blanketPeriodField;
-        
-        private NaftaImporterSpecificationType importerSpecificationField;
-        
-        private bool importerSpecificationFieldSpecified;
-        
-        private Contact signatureContactField;
-        
-        private NaftaProducerSpecificationType producerSpecificationField;
-        
-        private bool producerSpecificationFieldSpecified;
-        
-        private NaftaProducer[] producersField;
-        
-        private CustomerImageUsage[] customerImageUsagesField;
-        
-        /// <remarks/>
-        public ShippingDocumentFormat Format {
-            get {
-                return this.formatField;
-            }
-            set {
-                this.formatField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public DateRange BlanketPeriod {
-            get {
-                return this.blanketPeriodField;
-            }
-            set {
-                this.blanketPeriodField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public NaftaImporterSpecificationType ImporterSpecification {
-            get {
-                return this.importerSpecificationField;
-            }
-            set {
-                this.importerSpecificationField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ImporterSpecificationSpecified {
-            get {
-                return this.importerSpecificationFieldSpecified;
-            }
-            set {
-                this.importerSpecificationFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public Contact SignatureContact {
-            get {
-                return this.signatureContactField;
-            }
-            set {
-                this.signatureContactField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public NaftaProducerSpecificationType ProducerSpecification {
-            get {
-                return this.producerSpecificationField;
-            }
-            set {
-                this.producerSpecificationField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ProducerSpecificationSpecified {
-            get {
-                return this.producerSpecificationFieldSpecified;
-            }
-            set {
-                this.producerSpecificationFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Producers")]
-        public NaftaProducer[] Producers {
-            get {
-                return this.producersField;
-            }
-            set {
-                this.producersField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("CustomerImageUsages")]
-        public CustomerImageUsage[] CustomerImageUsages {
-            get {
-                return this.customerImageUsagesField;
-            }
-            set {
-                this.customerImageUsagesField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class DateRange {
-        
-        private System.DateTime beginsField;
-        
-        private System.DateTime endsField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date")]
-        public System.DateTime Begins {
-            get {
-                return this.beginsField;
-            }
-            set {
-                this.beginsField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date")]
-        public System.DateTime Ends {
-            get {
-                return this.endsField;
-            }
-            set {
-                this.endsField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum NaftaImporterSpecificationType {
-        
-        /// <remarks/>
-        IMPORTER_OF_RECORD,
-        
-        /// <remarks/>
-        RECIPIENT,
-        
-        /// <remarks/>
-        UNKNOWN,
-        
-        /// <remarks/>
-        VARIOUS,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum NaftaProducerSpecificationType {
-        
-        /// <remarks/>
-        AVAILABLE_UPON_REQUEST,
-        
-        /// <remarks/>
-        MULTIPLE_SPECIFIED,
-        
-        /// <remarks/>
-        SAME,
-        
-        /// <remarks/>
-        SINGLE_SPECIFIED,
-        
-        /// <remarks/>
-        UNKNOWN,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class GeneralAgencyAgreementDetail {
-        
-        private ShippingDocumentFormat formatField;
-        
-        /// <remarks/>
-        public ShippingDocumentFormat Format {
-            get {
-                return this.formatField;
-            }
-            set {
-                this.formatField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class CustomDocumentDetail {
-        
-        private ShippingDocumentFormat formatField;
-        
-        private LabelPrintingOrientationType labelPrintingOrientationField;
-        
-        private bool labelPrintingOrientationFieldSpecified;
-        
-        private LabelRotationType labelRotationField;
-        
-        private bool labelRotationFieldSpecified;
-        
-        private string specificationIdField;
-        
-        /// <remarks/>
-        public ShippingDocumentFormat Format {
-            get {
-                return this.formatField;
-            }
-            set {
-                this.formatField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public LabelPrintingOrientationType LabelPrintingOrientation {
-            get {
-                return this.labelPrintingOrientationField;
-            }
-            set {
-                this.labelPrintingOrientationField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool LabelPrintingOrientationSpecified {
-            get {
-                return this.labelPrintingOrientationFieldSpecified;
-            }
-            set {
-                this.labelPrintingOrientationFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public LabelRotationType LabelRotation {
-            get {
-                return this.labelRotationField;
-            }
-            set {
-                this.labelRotationField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool LabelRotationSpecified {
-            get {
-                return this.labelRotationFieldSpecified;
-            }
-            set {
-                this.labelRotationFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string SpecificationId {
-            get {
-                return this.specificationIdField;
-            }
-            set {
-                this.specificationIdField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum LabelPrintingOrientationType {
-        
-        /// <remarks/>
-        BOTTOM_EDGE_OF_TEXT_FIRST,
-        
-        /// <remarks/>
-        TOP_EDGE_OF_TEXT_FIRST,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum LabelRotationType {
-        
-        /// <remarks/>
-        LEFT,
-        
-        /// <remarks/>
-        NONE,
-        
-        /// <remarks/>
-        RIGHT,
-        
-        /// <remarks/>
-        UPSIDE_DOWN,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class CommercialInvoiceDetail {
-        
-        private ShippingDocumentFormat formatField;
-        
-        private CustomerImageUsage[] customerImageUsagesField;
-        
-        /// <remarks/>
-        public ShippingDocumentFormat Format {
-            get {
-                return this.formatField;
-            }
-            set {
-                this.formatField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("CustomerImageUsages")]
-        public CustomerImageUsage[] CustomerImageUsages {
-            get {
-                return this.customerImageUsagesField;
-            }
-            set {
-                this.customerImageUsagesField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class CertificateOfOriginDetail {
-        
-        private ShippingDocumentFormat documentFormatField;
-        
-        private CustomerImageUsage[] customerImageUsagesField;
-        
-        /// <remarks/>
-        public ShippingDocumentFormat DocumentFormat {
-            get {
-                return this.documentFormatField;
-            }
-            set {
-                this.documentFormatField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("CustomerImageUsages")]
-        public CustomerImageUsage[] CustomerImageUsages {
-            get {
-                return this.customerImageUsagesField;
-            }
-            set {
-                this.customerImageUsagesField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class ShippingDocumentSpecification {
-        
-        private RequestedShippingDocumentType[] shippingDocumentTypesField;
-        
-        private CertificateOfOriginDetail certificateOfOriginField;
-        
-        private CommercialInvoiceDetail commercialInvoiceDetailField;
-        
-        private CustomDocumentDetail[] customPackageDocumentDetailField;
-        
-        private CustomDocumentDetail[] customShipmentDocumentDetailField;
-        
-        private GeneralAgencyAgreementDetail generalAgencyAgreementDetailField;
-        
-        private NaftaCertificateOfOriginDetail naftaCertificateOfOriginDetailField;
-        
-        private Op900Detail op900DetailField;
-        
-        private DangerousGoodsShippersDeclarationDetail dangerousGoodsShippersDeclarationDetailField;
-        
-        private ReturnInstructionsDetail returnInstructionsDetailField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ShippingDocumentTypes")]
-        public RequestedShippingDocumentType[] ShippingDocumentTypes {
-            get {
-                return this.shippingDocumentTypesField;
-            }
-            set {
-                this.shippingDocumentTypesField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public CertificateOfOriginDetail CertificateOfOrigin {
-            get {
-                return this.certificateOfOriginField;
-            }
-            set {
-                this.certificateOfOriginField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public CommercialInvoiceDetail CommercialInvoiceDetail {
-            get {
-                return this.commercialInvoiceDetailField;
-            }
-            set {
-                this.commercialInvoiceDetailField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("CustomPackageDocumentDetail")]
-        public CustomDocumentDetail[] CustomPackageDocumentDetail {
-            get {
-                return this.customPackageDocumentDetailField;
-            }
-            set {
-                this.customPackageDocumentDetailField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("CustomShipmentDocumentDetail")]
-        public CustomDocumentDetail[] CustomShipmentDocumentDetail {
-            get {
-                return this.customShipmentDocumentDetailField;
-            }
-            set {
-                this.customShipmentDocumentDetailField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public GeneralAgencyAgreementDetail GeneralAgencyAgreementDetail {
-            get {
-                return this.generalAgencyAgreementDetailField;
-            }
-            set {
-                this.generalAgencyAgreementDetailField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public NaftaCertificateOfOriginDetail NaftaCertificateOfOriginDetail {
-            get {
-                return this.naftaCertificateOfOriginDetailField;
-            }
-            set {
-                this.naftaCertificateOfOriginDetailField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public Op900Detail Op900Detail {
-            get {
-                return this.op900DetailField;
-            }
-            set {
-                this.op900DetailField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public DangerousGoodsShippersDeclarationDetail DangerousGoodsShippersDeclarationDetail {
-            get {
-                return this.dangerousGoodsShippersDeclarationDetailField;
-            }
-            set {
-                this.dangerousGoodsShippersDeclarationDetailField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public ReturnInstructionsDetail ReturnInstructionsDetail {
-            get {
-                return this.returnInstructionsDetailField;
-            }
-            set {
-                this.returnInstructionsDetailField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum RequestedShippingDocumentType {
-        
-        /// <remarks/>
-        CERTIFICATE_OF_ORIGIN,
-        
-        /// <remarks/>
-        COMMERCIAL_INVOICE,
-        
-        /// <remarks/>
-        CUSTOMER_SPECIFIED_LABELS,
-        
-        /// <remarks/>
-        DANGEROUS_GOODS_SHIPPERS_DECLARATION,
-        
-        /// <remarks/>
-        GENERAL_AGENCY_AGREEMENT,
-        
-        /// <remarks/>
-        LABEL,
-        
-        /// <remarks/>
-        NAFTA_CERTIFICATE_OF_ORIGIN,
-        
-        /// <remarks/>
-        PRO_FORMA_INVOICE,
-        
-        /// <remarks/>
-        RETURN_INSTRUCTIONS,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class AdditionalLabelsDetail {
-        
-        private AdditionalLabelsType typeField;
-        
-        private bool typeFieldSpecified;
-        
-        private string countField;
-        
-        /// <remarks/>
-        public AdditionalLabelsType Type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool TypeSpecified {
-            get {
-                return this.typeFieldSpecified;
-            }
-            set {
-                this.typeFieldSpecified = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger")]
-        public string Count {
+        public string Copies {
             get {
-                return this.countField;
+                return this.copiesField;
             }
             set {
-                this.countField = value;
+                this.copiesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PageQuadrantType StartingPosition {
+            get {
+                return this.startingPositionField;
+            }
+            set {
+                this.startingPositionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool StartingPositionSpecified {
+            get {
+                return this.startingPositionFieldSpecified;
+            }
+            set {
+                this.startingPositionFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public DocTabContent DocTabContent {
+            get {
+                return this.docTabContentField;
+            }
+            set {
+                this.docTabContentField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public RelativeVerticalPositionType CustomContentPosition {
+            get {
+                return this.customContentPositionField;
+            }
+            set {
+                this.customContentPositionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool CustomContentPositionSpecified {
+            get {
+                return this.customContentPositionFieldSpecified;
+            }
+            set {
+                this.customContentPositionFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CustomLabelDetail CustomContent {
+            get {
+                return this.customContentField;
+            }
+            set {
+                this.customContentField = value;
             }
         }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum AdditionalLabelsType {
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum PageQuadrantType {
         
         /// <remarks/>
-        BROKER,
+        BOTTOM_LEFT,
         
         /// <remarks/>
-        CONSIGNEE,
+        BOTTOM_RIGHT,
         
         /// <remarks/>
-        CUSTOMS,
+        TOP_LEFT,
         
         /// <remarks/>
-        DESTINATION,
-        
-        /// <remarks/>
-        MANIFEST,
-        
-        /// <remarks/>
-        ORIGIN,
-        
-        /// <remarks/>
-        RECIPIENT,
-        
-        /// <remarks/>
-        SHIPPER,
+        TOP_RIGHT,
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class ConfigurableLabelReferenceEntry {
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class DocTabContent {
+        
+        private DocTabContentType docTabContentTypeField;
+        
+        private bool docTabContentTypeFieldSpecified;
+        
+        private DocTabZoneSpecification[] zone001Field;
+        
+        private DocTabContentBarcoded barcodedField;
+        
+        /// <remarks/>
+        public DocTabContentType DocTabContentType {
+            get {
+                return this.docTabContentTypeField;
+            }
+            set {
+                this.docTabContentTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool DocTabContentTypeSpecified {
+            get {
+                return this.docTabContentTypeFieldSpecified;
+            }
+            set {
+                this.docTabContentTypeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("DocTabZoneSpecifications", IsNullable=false)]
+        public DocTabZoneSpecification[] Zone001 {
+            get {
+                return this.zone001Field;
+            }
+            set {
+                this.zone001Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        public DocTabContentBarcoded Barcoded {
+            get {
+                return this.barcodedField;
+            }
+            set {
+                this.barcodedField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum DocTabContentType {
+        
+        /// <remarks/>
+        BARCODED,
+        
+        /// <remarks/>
+        CUSTOM,
+        
+        /// <remarks/>
+        MINIMUM,
+        
+        /// <remarks/>
+        STANDARD,
+        
+        /// <remarks/>
+        ZONE001,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class DocTabZoneSpecification {
         
         private string zoneNumberField;
         
@@ -9543,6 +9803,10 @@ namespace DotNetShipping.RateServiceWebReference {
         private string dataFieldField;
         
         private string literalValueField;
+        
+        private DocTabZoneJustificationType justificationField;
+        
+        private bool justificationFieldSpecified;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(DataType="positiveInteger")]
@@ -9584,14 +9848,649 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.literalValueField = value;
             }
         }
+        
+        /// <remarks/>
+        public DocTabZoneJustificationType Justification {
+            get {
+                return this.justificationField;
+            }
+            set {
+                this.justificationField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool JustificationSpecified {
+            get {
+                return this.justificationFieldSpecified;
+            }
+            set {
+                this.justificationFieldSpecified = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum DocTabZoneJustificationType {
+        
+        /// <remarks/>
+        LEFT,
+        
+        /// <remarks/>
+        RIGHT,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class DocTabContentBarcoded {
+        
+        private BarcodeSymbologyType symbologyField;
+        
+        private bool symbologyFieldSpecified;
+        
+        private DocTabZoneSpecification specificationField;
+        
+        /// <remarks/>
+        public BarcodeSymbologyType Symbology {
+            get {
+                return this.symbologyField;
+            }
+            set {
+                this.symbologyField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool SymbologySpecified {
+            get {
+                return this.symbologyFieldSpecified;
+            }
+            set {
+                this.symbologyFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public DocTabZoneSpecification Specification {
+            get {
+                return this.specificationField;
+            }
+            set {
+                this.specificationField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum BarcodeSymbologyType {
+        
+        /// <remarks/>
+        CODABAR,
+        
+        /// <remarks/>
+        CODE128,
+        
+        /// <remarks/>
+        CODE128B,
+        
+        /// <remarks/>
+        CODE128C,
+        
+        /// <remarks/>
+        CODE128_WIDEBAR,
+        
+        /// <remarks/>
+        CODE39,
+        
+        /// <remarks/>
+        CODE93,
+        
+        /// <remarks/>
+        I2OF5,
+        
+        /// <remarks/>
+        MANUAL,
+        
+        /// <remarks/>
+        PDF417,
+        
+        /// <remarks/>
+        POSTNET,
+        
+        /// <remarks/>
+        QR_CODE,
+        
+        /// <remarks/>
+        UCC128,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum RelativeVerticalPositionType {
+        
+        /// <remarks/>
+        ABOVE,
+        
+        /// <remarks/>
+        BELOW,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class CustomLabelDetail {
+        
+        private CustomLabelCoordinateUnits coordinateUnitsField;
+        
+        private bool coordinateUnitsFieldSpecified;
+        
+        private CustomLabelTextEntry[] textEntriesField;
+        
+        private CustomLabelGraphicEntry[] graphicEntriesField;
+        
+        private CustomLabelBoxEntry[] boxEntriesField;
+        
+        private CustomLabelTextBoxEntry[] textBoxEntriesField;
+        
+        private CustomLabelBarcodeEntry[] barcodeEntriesField;
+        
+        /// <remarks/>
+        public CustomLabelCoordinateUnits CoordinateUnits {
+            get {
+                return this.coordinateUnitsField;
+            }
+            set {
+                this.coordinateUnitsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool CoordinateUnitsSpecified {
+            get {
+                return this.coordinateUnitsFieldSpecified;
+            }
+            set {
+                this.coordinateUnitsFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("TextEntries")]
+        public CustomLabelTextEntry[] TextEntries {
+            get {
+                return this.textEntriesField;
+            }
+            set {
+                this.textEntriesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("GraphicEntries")]
+        public CustomLabelGraphicEntry[] GraphicEntries {
+            get {
+                return this.graphicEntriesField;
+            }
+            set {
+                this.graphicEntriesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("BoxEntries")]
+        public CustomLabelBoxEntry[] BoxEntries {
+            get {
+                return this.boxEntriesField;
+            }
+            set {
+                this.boxEntriesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("TextBoxEntries")]
+        public CustomLabelTextBoxEntry[] TextBoxEntries {
+            get {
+                return this.textBoxEntriesField;
+            }
+            set {
+                this.textBoxEntriesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("BarcodeEntries")]
+        public CustomLabelBarcodeEntry[] BarcodeEntries {
+            get {
+                return this.barcodeEntriesField;
+            }
+            set {
+                this.barcodeEntriesField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum CustomLabelCoordinateUnits {
+        
+        /// <remarks/>
+        MILS,
+        
+        /// <remarks/>
+        PIXELS,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class CustomLabelTextEntry {
+        
+        private CustomLabelPosition positionField;
+        
+        private string formatField;
+        
+        private string[] dataFieldsField;
+        
+        private string thermalFontIdField;
+        
+        private string fontNameField;
+        
+        private string fontSizeField;
+        
+        private RotationType rotationField;
+        
+        private bool rotationFieldSpecified;
+        
+        /// <remarks/>
+        public CustomLabelPosition Position {
+            get {
+                return this.positionField;
+            }
+            set {
+                this.positionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Format {
+            get {
+                return this.formatField;
+            }
+            set {
+                this.formatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("DataFields")]
+        public string[] DataFields {
+            get {
+                return this.dataFieldsField;
+            }
+            set {
+                this.dataFieldsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ThermalFontId {
+            get {
+                return this.thermalFontIdField;
+            }
+            set {
+                this.thermalFontIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string FontName {
+            get {
+                return this.fontNameField;
+            }
+            set {
+                this.fontNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="positiveInteger")]
+        public string FontSize {
+            get {
+                return this.fontSizeField;
+            }
+            set {
+                this.fontSizeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public RotationType Rotation {
+            get {
+                return this.rotationField;
+            }
+            set {
+                this.rotationField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool RotationSpecified {
+            get {
+                return this.rotationFieldSpecified;
+            }
+            set {
+                this.rotationFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class CustomLabelPosition {
+        
+        private string xField;
+        
+        private int yField;
+        
+        private bool yFieldSpecified;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger")]
+        public string X {
+            get {
+                return this.xField;
+            }
+            set {
+                this.xField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int Y {
+            get {
+                return this.yField;
+            }
+            set {
+                this.yField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool YSpecified {
+            get {
+                return this.yFieldSpecified;
+            }
+            set {
+                this.yFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum RotationType {
+        
+        /// <remarks/>
+        LEFT,
+        
+        /// <remarks/>
+        NONE,
+        
+        /// <remarks/>
+        RIGHT,
+        
+        /// <remarks/>
+        UPSIDE_DOWN,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class CustomLabelGraphicEntry {
+        
+        private CustomLabelPosition positionField;
+        
+        private string printerGraphicIdField;
+        
+        private string fileGraphicFullNameField;
+        
+        /// <remarks/>
+        public CustomLabelPosition Position {
+            get {
+                return this.positionField;
+            }
+            set {
+                this.positionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string PrinterGraphicId {
+            get {
+                return this.printerGraphicIdField;
+            }
+            set {
+                this.printerGraphicIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string FileGraphicFullName {
+            get {
+                return this.fileGraphicFullNameField;
+            }
+            set {
+                this.fileGraphicFullNameField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class CustomLabelBoxEntry {
+        
+        private CustomLabelPosition topLeftCornerField;
+        
+        private CustomLabelPosition bottomRightCornerField;
+        
+        /// <remarks/>
+        public CustomLabelPosition TopLeftCorner {
+            get {
+                return this.topLeftCornerField;
+            }
+            set {
+                this.topLeftCornerField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CustomLabelPosition BottomRightCorner {
+            get {
+                return this.bottomRightCornerField;
+            }
+            set {
+                this.bottomRightCornerField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class CustomLabelTextBoxEntry {
+        
+        private CustomLabelPosition topLeftCornerField;
+        
+        private CustomLabelPosition bottomRightCornerField;
+        
+        private CustomLabelPosition positionField;
+        
+        private string formatField;
+        
+        private string[] dataFieldsField;
+        
+        private string thermalFontIdField;
+        
+        private string fontNameField;
+        
+        private string fontSizeField;
+        
+        private RotationType rotationField;
+        
+        private bool rotationFieldSpecified;
+        
+        /// <remarks/>
+        public CustomLabelPosition TopLeftCorner {
+            get {
+                return this.topLeftCornerField;
+            }
+            set {
+                this.topLeftCornerField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CustomLabelPosition BottomRightCorner {
+            get {
+                return this.bottomRightCornerField;
+            }
+            set {
+                this.bottomRightCornerField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CustomLabelPosition Position {
+            get {
+                return this.positionField;
+            }
+            set {
+                this.positionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Format {
+            get {
+                return this.formatField;
+            }
+            set {
+                this.formatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("DataFields")]
+        public string[] DataFields {
+            get {
+                return this.dataFieldsField;
+            }
+            set {
+                this.dataFieldsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ThermalFontId {
+            get {
+                return this.thermalFontIdField;
+            }
+            set {
+                this.thermalFontIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string FontName {
+            get {
+                return this.fontNameField;
+            }
+            set {
+                this.fontNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="positiveInteger")]
+        public string FontSize {
+            get {
+                return this.fontSizeField;
+            }
+            set {
+                this.fontSizeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public RotationType Rotation {
+            get {
+                return this.rotationField;
+            }
+            set {
+                this.rotationField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool RotationSpecified {
+            get {
+                return this.rotationFieldSpecified;
+            }
+            set {
+                this.rotationFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class CustomLabelBarcodeEntry {
         
         private CustomLabelPosition positionField;
@@ -9708,190 +10607,19 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class CustomLabelPosition {
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class DangerousGoodsShippersDeclarationDetail {
         
-        private string xField;
+        private ShippingDocumentFormat formatField;
         
-        private string yField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger")]
-        public string X {
-            get {
-                return this.xField;
-            }
-            set {
-                this.xField = value;
-            }
-        }
+        private CustomerImageUsage[] customerImageUsagesField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger")]
-        public string Y {
-            get {
-                return this.yField;
-            }
-            set {
-                this.yField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum BarcodeSymbologyType {
-        
-        /// <remarks/>
-        CODABAR,
-        
-        /// <remarks/>
-        CODE128,
-        
-        /// <remarks/>
-        CODE128B,
-        
-        /// <remarks/>
-        CODE128C,
-        
-        /// <remarks/>
-        CODE39,
-        
-        /// <remarks/>
-        CODE93,
-        
-        /// <remarks/>
-        I2OF5,
-        
-        /// <remarks/>
-        MANUAL,
-        
-        /// <remarks/>
-        PDF417,
-        
-        /// <remarks/>
-        POSTNET,
-        
-        /// <remarks/>
-        UCC128,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class CustomLabelBoxEntry {
-        
-        private CustomLabelPosition topLeftCornerField;
-        
-        private CustomLabelPosition bottomRightCornerField;
-        
-        /// <remarks/>
-        public CustomLabelPosition TopLeftCorner {
-            get {
-                return this.topLeftCornerField;
-            }
-            set {
-                this.topLeftCornerField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public CustomLabelPosition BottomRightCorner {
-            get {
-                return this.bottomRightCornerField;
-            }
-            set {
-                this.bottomRightCornerField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class CustomLabelGraphicEntry {
-        
-        private CustomLabelPosition positionField;
-        
-        private string printerGraphicIdField;
-        
-        private string fileGraphicFullNameField;
-        
-        /// <remarks/>
-        public CustomLabelPosition Position {
-            get {
-                return this.positionField;
-            }
-            set {
-                this.positionField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string PrinterGraphicId {
-            get {
-                return this.printerGraphicIdField;
-            }
-            set {
-                this.printerGraphicIdField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string FileGraphicFullName {
-            get {
-                return this.fileGraphicFullNameField;
-            }
-            set {
-                this.fileGraphicFullNameField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class CustomLabelTextEntry {
-        
-        private CustomLabelPosition positionField;
-        
-        private string formatField;
-        
-        private string[] dataFieldsField;
-        
-        private string thermalFontIdField;
-        
-        private string fontNameField;
-        
-        private string fontSizeField;
-        
-        /// <remarks/>
-        public CustomLabelPosition Position {
-            get {
-                return this.positionField;
-            }
-            set {
-                this.positionField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Format {
+        public ShippingDocumentFormat Format {
             get {
                 return this.formatField;
             }
@@ -9901,200 +10629,1045 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("DataFields")]
-        public string[] DataFields {
+        [System.Xml.Serialization.XmlElementAttribute("CustomerImageUsages")]
+        public CustomerImageUsage[] CustomerImageUsages {
             get {
-                return this.dataFieldsField;
+                return this.customerImageUsagesField;
             }
             set {
-                this.dataFieldsField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string ThermalFontId {
-            get {
-                return this.thermalFontIdField;
-            }
-            set {
-                this.thermalFontIdField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string FontName {
-            get {
-                return this.fontNameField;
-            }
-            set {
-                this.fontNameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="positiveInteger")]
-        public string FontSize {
-            get {
-                return this.fontSizeField;
-            }
-            set {
-                this.fontSizeField = value;
+                this.customerImageUsagesField = value;
             }
         }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class CustomLabelDetail {
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class CustomerImageUsage {
         
-        private CustomLabelCoordinateUnits coordinateUnitsField;
+        private CustomerImageUsageType typeField;
         
-        private bool coordinateUnitsFieldSpecified;
+        private bool typeFieldSpecified;
         
-        private CustomLabelTextEntry[] textEntriesField;
+        private ImageId idField;
         
-        private CustomLabelGraphicEntry[] graphicEntriesField;
-        
-        private CustomLabelBoxEntry[] boxEntriesField;
-        
-        private CustomLabelBarcodeEntry[] barcodeEntriesField;
+        private bool idFieldSpecified;
         
         /// <remarks/>
-        public CustomLabelCoordinateUnits CoordinateUnits {
+        public CustomerImageUsageType Type {
             get {
-                return this.coordinateUnitsField;
+                return this.typeField;
             }
             set {
-                this.coordinateUnitsField = value;
+                this.typeField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool CoordinateUnitsSpecified {
+        public bool TypeSpecified {
             get {
-                return this.coordinateUnitsFieldSpecified;
+                return this.typeFieldSpecified;
             }
             set {
-                this.coordinateUnitsFieldSpecified = value;
+                this.typeFieldSpecified = value;
             }
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("TextEntries")]
-        public CustomLabelTextEntry[] TextEntries {
+        public ImageId Id {
             get {
-                return this.textEntriesField;
+                return this.idField;
             }
             set {
-                this.textEntriesField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("GraphicEntries")]
-        public CustomLabelGraphicEntry[] GraphicEntries {
-            get {
-                return this.graphicEntriesField;
-            }
-            set {
-                this.graphicEntriesField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("BoxEntries")]
-        public CustomLabelBoxEntry[] BoxEntries {
-            get {
-                return this.boxEntriesField;
-            }
-            set {
-                this.boxEntriesField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("BarcodeEntries")]
-        public CustomLabelBarcodeEntry[] BarcodeEntries {
-            get {
-                return this.barcodeEntriesField;
-            }
-            set {
-                this.barcodeEntriesField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum CustomLabelCoordinateUnits {
-        
-        /// <remarks/>
-        MILS,
-        
-        /// <remarks/>
-        PIXELS,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class DocTabContentBarcoded {
-        
-        private BarcodeSymbologyType symbologyField;
-        
-        private bool symbologyFieldSpecified;
-        
-        private DocTabZoneSpecification specificationField;
-        
-        /// <remarks/>
-        public BarcodeSymbologyType Symbology {
-            get {
-                return this.symbologyField;
-            }
-            set {
-                this.symbologyField = value;
+                this.idField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool SymbologySpecified {
+        public bool IdSpecified {
             get {
-                return this.symbologyFieldSpecified;
+                return this.idFieldSpecified;
             }
             set {
-                this.symbologyFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public DocTabZoneSpecification Specification {
-            get {
-                return this.specificationField;
-            }
-            set {
-                this.specificationField = value;
+                this.idFieldSpecified = value;
             }
         }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum CustomerImageUsageType {
+        
+        /// <remarks/>
+        LETTER_HEAD,
+        
+        /// <remarks/>
+        SIGNATURE,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum ImageId {
+        
+        /// <remarks/>
+        IMAGE_1,
+        
+        /// <remarks/>
+        IMAGE_2,
+        
+        /// <remarks/>
+        IMAGE_3,
+        
+        /// <remarks/>
+        IMAGE_4,
+        
+        /// <remarks/>
+        IMAGE_5,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class DocTabZoneSpecification {
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class Op900Detail {
+        
+        private ShippingDocumentFormat formatField;
+        
+        private CustomerReferenceType referenceField;
+        
+        private bool referenceFieldSpecified;
+        
+        private CustomerImageUsage[] customerImageUsagesField;
+        
+        private string signatureNameField;
+        
+        /// <remarks/>
+        public ShippingDocumentFormat Format {
+            get {
+                return this.formatField;
+            }
+            set {
+                this.formatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CustomerReferenceType Reference {
+            get {
+                return this.referenceField;
+            }
+            set {
+                this.referenceField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ReferenceSpecified {
+            get {
+                return this.referenceFieldSpecified;
+            }
+            set {
+                this.referenceFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("CustomerImageUsages")]
+        public CustomerImageUsage[] CustomerImageUsages {
+            get {
+                return this.customerImageUsagesField;
+            }
+            set {
+                this.customerImageUsagesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string SignatureName {
+            get {
+                return this.signatureNameField;
+            }
+            set {
+                this.signatureNameField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class NaftaProducer {
+        
+        private string idField;
+        
+        private Party producerField;
+        
+        /// <remarks/>
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public Party Producer {
+            get {
+                return this.producerField;
+            }
+            set {
+                this.producerField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class NaftaCertificateOfOriginDetail {
+        
+        private ShippingDocumentFormat formatField;
+        
+        private DateRange blanketPeriodField;
+        
+        private NaftaImporterSpecificationType importerSpecificationField;
+        
+        private bool importerSpecificationFieldSpecified;
+        
+        private Contact signatureContactField;
+        
+        private NaftaProducerSpecificationType producerSpecificationField;
+        
+        private bool producerSpecificationFieldSpecified;
+        
+        private NaftaProducer[] producersField;
+        
+        private CustomerImageUsage[] customerImageUsagesField;
+        
+        /// <remarks/>
+        public ShippingDocumentFormat Format {
+            get {
+                return this.formatField;
+            }
+            set {
+                this.formatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public DateRange BlanketPeriod {
+            get {
+                return this.blanketPeriodField;
+            }
+            set {
+                this.blanketPeriodField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public NaftaImporterSpecificationType ImporterSpecification {
+            get {
+                return this.importerSpecificationField;
+            }
+            set {
+                this.importerSpecificationField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ImporterSpecificationSpecified {
+            get {
+                return this.importerSpecificationFieldSpecified;
+            }
+            set {
+                this.importerSpecificationFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public Contact SignatureContact {
+            get {
+                return this.signatureContactField;
+            }
+            set {
+                this.signatureContactField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public NaftaProducerSpecificationType ProducerSpecification {
+            get {
+                return this.producerSpecificationField;
+            }
+            set {
+                this.producerSpecificationField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ProducerSpecificationSpecified {
+            get {
+                return this.producerSpecificationFieldSpecified;
+            }
+            set {
+                this.producerSpecificationFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Producers")]
+        public NaftaProducer[] Producers {
+            get {
+                return this.producersField;
+            }
+            set {
+                this.producersField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("CustomerImageUsages")]
+        public CustomerImageUsage[] CustomerImageUsages {
+            get {
+                return this.customerImageUsagesField;
+            }
+            set {
+                this.customerImageUsagesField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class DateRange {
+        
+        private System.DateTime beginsField;
+        
+        private bool beginsFieldSpecified;
+        
+        private System.DateTime endsField;
+        
+        private bool endsFieldSpecified;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="date")]
+        public System.DateTime Begins {
+            get {
+                return this.beginsField;
+            }
+            set {
+                this.beginsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool BeginsSpecified {
+            get {
+                return this.beginsFieldSpecified;
+            }
+            set {
+                this.beginsFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="date")]
+        public System.DateTime Ends {
+            get {
+                return this.endsField;
+            }
+            set {
+                this.endsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool EndsSpecified {
+            get {
+                return this.endsFieldSpecified;
+            }
+            set {
+                this.endsFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum NaftaImporterSpecificationType {
+        
+        /// <remarks/>
+        IMPORTER_OF_RECORD,
+        
+        /// <remarks/>
+        RECIPIENT,
+        
+        /// <remarks/>
+        UNKNOWN,
+        
+        /// <remarks/>
+        VARIOUS,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum NaftaProducerSpecificationType {
+        
+        /// <remarks/>
+        AVAILABLE_UPON_REQUEST,
+        
+        /// <remarks/>
+        MULTIPLE_SPECIFIED,
+        
+        /// <remarks/>
+        SAME,
+        
+        /// <remarks/>
+        SINGLE_SPECIFIED,
+        
+        /// <remarks/>
+        UNKNOWN,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class GeneralAgencyAgreementDetail {
+        
+        private ShippingDocumentFormat formatField;
+        
+        /// <remarks/>
+        public ShippingDocumentFormat Format {
+            get {
+                return this.formatField;
+            }
+            set {
+                this.formatField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ExportDeclarationDetail {
+        
+        private ShippingDocumentFormat documentFormatField;
+        
+        private CustomerImageUsage[] customerImageUsagesField;
+        
+        /// <remarks/>
+        public ShippingDocumentFormat DocumentFormat {
+            get {
+                return this.documentFormatField;
+            }
+            set {
+                this.documentFormatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("CustomerImageUsages")]
+        public CustomerImageUsage[] CustomerImageUsages {
+            get {
+                return this.customerImageUsagesField;
+            }
+            set {
+                this.customerImageUsagesField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class CustomDocumentDetail {
+        
+        private ShippingDocumentFormat formatField;
+        
+        private LabelPrintingOrientationType labelPrintingOrientationField;
+        
+        private bool labelPrintingOrientationFieldSpecified;
+        
+        private LabelRotationType labelRotationField;
+        
+        private bool labelRotationFieldSpecified;
+        
+        private string specificationIdField;
+        
+        private CustomLabelDetail customContentField;
+        
+        /// <remarks/>
+        public ShippingDocumentFormat Format {
+            get {
+                return this.formatField;
+            }
+            set {
+                this.formatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public LabelPrintingOrientationType LabelPrintingOrientation {
+            get {
+                return this.labelPrintingOrientationField;
+            }
+            set {
+                this.labelPrintingOrientationField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool LabelPrintingOrientationSpecified {
+            get {
+                return this.labelPrintingOrientationFieldSpecified;
+            }
+            set {
+                this.labelPrintingOrientationFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public LabelRotationType LabelRotation {
+            get {
+                return this.labelRotationField;
+            }
+            set {
+                this.labelRotationField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool LabelRotationSpecified {
+            get {
+                return this.labelRotationFieldSpecified;
+            }
+            set {
+                this.labelRotationFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string SpecificationId {
+            get {
+                return this.specificationIdField;
+            }
+            set {
+                this.specificationIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CustomLabelDetail CustomContent {
+            get {
+                return this.customContentField;
+            }
+            set {
+                this.customContentField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum LabelPrintingOrientationType {
+        
+        /// <remarks/>
+        BOTTOM_EDGE_OF_TEXT_FIRST,
+        
+        /// <remarks/>
+        TOP_EDGE_OF_TEXT_FIRST,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum LabelRotationType {
+        
+        /// <remarks/>
+        LEFT,
+        
+        /// <remarks/>
+        NONE,
+        
+        /// <remarks/>
+        RIGHT,
+        
+        /// <remarks/>
+        UPSIDE_DOWN,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class CommercialInvoiceDetail {
+        
+        private ShippingDocumentFormat formatField;
+        
+        private CustomerImageUsage[] customerImageUsagesField;
+        
+        /// <remarks/>
+        public ShippingDocumentFormat Format {
+            get {
+                return this.formatField;
+            }
+            set {
+                this.formatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("CustomerImageUsages")]
+        public CustomerImageUsage[] CustomerImageUsages {
+            get {
+                return this.customerImageUsagesField;
+            }
+            set {
+                this.customerImageUsagesField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class CertificateOfOriginDetail {
+        
+        private ShippingDocumentFormat documentFormatField;
+        
+        private CustomerImageUsage[] customerImageUsagesField;
+        
+        /// <remarks/>
+        public ShippingDocumentFormat DocumentFormat {
+            get {
+                return this.documentFormatField;
+            }
+            set {
+                this.documentFormatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("CustomerImageUsages")]
+        public CustomerImageUsage[] CustomerImageUsages {
+            get {
+                return this.customerImageUsagesField;
+            }
+            set {
+                this.customerImageUsagesField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ShippingDocumentSpecification {
+        
+        private RequestedShippingDocumentType[] shippingDocumentTypesField;
+        
+        private CertificateOfOriginDetail certificateOfOriginField;
+        
+        private CommercialInvoiceDetail commercialInvoiceDetailField;
+        
+        private CustomDocumentDetail[] customPackageDocumentDetailField;
+        
+        private CustomDocumentDetail[] customShipmentDocumentDetailField;
+        
+        private ExportDeclarationDetail exportDeclarationDetailField;
+        
+        private GeneralAgencyAgreementDetail generalAgencyAgreementDetailField;
+        
+        private NaftaCertificateOfOriginDetail naftaCertificateOfOriginDetailField;
+        
+        private Op900Detail op900DetailField;
+        
+        private DangerousGoodsShippersDeclarationDetail dangerousGoodsShippersDeclarationDetailField;
+        
+        private FreightAddressLabelDetail freightAddressLabelDetailField;
+        
+        private ReturnInstructionsDetail returnInstructionsDetailField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("ShippingDocumentTypes")]
+        public RequestedShippingDocumentType[] ShippingDocumentTypes {
+            get {
+                return this.shippingDocumentTypesField;
+            }
+            set {
+                this.shippingDocumentTypesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CertificateOfOriginDetail CertificateOfOrigin {
+            get {
+                return this.certificateOfOriginField;
+            }
+            set {
+                this.certificateOfOriginField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CommercialInvoiceDetail CommercialInvoiceDetail {
+            get {
+                return this.commercialInvoiceDetailField;
+            }
+            set {
+                this.commercialInvoiceDetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("CustomPackageDocumentDetail")]
+        public CustomDocumentDetail[] CustomPackageDocumentDetail {
+            get {
+                return this.customPackageDocumentDetailField;
+            }
+            set {
+                this.customPackageDocumentDetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("CustomShipmentDocumentDetail")]
+        public CustomDocumentDetail[] CustomShipmentDocumentDetail {
+            get {
+                return this.customShipmentDocumentDetailField;
+            }
+            set {
+                this.customShipmentDocumentDetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public ExportDeclarationDetail ExportDeclarationDetail {
+            get {
+                return this.exportDeclarationDetailField;
+            }
+            set {
+                this.exportDeclarationDetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public GeneralAgencyAgreementDetail GeneralAgencyAgreementDetail {
+            get {
+                return this.generalAgencyAgreementDetailField;
+            }
+            set {
+                this.generalAgencyAgreementDetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public NaftaCertificateOfOriginDetail NaftaCertificateOfOriginDetail {
+            get {
+                return this.naftaCertificateOfOriginDetailField;
+            }
+            set {
+                this.naftaCertificateOfOriginDetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public Op900Detail Op900Detail {
+            get {
+                return this.op900DetailField;
+            }
+            set {
+                this.op900DetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public DangerousGoodsShippersDeclarationDetail DangerousGoodsShippersDeclarationDetail {
+            get {
+                return this.dangerousGoodsShippersDeclarationDetailField;
+            }
+            set {
+                this.dangerousGoodsShippersDeclarationDetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public FreightAddressLabelDetail FreightAddressLabelDetail {
+            get {
+                return this.freightAddressLabelDetailField;
+            }
+            set {
+                this.freightAddressLabelDetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public ReturnInstructionsDetail ReturnInstructionsDetail {
+            get {
+                return this.returnInstructionsDetailField;
+            }
+            set {
+                this.returnInstructionsDetailField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum RequestedShippingDocumentType {
+        
+        /// <remarks/>
+        CERTIFICATE_OF_ORIGIN,
+        
+        /// <remarks/>
+        COMMERCIAL_INVOICE,
+        
+        /// <remarks/>
+        CUSTOMER_SPECIFIED_LABELS,
+        
+        /// <remarks/>
+        DANGEROUS_GOODS_SHIPPERS_DECLARATION,
+        
+        /// <remarks/>
+        EXPORT_DECLARATION,
+        
+        /// <remarks/>
+        FEDEX_FREIGHT_STRAIGHT_BILL_OF_LADING,
+        
+        /// <remarks/>
+        GENERAL_AGENCY_AGREEMENT,
+        
+        /// <remarks/>
+        LABEL,
+        
+        /// <remarks/>
+        NAFTA_CERTIFICATE_OF_ORIGIN,
+        
+        /// <remarks/>
+        PRO_FORMA_INVOICE,
+        
+        /// <remarks/>
+        RETURN_INSTRUCTIONS,
+        
+        /// <remarks/>
+        VICS_BILL_OF_LADING,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class AdditionalLabelsDetail {
+        
+        private AdditionalLabelsType typeField;
+        
+        private bool typeFieldSpecified;
+        
+        private string countField;
+        
+        /// <remarks/>
+        public AdditionalLabelsType Type {
+            get {
+                return this.typeField;
+            }
+            set {
+                this.typeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool TypeSpecified {
+            get {
+                return this.typeFieldSpecified;
+            }
+            set {
+                this.typeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger")]
+        public string Count {
+            get {
+                return this.countField;
+            }
+            set {
+                this.countField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum AdditionalLabelsType {
+        
+        /// <remarks/>
+        BROKER,
+        
+        /// <remarks/>
+        CONSIGNEE,
+        
+        /// <remarks/>
+        CUSTOMS,
+        
+        /// <remarks/>
+        DESTINATION,
+        
+        /// <remarks/>
+        MANIFEST,
+        
+        /// <remarks/>
+        ORIGIN,
+        
+        /// <remarks/>
+        RECIPIENT,
+        
+        /// <remarks/>
+        SHIPPER,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class RegulatoryLabelContentDetail {
+        
+        private RegulatoryLabelType typeField;
+        
+        private bool typeFieldSpecified;
+        
+        private CustomerSpecifiedLabelGenerationOptionType[] generationOptionsField;
+        
+        /// <remarks/>
+        public RegulatoryLabelType Type {
+            get {
+                return this.typeField;
+            }
+            set {
+                this.typeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool TypeSpecified {
+            get {
+                return this.typeFieldSpecified;
+            }
+            set {
+                this.typeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("GenerationOptions")]
+        public CustomerSpecifiedLabelGenerationOptionType[] GenerationOptions {
+            get {
+                return this.generationOptionsField;
+            }
+            set {
+                this.generationOptionsField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum RegulatoryLabelType {
+        
+        /// <remarks/>
+        ALCOHOL_SHIPMENT_LABEL,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum CustomerSpecifiedLabelGenerationOptionType {
+        
+        /// <remarks/>
+        CONTENT_ON_SHIPPING_LABEL_ONLY,
+        
+        /// <remarks/>
+        CONTENT_ON_SHIPPING_LABEL_PREFERRED,
+        
+        /// <remarks/>
+        CONTENT_ON_SUPPLEMENTAL_LABEL_ONLY,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ConfigurableLabelReferenceEntry {
         
         private string zoneNumberField;
         
@@ -10103,10 +11676,6 @@ namespace DotNetShipping.RateServiceWebReference {
         private string dataFieldField;
         
         private string literalValueField;
-        
-        private DocTabZoneJustificationType justificationField;
-        
-        private bool justificationFieldSpecified;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(DataType="positiveInteger")]
@@ -10148,129 +11717,21 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.literalValueField = value;
             }
         }
-        
-        /// <remarks/>
-        public DocTabZoneJustificationType Justification {
-            get {
-                return this.justificationField;
-            }
-            set {
-                this.justificationField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool JustificationSpecified {
-            get {
-                return this.justificationFieldSpecified;
-            }
-            set {
-                this.justificationFieldSpecified = value;
-            }
-        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum DocTabZoneJustificationType {
-        
-        /// <remarks/>
-        LEFT,
-        
-        /// <remarks/>
-        RIGHT,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class DocTabContent {
-        
-        private DocTabContentType docTabContentTypeField;
-        
-        private bool docTabContentTypeFieldSpecified;
-        
-        private DocTabZoneSpecification[] zone001Field;
-        
-        private DocTabContentBarcoded barcodedField;
-        
-        /// <remarks/>
-        public DocTabContentType DocTabContentType {
-            get {
-                return this.docTabContentTypeField;
-            }
-            set {
-                this.docTabContentTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool DocTabContentTypeSpecified {
-            get {
-                return this.docTabContentTypeFieldSpecified;
-            }
-            set {
-                this.docTabContentTypeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("DocTabZoneSpecifications", IsNullable=false)]
-        public DocTabZoneSpecification[] Zone001 {
-            get {
-                return this.zone001Field;
-            }
-            set {
-                this.zone001Field = value;
-            }
-        }
-        
-        /// <remarks/>
-        public DocTabContentBarcoded Barcoded {
-            get {
-                return this.barcodedField;
-            }
-            set {
-                this.barcodedField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum DocTabContentType {
-        
-        /// <remarks/>
-        BARCODED,
-        
-        /// <remarks/>
-        MINIMUM,
-        
-        /// <remarks/>
-        STANDARD,
-        
-        /// <remarks/>
-        ZONE001,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class CustomerSpecifiedLabelDetail {
         
         private DocTabContent docTabContentField;
+        
+        private RelativeVerticalPositionType customContentPositionField;
+        
+        private bool customContentPositionFieldSpecified;
         
         private CustomLabelDetail customContentField;
         
@@ -10284,6 +11745,8 @@ namespace DotNetShipping.RateServiceWebReference {
         
         private Localization termsAndConditionsLocalizationField;
         
+        private RegulatoryLabelContentDetail[] regulatoryLabelsField;
+        
         private AdditionalLabelsDetail[] additionalLabelsField;
         
         private string airWaybillSuppressionCountField;
@@ -10295,6 +11758,27 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.docTabContentField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public RelativeVerticalPositionType CustomContentPosition {
+            get {
+                return this.customContentPositionField;
+            }
+            set {
+                this.customContentPositionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool CustomContentPositionSpecified {
+            get {
+                return this.customContentPositionFieldSpecified;
+            }
+            set {
+                this.customContentPositionFieldSpecified = value;
             }
         }
         
@@ -10362,6 +11846,17 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("RegulatoryLabels")]
+        public RegulatoryLabelContentDetail[] RegulatoryLabels {
+            get {
+                return this.regulatoryLabelsField;
+            }
+            set {
+                this.regulatoryLabelsField = value;
+            }
+        }
+        
+        /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("AdditionalLabels")]
         public AdditionalLabelsDetail[] AdditionalLabels {
             get {
@@ -10385,9 +11880,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum LabelMaskableDataType {
         
         /// <remarks/>
@@ -10406,6 +11901,9 @@ namespace DotNetShipping.RateServiceWebReference {
         PACKAGE_SEQUENCE_AND_COUNT,
         
         /// <remarks/>
+        SECONDARY_BARCODE,
+        
+        /// <remarks/>
         SHIPPER_ACCOUNT_NUMBER,
         
         /// <remarks/>
@@ -10422,9 +11920,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum SecondaryBarcodeType {
         
         /// <remarks/>
@@ -10441,11 +11939,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class LabelSpecification {
         
         private LabelFormatType labelFormatTypeField;
@@ -10467,6 +11965,10 @@ namespace DotNetShipping.RateServiceWebReference {
         private LabelRotationType labelRotationField;
         
         private bool labelRotationFieldSpecified;
+        
+        private LabelOrderType labelOrderField;
+        
+        private bool labelOrderFieldSpecified;
         
         private ContactAndAddress printedLabelOriginField;
         
@@ -10578,6 +12080,27 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
+        public LabelOrderType LabelOrder {
+            get {
+                return this.labelOrderField;
+            }
+            set {
+                this.labelOrderField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool LabelOrderSpecified {
+            get {
+                return this.labelOrderFieldSpecified;
+            }
+            set {
+                this.labelOrderFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
         public ContactAndAddress PrintedLabelOrigin {
             get {
                 return this.printedLabelOriginField;
@@ -10599,9 +12122,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum LabelFormatType {
         
         /// <remarks/>
@@ -10624,13 +12147,17 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum LabelStockType {
         
         /// <remarks/>
         PAPER_4X6,
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlEnumAttribute("PAPER_4X6.75")]
+        PAPER_4X675,
         
         /// <remarks/>
         PAPER_4X8,
@@ -10654,6 +12181,10 @@ namespace DotNetShipping.RateServiceWebReference {
         STOCK_4X6,
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlEnumAttribute("STOCK_4X6.75")]
+        STOCK_4X675,
+        
+        /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("STOCK_4X6.75_LEADING_DOC_TAB")]
         STOCK_4X675_LEADING_DOC_TAB,
         
@@ -10665,6 +12196,9 @@ namespace DotNetShipping.RateServiceWebReference {
         STOCK_4X8,
         
         /// <remarks/>
+        STOCK_4X9,
+        
+        /// <remarks/>
         STOCK_4X9_LEADING_DOC_TAB,
         
         /// <remarks/>
@@ -10672,12 +12206,27 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum LabelOrderType {
+        
+        /// <remarks/>
+        SHIPPING_LABEL_FIRST,
+        
+        /// <remarks/>
+        SHIPPING_LABEL_LAST,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class SmartPostShipmentDetail {
+        
+        private SmartPostShipmentProcessingOptionType[] processingOptionsRequestedField;
         
         private SmartPostIndiciaType indiciaField;
         
@@ -10690,6 +12239,17 @@ namespace DotNetShipping.RateServiceWebReference {
         private string hubIdField;
         
         private string customerManifestIdField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("Options", IsNullable=false)]
+        public SmartPostShipmentProcessingOptionType[] ProcessingOptionsRequested {
+            get {
+                return this.processingOptionsRequestedField;
+            }
+            set {
+                this.processingOptionsRequestedField = value;
+            }
+        }
         
         /// <remarks/>
         public SmartPostIndiciaType Indicia {
@@ -10755,9 +12315,19 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum SmartPostShipmentProcessingOptionType {
+        
+        /// <remarks/>
+        GROUND_TRACKING_NUMBER_REQUESTED,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum SmartPostAncillaryEndorsementType {
         
         /// <remarks/>
@@ -10777,11 +12347,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class PickupDetail {
         
         private System.DateTime readyDateTimeField;
@@ -10898,9 +12468,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum PickupRequestType {
         
         /// <remarks/>
@@ -10911,9 +12481,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum PickupRequestSourceType {
         
         /// <remarks/>
@@ -10924,11 +12494,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class DestinationControlDetail {
         
         private DestinationControlStatementType[] statementTypesField;
@@ -10970,9 +12540,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum DestinationControlStatementType {
         
         /// <remarks/>
@@ -10983,11 +12553,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ExportDetail {
         
         private B13AFilingOptionType b13AFilingOptionField;
@@ -11053,9 +12623,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum B13AFilingOptionType {
         
         /// <remarks/>
@@ -11075,11 +12645,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class NaftaCommodityDetail {
         
         private NaftaPreferenceCriterionCode preferenceCriterionField;
@@ -11183,9 +12753,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum NaftaPreferenceCriterionCode {
         
         /// <remarks/>
@@ -11208,9 +12778,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum NaftaProducerDeterminationCode {
         
         /// <remarks/>
@@ -11227,9 +12797,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum NaftaNetCostMethodCode {
         
         /// <remarks/>
@@ -11240,11 +12810,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class EdtExciseCondition {
         
         private string categoryField;
@@ -11273,11 +12843,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Measure {
         
         private decimal quantityField;
@@ -11319,11 +12889,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Commodity {
         
         private string nameField;
@@ -11332,13 +12902,19 @@ namespace DotNetShipping.RateServiceWebReference {
         
         private string descriptionField;
         
+        private CommodityPurposeType purposeField;
+        
+        private bool purposeFieldSpecified;
+        
         private string countryOfManufactureField;
         
         private string harmonizedCodeField;
         
         private Weight weightField;
         
-        private string quantityField;
+        private decimal quantityField;
+        
+        private bool quantityFieldSpecified;
         
         private string quantityUnitsField;
         
@@ -11394,6 +12970,27 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
+        public CommodityPurposeType Purpose {
+            get {
+                return this.purposeField;
+            }
+            set {
+                this.purposeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool PurposeSpecified {
+            get {
+                return this.purposeFieldSpecified;
+            }
+            set {
+                this.purposeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
         public string CountryOfManufacture {
             get {
                 return this.countryOfManufactureField;
@@ -11424,13 +13021,23 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger")]
-        public string Quantity {
+        public decimal Quantity {
             get {
                 return this.quantityField;
             }
             set {
                 this.quantityField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool QuantitySpecified {
+            get {
+                return this.quantityFieldSpecified;
+            }
+            set {
+                this.quantityFieldSpecified = value;
             }
         }
         
@@ -11550,11 +13157,24 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum CommodityPurposeType {
+        
+        /// <remarks/>
+        BUSINESS,
+        
+        /// <remarks/>
+        CONSUMER,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class CommercialInvoice {
         
         private string[] commentsField;
@@ -11583,9 +13203,7 @@ namespace DotNetShipping.RateServiceWebReference {
         
         private string originatorNameField;
         
-        private TermsOfSaleType termsOfSaleField;
-        
-        private bool termsOfSaleFieldSpecified;
+        private string termsOfSaleField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Comments")]
@@ -11721,7 +13339,7 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        public TermsOfSaleType TermsOfSale {
+        public string TermsOfSale {
             get {
                 return this.termsOfSaleField;
             }
@@ -11729,23 +13347,12 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.termsOfSaleField = value;
             }
         }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool TermsOfSaleSpecified {
-            get {
-                return this.termsOfSaleFieldSpecified;
-            }
-            set {
-                this.termsOfSaleFieldSpecified = value;
-            }
-        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum TaxesOrMiscellaneousChargeType {
         
         /// <remarks/>
@@ -11768,9 +13375,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum PurposeOfShipmentType {
         
         /// <remarks/>
@@ -11793,42 +13400,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum TermsOfSaleType {
-        
-        /// <remarks/>
-        CFR_OR_CPT,
-        
-        /// <remarks/>
-        CIF_OR_CIP,
-        
-        /// <remarks/>
-        DAP,
-        
-        /// <remarks/>
-        DAT,
-        
-        /// <remarks/>
-        DDP,
-        
-        /// <remarks/>
-        DDU,
-        
-        /// <remarks/>
-        EXW,
-        
-        /// <remarks/>
-        FOB_OR_FCA,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RecipientCustomsId {
         
         private RecipientCustomsIdType typeField;
@@ -11870,9 +13446,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RecipientCustomsIdType {
         
         /// <remarks/>
@@ -11886,11 +13462,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class CustomsOptionDetail {
         
         private CustomsOptionType typeField;
@@ -11932,9 +13508,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum CustomsOptionType {
         
         /// <remarks/>
@@ -11969,11 +13545,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class BrokerDetail {
         
         private BrokerType typeField;
@@ -12015,9 +13591,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum BrokerType {
         
         /// <remarks/>
@@ -12028,11 +13604,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class CustomsClearanceDetail {
         
         private BrokerDetail[] brokersField;
@@ -12272,9 +13848,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ClearanceBrokerageType {
         
         /// <remarks/>
@@ -12294,11 +13870,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Payment {
         
         private PaymentType paymentTypeField;
@@ -12340,9 +13916,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum PaymentType {
         
         /// <remarks/>
@@ -12350,11 +13926,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Payor {
         
         private Party responsiblePartyField;
@@ -12371,9 +13947,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum FreightOnValueType {
         
         /// <remarks/>
@@ -12384,27 +13960,30 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RegulatoryControlType {
-        
-        /// <remarks/>
-        EU_CIRCULATION,
         
         /// <remarks/>
         FOOD_OR_PERISHABLE,
         
         /// <remarks/>
         NAFTA,
+        
+        /// <remarks/>
+        NOT_APPLICABLE_FOR_LOW_CUSTOMS_VALUE_EXCEPTION,
+        
+        /// <remarks/>
+        NOT_IN_FREE_CIRCULATION,
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Volume {
         
         private VolumeUnits unitsField;
@@ -12459,9 +14038,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum VolumeUnits {
         
         /// <remarks/>
@@ -12472,12 +14051,14 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class FreightShipmentLineItem {
+        
+        private string idField;
         
         private FreightClassType freightClassField;
         
@@ -12487,6 +14068,8 @@ namespace DotNetShipping.RateServiceWebReference {
         
         private bool packagingFieldSpecified;
         
+        private string piecesField;
+        
         private string descriptionField;
         
         private Weight weightField;
@@ -12494,6 +14077,16 @@ namespace DotNetShipping.RateServiceWebReference {
         private Dimensions dimensionsField;
         
         private Volume volumeField;
+        
+        /// <remarks/>
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
         public FreightClassType FreightClass {
@@ -12534,6 +14127,17 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.packagingFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger")]
+        public string Pieces {
+            get {
+                return this.piecesField;
+            }
+            set {
+                this.piecesField = value;
             }
         }
         
@@ -12579,39 +14183,26 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class FreightSpecialServicePayment {
         
-        private ShipmentSpecialServiceType specialServiceField;
-        
-        private bool specialServiceFieldSpecified;
+        private string specialServiceField;
         
         private FreightShipmentRoleType paymentTypeField;
         
         private bool paymentTypeFieldSpecified;
         
         /// <remarks/>
-        public ShipmentSpecialServiceType SpecialService {
+        public string SpecialService {
             get {
                 return this.specialServiceField;
             }
             set {
                 this.specialServiceField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool SpecialServiceSpecified {
-            get {
-                return this.specialServiceFieldSpecified;
-            }
-            set {
-                this.specialServiceFieldSpecified = value;
             }
         }
         
@@ -12638,115 +14229,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum ShipmentSpecialServiceType {
-        
-        /// <remarks/>
-        BROKER_SELECT_OPTION,
-        
-        /// <remarks/>
-        CALL_BEFORE_DELIVERY,
-        
-        /// <remarks/>
-        COD,
-        
-        /// <remarks/>
-        CUSTOM_DELIVERY_WINDOW,
-        
-        /// <remarks/>
-        DANGEROUS_GOODS,
-        
-        /// <remarks/>
-        DO_NOT_BREAK_DOWN_PALLETS,
-        
-        /// <remarks/>
-        DO_NOT_STACK_PALLETS,
-        
-        /// <remarks/>
-        DRY_ICE,
-        
-        /// <remarks/>
-        EAST_COAST_SPECIAL,
-        
-        /// <remarks/>
-        ELECTRONIC_TRADE_DOCUMENTS,
-        
-        /// <remarks/>
-        EMAIL_NOTIFICATION,
-        
-        /// <remarks/>
-        EXTREME_LENGTH,
-        
-        /// <remarks/>
-        FOOD,
-        
-        /// <remarks/>
-        FREIGHT_GUARANTEE,
-        
-        /// <remarks/>
-        FUTURE_DAY_SHIPMENT,
-        
-        /// <remarks/>
-        HOLD_AT_LOCATION,
-        
-        /// <remarks/>
-        HOME_DELIVERY_PREMIUM,
-        
-        /// <remarks/>
-        INSIDE_DELIVERY,
-        
-        /// <remarks/>
-        INSIDE_PICKUP,
-        
-        /// <remarks/>
-        INTERNATIONAL_CONTROLLED_EXPORT_SERVICE,
-        
-        /// <remarks/>
-        INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS,
-        
-        /// <remarks/>
-        LIFTGATE_DELIVERY,
-        
-        /// <remarks/>
-        LIFTGATE_PICKUP,
-        
-        /// <remarks/>
-        LIMITED_ACCESS_DELIVERY,
-        
-        /// <remarks/>
-        LIMITED_ACCESS_PICKUP,
-        
-        /// <remarks/>
-        PENDING_SHIPMENT,
-        
-        /// <remarks/>
-        POISON,
-        
-        /// <remarks/>
-        PROTECTION_FROM_FREEZING,
-        
-        /// <remarks/>
-        RETURNS_CLEARANCE,
-        
-        /// <remarks/>
-        RETURN_SHIPMENT,
-        
-        /// <remarks/>
-        SATURDAY_DELIVERY,
-        
-        /// <remarks/>
-        SATURDAY_PICKUP,
-        
-        /// <remarks/>
-        TOP_LOAD,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum FreightShipmentRoleType {
         
         /// <remarks/>
@@ -12757,11 +14242,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class LiabilityCoverageDetail {
         
         private LiabilityCoverageType coverageTypeField;
@@ -12803,9 +14288,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum LiabilityCoverageType {
         
         /// <remarks/>
@@ -12816,11 +14301,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class FreightShipmentDetail {
         
         private string fedExFreightAccountNumberField;
@@ -13072,9 +14557,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum FreightCollectTermsType {
         
         /// <remarks/>
@@ -13085,11 +14570,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ExpressFreightDetailContact {
         
         private string nameField;
@@ -13118,11 +14603,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ExpressFreightDetail {
         
         private bool packingListEnclosedField;
@@ -13226,11 +14711,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class CustomDeliveryWindowDetail {
         
         private CustomDeliveryWindowType typeField;
@@ -13324,9 +14809,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum CustomDeliveryWindowType {
         
         /// <remarks/>
@@ -13343,16 +14828,18 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class UploadDocumentReferenceDetail {
         
         private string lineNumberField;
         
         private string customerReferenceField;
+        
+        private string descriptionField;
         
         private UploadDocumentProducerType documentProducerField;
         
@@ -13386,6 +14873,16 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.customerReferenceField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Description {
+            get {
+                return this.descriptionField;
+            }
+            set {
+                this.descriptionField = value;
             }
         }
         
@@ -13464,16 +14961,28 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum UploadDocumentProducerType {
         
         /// <remarks/>
         CUSTOMER,
         
         /// <remarks/>
+        FEDEX_CAFE,
+        
+        /// <remarks/>
         FEDEX_CLS,
+        
+        /// <remarks/>
+        FEDEX_FIDT,
+        
+        /// <remarks/>
+        FEDEX_FXRS,
+        
+        /// <remarks/>
+        FEDEX_GSMW,
         
         /// <remarks/>
         FEDEX_GTM,
@@ -13483,9 +14992,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum UploadDocumentType {
         
         /// <remarks/>
@@ -13501,6 +15010,9 @@ namespace DotNetShipping.RateServiceWebReference {
         NAFTA_CERTIFICATE_OF_ORIGIN,
         
         /// <remarks/>
+        NET_RATE_SHEET,
+        
+        /// <remarks/>
         OTHER,
         
         /// <remarks/>
@@ -13508,143 +15020,57 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum UploadDocumentIdProducer {
         
         /// <remarks/>
         CUSTOMER,
         
         /// <remarks/>
+        FEDEX_CAFE,
+        
+        /// <remarks/>
         FEDEX_CSHP,
         
         /// <remarks/>
+        FEDEX_FXRS,
+        
+        /// <remarks/>
+        FEDEX_GSMW,
+        
+        /// <remarks/>
         FEDEX_GTM,
+        
+        /// <remarks/>
+        FEDEX_INET,
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class UploadDocumentDetail {
-        
-        private string lineNumberField;
-        
-        private string customerReferenceField;
-        
-        private UploadDocumentProducerType documentProducerField;
-        
-        private bool documentProducerFieldSpecified;
-        
-        private UploadDocumentType documentTypeField;
-        
-        private bool documentTypeFieldSpecified;
-        
-        private string fileNameField;
-        
-        private byte[] documentContentField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger")]
-        public string LineNumber {
-            get {
-                return this.lineNumberField;
-            }
-            set {
-                this.lineNumberField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string CustomerReference {
-            get {
-                return this.customerReferenceField;
-            }
-            set {
-                this.customerReferenceField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public UploadDocumentProducerType DocumentProducer {
-            get {
-                return this.documentProducerField;
-            }
-            set {
-                this.documentProducerField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool DocumentProducerSpecified {
-            get {
-                return this.documentProducerFieldSpecified;
-            }
-            set {
-                this.documentProducerFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public UploadDocumentType DocumentType {
-            get {
-                return this.documentTypeField;
-            }
-            set {
-                this.documentTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool DocumentTypeSpecified {
-            get {
-                return this.documentTypeFieldSpecified;
-            }
-            set {
-                this.documentTypeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string FileName {
-            get {
-                return this.fileNameField;
-            }
-            set {
-                this.fileNameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")]
-        public byte[] DocumentContent {
-            get {
-                return this.documentContentField;
-            }
-            set {
-                this.documentContentField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class EtdDetail {
+        
+        private EtdAttributeType[] attributesField;
         
         private RequestedShippingDocumentType[] requestedDocumentCopiesField;
         
-        private UploadDocumentDetail[] documentsField;
-        
         private UploadDocumentReferenceDetail[] documentReferencesField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Attributes")]
+        public EtdAttributeType[] Attributes {
+            get {
+                return this.attributesField;
+            }
+            set {
+                this.attributesField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("RequestedDocumentCopies")]
@@ -13654,17 +15080,6 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.requestedDocumentCopiesField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Documents")]
-        public UploadDocumentDetail[] Documents {
-            get {
-                return this.documentsField;
-            }
-            set {
-                this.documentsField = value;
             }
         }
         
@@ -13681,11 +15096,21 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum EtdAttributeType {
+        
+        /// <remarks/>
+        POST_SHIPMENT_UPLOAD_REQUESTED,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class FreightGuaranteeDetail {
         
         private FreightGuaranteeType typeField;
@@ -13741,14 +15166,16 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class HomeDeliveryPremiumDetail {
         
         private HomeDeliveryPremiumType homeDeliveryPremiumTypeField;
+        
+        private bool homeDeliveryPremiumTypeFieldSpecified;
         
         private System.DateTime dateField;
         
@@ -13763,6 +15190,17 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.homeDeliveryPremiumTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool HomeDeliveryPremiumTypeSpecified {
+            get {
+                return this.homeDeliveryPremiumTypeFieldSpecified;
+            }
+            set {
+                this.homeDeliveryPremiumTypeFieldSpecified = value;
             }
         }
         
@@ -13800,9 +15238,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum HomeDeliveryPremiumType {
         
         /// <remarks/>
@@ -13816,16 +15254,18 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ShipmentDryIceDetail {
         
         private string packageCountField;
         
         private Weight totalWeightField;
+        
+        private ShipmentDryIceProcessingOptionType[] processingOptionsField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(DataType="nonNegativeInteger")]
@@ -13847,14 +15287,35 @@ namespace DotNetShipping.RateServiceWebReference {
                 this.totalWeightField = value;
             }
         }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("Options", IsNullable=false)]
+        public ShipmentDryIceProcessingOptionType[] ProcessingOptions {
+            get {
+                return this.processingOptionsField;
+            }
+            set {
+                this.processingOptionsField = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum ShipmentDryIceProcessingOptionType {
+        
+        /// <remarks/>
+        SHIPMENT_LEVEL_DRY_ICE_ONLY,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class InternationalTrafficInArmsRegulationsDetail {
         
         private string licenseOrExemptionNumberField;
@@ -13871,11 +15332,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class InternationalControlledExportDetail {
         
         private InternationalControlledExportType typeField;
@@ -13967,9 +15428,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum InternationalControlledExportType {
         
         /// <remarks/>
@@ -14007,53 +15468,24 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class EMailLabelDetail {
-        
-        private string notificationEMailAddressField;
-        
-        private string notificationMessageField;
-        
-        /// <remarks/>
-        public string NotificationEMailAddress {
-            get {
-                return this.notificationEMailAddressField;
-            }
-            set {
-                this.notificationEMailAddressField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string NotificationMessage {
-            get {
-                return this.notificationMessageField;
-            }
-            set {
-                this.notificationMessageField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class PendingShipmentDetail {
         
         private PendingShipmentType typeField;
+        
+        private bool typeFieldSpecified;
         
         private System.DateTime expirationDateField;
         
         private bool expirationDateFieldSpecified;
         
-        private EMailLabelDetail emailLabelDetailField;
+        private PendingShipmentProcessingOptionType[] processingOptionsField;
+        
+        private RecommendedDocumentType[] recommendedDocumentSpecificationField;
         
         /// <remarks/>
         public PendingShipmentType Type {
@@ -14062,6 +15494,17 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.typeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool TypeSpecified {
+            get {
+                return this.typeFieldSpecified;
+            }
+            set {
+                this.typeFieldSpecified = value;
             }
         }
         
@@ -14088,20 +15531,32 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        public EMailLabelDetail EmailLabelDetail {
+        [System.Xml.Serialization.XmlArrayItemAttribute("Options", IsNullable=false)]
+        public PendingShipmentProcessingOptionType[] ProcessingOptions {
             get {
-                return this.emailLabelDetailField;
+                return this.processingOptionsField;
             }
             set {
-                this.emailLabelDetailField = value;
+                this.processingOptionsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("Types", IsNullable=false)]
+        public RecommendedDocumentType[] RecommendedDocumentSpecification {
+            get {
+                return this.recommendedDocumentSpecificationField;
+            }
+            set {
+                this.recommendedDocumentSpecificationField = value;
             }
         }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum PendingShipmentType {
         
         /// <remarks/>
@@ -14109,11 +15564,106 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum PendingShipmentProcessingOptionType {
+        
+        /// <remarks/>
+        ALLOW_MODIFICATIONS,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum RecommendedDocumentType {
+        
+        /// <remarks/>
+        ANTIQUE_STATEMENT_EUROPEAN_UNION,
+        
+        /// <remarks/>
+        ANTIQUE_STATEMENT_UNITED_STATES,
+        
+        /// <remarks/>
+        ASSEMBLER_DECLARATION,
+        
+        /// <remarks/>
+        BEARING_WORKSHEET,
+        
+        /// <remarks/>
+        CERTIFICATE_OF_SHIPMENTS_TO_SYRIA,
+        
+        /// <remarks/>
+        COMMERCIAL_INVOICE_FOR_THE_CARIBBEAN_COMMON_MARKET,
+        
+        /// <remarks/>
+        CONIFEROUS_SOLID_WOOD_PACKAGING_MATERIAL_TO_THE_PEOPLES_REPUBLIC_OF_CHINA,
+        
+        /// <remarks/>
+        DECLARATION_FOR_FREE_ENTRY_OF_RETURNED_AMERICAN_PRODUCTS,
+        
+        /// <remarks/>
+        DECLARATION_OF_BIOLOGICAL_STANDARDS,
+        
+        /// <remarks/>
+        DECLARATION_OF_IMPORTED_ELECTRONIC_PRODUCTS_SUBJECT_TO_RADIATION_CONTROL_STANDARD,
+        
+        /// <remarks/>
+        ELECTRONIC_INTEGRATED_CIRCUIT_WORKSHEET,
+        
+        /// <remarks/>
+        FILM_AND_VIDEO_CERTIFICATE,
+        
+        /// <remarks/>
+        INTERIM_FOOTWEAR_INVOICE,
+        
+        /// <remarks/>
+        NAFTA_CERTIFICATE_OF_ORIGIN_CANADA_ENGLISH,
+        
+        /// <remarks/>
+        NAFTA_CERTIFICATE_OF_ORIGIN_CANADA_FRENCH,
+        
+        /// <remarks/>
+        NAFTA_CERTIFICATE_OF_ORIGIN_SPANISH,
+        
+        /// <remarks/>
+        NAFTA_CERTIFICATE_OF_ORIGIN_UNITED_STATES,
+        
+        /// <remarks/>
+        PACKING_LIST,
+        
+        /// <remarks/>
+        PRINTED_CIRCUIT_BOARD_WORKSHEET,
+        
+        /// <remarks/>
+        REPAIRED_WATCH_BREAKOUT_WORKSHEET,
+        
+        /// <remarks/>
+        STATEMENT_REGARDING_THE_IMPORT_OF_RADIO_FREQUENCY_DEVICES,
+        
+        /// <remarks/>
+        TOXIC_SUBSTANCES_CONTROL_ACT,
+        
+        /// <remarks/>
+        UNITED_STATES_CARIBBEAN_BASIN_TRADE_PARTNERSHIP_ACT_CERTIFICATE_OF_ORIGIN_NON_TEXTILES,
+        
+        /// <remarks/>
+        UNITED_STATES_CARIBBEAN_BASIN_TRADE_PARTNERSHIP_ACT_CERTIFICATE_OF_ORIGIN_TEXTILES,
+        
+        /// <remarks/>
+        UNITED_STATES_NEW_WATCH_WORKSHEET,
+        
+        /// <remarks/>
+        UNITED_STATES_WATCH_REPAIR_DECLARATION,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ReturnAssociationDetail {
         
         private string trackingNumberField;
@@ -14156,11 +15706,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ReturnEMailDetail {
         
         private string merchantPhoneNumberField;
@@ -14190,9 +15740,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ReturnEMailAllowedSpecialServiceType {
         
         /// <remarks/>
@@ -14203,11 +15753,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class Rma {
         
         private string reasonField;
@@ -14224,14 +15774,16 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ReturnShipmentDetail {
         
         private ReturnType returnTypeField;
+        
+        private bool returnTypeFieldSpecified;
         
         private Rma rmaField;
         
@@ -14246,6 +15798,17 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.returnTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ReturnTypeSpecified {
+            get {
+                return this.returnTypeFieldSpecified;
+            }
+            set {
+                this.returnTypeFieldSpecified = value;
             }
         }
         
@@ -14281,9 +15844,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ReturnType {
         
         /// <remarks/>
@@ -14297,74 +15860,129 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class EMailNotificationRecipient {
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ShipmentNotificationFormatSpecification {
         
-        private EMailNotificationRecipientType eMailNotificationRecipientTypeField;
+        private NotificationFormatType typeField;
         
-        private string eMailAddressField;
-        
-        private EMailNotificationEventType[] notificationEventsRequestedField;
-        
-        private EMailNotificationFormatType formatField;
-        
-        private bool formatFieldSpecified;
-        
-        private Localization localizationField;
+        private bool typeFieldSpecified;
         
         /// <remarks/>
-        public EMailNotificationRecipientType EMailNotificationRecipientType {
+        public NotificationFormatType Type {
             get {
-                return this.eMailNotificationRecipientTypeField;
+                return this.typeField;
             }
             set {
-                this.eMailNotificationRecipientTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string EMailAddress {
-            get {
-                return this.eMailAddressField;
-            }
-            set {
-                this.eMailAddressField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("NotificationEventsRequested")]
-        public EMailNotificationEventType[] NotificationEventsRequested {
-            get {
-                return this.notificationEventsRequestedField;
-            }
-            set {
-                this.notificationEventsRequestedField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public EMailNotificationFormatType Format {
-            get {
-                return this.formatField;
-            }
-            set {
-                this.formatField = value;
+                this.typeField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool FormatSpecified {
+        public bool TypeSpecified {
             get {
-                return this.formatFieldSpecified;
+                return this.typeFieldSpecified;
             }
             set {
-                this.formatFieldSpecified = value;
+                this.typeFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum NotificationFormatType {
+        
+        /// <remarks/>
+        HTML,
+        
+        /// <remarks/>
+        TEXT,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class EMailDetail {
+        
+        private string emailAddressField;
+        
+        private string nameField;
+        
+        /// <remarks/>
+        public string EmailAddress {
+            get {
+                return this.emailAddressField;
+            }
+            set {
+                this.emailAddressField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class NotificationDetail {
+        
+        private NotificationType notificationTypeField;
+        
+        private bool notificationTypeFieldSpecified;
+        
+        private EMailDetail emailDetailField;
+        
+        private Localization localizationField;
+        
+        /// <remarks/>
+        public NotificationType NotificationType {
+            get {
+                return this.notificationTypeField;
+            }
+            set {
+                this.notificationTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool NotificationTypeSpecified {
+            get {
+                return this.notificationTypeFieldSpecified;
+            }
+            set {
+                this.notificationTypeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public EMailDetail EmailDetail {
+            get {
+                return this.emailDetailField;
+            }
+            set {
+                this.emailDetailField = value;
             }
         }
         
@@ -14380,16 +15998,134 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum EMailNotificationEventType {
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum NotificationType {
+        
+        /// <remarks/>
+        EMAIL,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ShipmentEventNotificationSpecification {
+        
+        private ShipmentNotificationRoleType roleField;
+        
+        private bool roleFieldSpecified;
+        
+        private NotificationEventType[] eventsField;
+        
+        private NotificationDetail notificationDetailField;
+        
+        private ShipmentNotificationFormatSpecification formatSpecificationField;
+        
+        /// <remarks/>
+        public ShipmentNotificationRoleType Role {
+            get {
+                return this.roleField;
+            }
+            set {
+                this.roleField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool RoleSpecified {
+            get {
+                return this.roleFieldSpecified;
+            }
+            set {
+                this.roleFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Events")]
+        public NotificationEventType[] Events {
+            get {
+                return this.eventsField;
+            }
+            set {
+                this.eventsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public NotificationDetail NotificationDetail {
+            get {
+                return this.notificationDetailField;
+            }
+            set {
+                this.notificationDetailField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public ShipmentNotificationFormatSpecification FormatSpecification {
+            get {
+                return this.formatSpecificationField;
+            }
+            set {
+                this.formatSpecificationField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum ShipmentNotificationRoleType {
+        
+        /// <remarks/>
+        BROKER,
+        
+        /// <remarks/>
+        OTHER,
+        
+        /// <remarks/>
+        RECIPIENT,
+        
+        /// <remarks/>
+        SHIPPER,
+        
+        /// <remarks/>
+        THIRD_PARTY,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum NotificationEventType {
         
         /// <remarks/>
         ON_DELIVERY,
         
         /// <remarks/>
+        ON_ESTIMATED_DELIVERY,
+        
+        /// <remarks/>
         ON_EXCEPTION,
+        
+        /// <remarks/>
+        ON_PICKUP_DRIVER_ARRIVED,
+        
+        /// <remarks/>
+        ON_PICKUP_DRIVER_ASSIGNED,
+        
+        /// <remarks/>
+        ON_PICKUP_DRIVER_DEPARTED,
+        
+        /// <remarks/>
+        ON_PICKUP_DRIVER_EN_ROUTE,
         
         /// <remarks/>
         ON_SHIPMENT,
@@ -14399,32 +16135,41 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public enum EMailNotificationFormatType {
-        
-        /// <remarks/>
-        HTML,
-        
-        /// <remarks/>
-        TEXT,
-        
-        /// <remarks/>
-        WIRELESS,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
-    public partial class EMailNotificationDetail {
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ShipmentEventNotificationDetail {
+        
+        private ShipmentNotificationAggregationType aggregationTypeField;
+        
+        private bool aggregationTypeFieldSpecified;
         
         private string personalMessageField;
         
-        private EMailNotificationRecipient[] recipientsField;
+        private ShipmentEventNotificationSpecification[] eventNotificationsField;
+        
+        /// <remarks/>
+        public ShipmentNotificationAggregationType AggregationType {
+            get {
+                return this.aggregationTypeField;
+            }
+            set {
+                this.aggregationTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool AggregationTypeSpecified {
+            get {
+                return this.aggregationTypeFieldSpecified;
+            }
+            set {
+                this.aggregationTypeFieldSpecified = value;
+            }
+        }
         
         /// <remarks/>
         public string PersonalMessage {
@@ -14437,23 +16182,36 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Recipients")]
-        public EMailNotificationRecipient[] Recipients {
+        [System.Xml.Serialization.XmlElementAttribute("EventNotifications")]
+        public ShipmentEventNotificationSpecification[] EventNotifications {
             get {
-                return this.recipientsField;
+                return this.eventNotificationsField;
             }
             set {
-                this.recipientsField = value;
+                this.eventNotificationsField = value;
             }
         }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum ShipmentNotificationAggregationType {
+        
+        /// <remarks/>
+        PER_PACKAGE,
+        
+        /// <remarks/>
+        PER_SHIPMENT,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class HoldAtLocationDetail {
         
         private string phoneNumberField;
@@ -14544,13 +16302,16 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum FedExLocationType {
         
         /// <remarks/>
         FEDEX_EXPRESS_STATION,
+        
+        /// <remarks/>
+        FEDEX_FACILITY,
         
         /// <remarks/>
         FEDEX_FREIGHT_SERVICE_CENTER,
@@ -14565,15 +16326,24 @@ namespace DotNetShipping.RateServiceWebReference {
         FEDEX_OFFICE,
         
         /// <remarks/>
+        FEDEX_ONSITE,
+        
+        /// <remarks/>
+        FEDEX_SHIPSITE,
+        
+        /// <remarks/>
+        FEDEX_SHIP_AND_GET,
+        
+        /// <remarks/>
         FEDEX_SMART_POST_HUB,
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class DeliveryOnInvoiceAcceptanceDetail {
         
         private Party recipientField;
@@ -14602,14 +16372,14 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ShipmentSpecialServicesRequested {
         
-        private ShipmentSpecialServiceType[] specialServiceTypesField;
+        private string[] specialServiceTypesField;
         
         private CodDetail codDetailField;
         
@@ -14617,7 +16387,7 @@ namespace DotNetShipping.RateServiceWebReference {
         
         private HoldAtLocationDetail holdAtLocationDetailField;
         
-        private EMailNotificationDetail eMailNotificationDetailField;
+        private ShipmentEventNotificationDetail eventNotificationDetailField;
         
         private ReturnShipmentDetail returnShipmentDetailField;
         
@@ -14641,7 +16411,7 @@ namespace DotNetShipping.RateServiceWebReference {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("SpecialServiceTypes")]
-        public ShipmentSpecialServiceType[] SpecialServiceTypes {
+        public string[] SpecialServiceTypes {
             get {
                 return this.specialServiceTypesField;
             }
@@ -14681,12 +16451,12 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        public EMailNotificationDetail EMailNotificationDetail {
+        public ShipmentEventNotificationDetail EventNotificationDetail {
             get {
-                return this.eMailNotificationDetailField;
+                return this.eventNotificationDetailField;
             }
             set {
-                this.eMailNotificationDetailField = value;
+                this.eventNotificationDetailField = value;
             }
         }
         
@@ -14793,9 +16563,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum FlatbedTrailerOption {
         
         /// <remarks/>
@@ -14806,11 +16576,66 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ShipmentAuthorizationDetail {
+        
+        private string accountNumberField;
+        
+        /// <remarks/>
+        public string AccountNumber {
+            get {
+                return this.accountNumberField;
+            }
+            set {
+                this.accountNumberField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ShipmentVariationOptionDetail {
+        
+        private string idField;
+        
+        private string[] valuesField;
+        
+        /// <remarks/>
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Values")]
+        public string[] Values {
+            get {
+                return this.valuesField;
+            }
+            set {
+                this.valuesField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class RequestedShipment {
         
         private System.DateTime shipTimestampField;
@@ -14821,19 +16646,19 @@ namespace DotNetShipping.RateServiceWebReference {
         
         private bool dropoffTypeFieldSpecified;
         
-        private ServiceType serviceTypeField;
+        private string serviceTypeField;
         
-        private bool serviceTypeFieldSpecified;
+        private string packagingTypeField;
         
-        private PackagingType packagingTypeField;
-        
-        private bool packagingTypeFieldSpecified;
+        private ShipmentVariationOptionDetail[] variationOptionsField;
         
         private Weight totalWeightField;
         
         private Money totalInsuredValueField;
         
         private string preferredCurrencyField;
+        
+        private ShipmentAuthorizationDetail shipmentAuthorizationDetailField;
         
         private Party shipperField;
         
@@ -14842,6 +16667,8 @@ namespace DotNetShipping.RateServiceWebReference {
         private string recipientLocationNumberField;
         
         private ContactAndAddress originField;
+        
+        private Party soldToField;
         
         private Payment shippingChargesPaymentField;
         
@@ -14926,7 +16753,7 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        public ServiceType ServiceType {
+        public string ServiceType {
             get {
                 return this.serviceTypeField;
             }
@@ -14936,18 +16763,7 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ServiceTypeSpecified {
-            get {
-                return this.serviceTypeFieldSpecified;
-            }
-            set {
-                this.serviceTypeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public PackagingType PackagingType {
+        public string PackagingType {
             get {
                 return this.packagingTypeField;
             }
@@ -14957,13 +16773,13 @@ namespace DotNetShipping.RateServiceWebReference {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool PackagingTypeSpecified {
+        [System.Xml.Serialization.XmlElementAttribute("VariationOptions")]
+        public ShipmentVariationOptionDetail[] VariationOptions {
             get {
-                return this.packagingTypeFieldSpecified;
+                return this.variationOptionsField;
             }
             set {
-                this.packagingTypeFieldSpecified = value;
+                this.variationOptionsField = value;
             }
         }
         
@@ -14994,6 +16810,16 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.preferredCurrencyField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public ShipmentAuthorizationDetail ShipmentAuthorizationDetail {
+            get {
+                return this.shipmentAuthorizationDetailField;
+            }
+            set {
+                this.shipmentAuthorizationDetailField = value;
             }
         }
         
@@ -15034,6 +16860,16 @@ namespace DotNetShipping.RateServiceWebReference {
             }
             set {
                 this.originField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public Party SoldTo {
+            get {
+                return this.soldToField;
+            }
+            set {
+                this.soldToField = value;
             }
         }
         
@@ -15246,9 +17082,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum DropoffType {
         
         /// <remarks/>
@@ -15268,25 +17104,25 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum RateRequestType {
         
         /// <remarks/>
-        ACCOUNT,
+        LIST,
         
         /// <remarks/>
-        LIST,
+        NONE,
         
         /// <remarks/>
         PREFERRED,
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum EdtRequestType {
         
         /// <remarks/>
@@ -15297,9 +17133,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ShipmentOnlyFieldsType {
         
         /// <remarks/>
@@ -15313,11 +17149,105 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public partial class ConsolidationKey {
+        
+        private ConsolidationType typeField;
+        
+        private bool typeFieldSpecified;
+        
+        private string indexField;
+        
+        private System.DateTime dateField;
+        
+        private bool dateFieldSpecified;
+        
+        /// <remarks/>
+        public ConsolidationType Type {
+            get {
+                return this.typeField;
+            }
+            set {
+                this.typeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool TypeSpecified {
+            get {
+                return this.typeFieldSpecified;
+            }
+            set {
+                this.typeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Index {
+            get {
+                return this.indexField;
+            }
+            set {
+                this.indexField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="date")]
+        public System.DateTime Date {
+            get {
+                return this.dateField;
+            }
+            set {
+                this.dateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool DateSpecified {
+            get {
+                return this.dateFieldSpecified;
+            }
+            set {
+                this.dateFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
+    public enum ConsolidationType {
+        
+        /// <remarks/>
+        INTERNATIONAL_DISTRIBUTION_FREIGHT,
+        
+        /// <remarks/>
+        INTERNATIONAL_ECONOMY_DISTRIBUTION,
+        
+        /// <remarks/>
+        INTERNATIONAL_GROUND_DISTRIBUTION,
+        
+        /// <remarks/>
+        INTERNATIONAL_PRIORITY_DISTRIBUTION,
+        
+        /// <remarks/>
+        TRANSBORDER_DISTRIBUTION,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public partial class ClientDetail {
         
         private string accountNumberField;
@@ -15395,9 +17325,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum ExpressRegionCode {
         
         /// <remarks/>
@@ -15417,9 +17347,9 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.7.3062.0")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v13")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://fedex.com/ws/rate/v26")]
     public enum CarrierCodeType {
         
         /// <remarks/>
@@ -15442,11 +17372,11 @@ namespace DotNetShipping.RateServiceWebReference {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.3062.0")]
     public delegate void getRatesCompletedEventHandler(object sender, getRatesCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.6.1590.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.3062.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class getRatesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
