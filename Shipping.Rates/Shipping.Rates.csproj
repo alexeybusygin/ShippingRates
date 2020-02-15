@@ -8,8 +8,8 @@
     <ProjectGuid>{0CAC6D52-FFA9-4350-8E36-A22A2A4A8B88}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DotNetShipping</RootNamespace>
-    <AssemblyName>DotNetShipping</AssemblyName>
+    <RootNamespace>Shipping.Rates</RootNamespace>
+    <AssemblyName>Shipping.Rates</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -41,7 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\DotNetShipping.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Shipping.Rates.xml</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -140,7 +140,7 @@
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>DotNetShipping_RateServiceWebReference_RateService</CachedSettingsPropName>
+      <CachedSettingsPropName>Shipping_Rates_RateServiceWebReference_RateService</CachedSettingsPropName>
     </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
