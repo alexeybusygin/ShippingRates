@@ -6,7 +6,7 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <licenseUrl>https://github.com/alexeybusygin/Shipping.Rates/blob/master/license.md</licenseUrl>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/alexeybusygin/Shipping.Rates</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>.NET wrapper to UPS, FedEx, and USPS shipping rates APIs.</description>
