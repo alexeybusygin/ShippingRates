@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Shipping.Rates.Tests.Features
 {
-    public abstract class FedExShipRatesTestsBase : IDisposable
+    /*public abstract class FedExShipRatesTestsBase : IDisposable
     {
         protected readonly RateManager _rateManager;
 
@@ -107,5 +107,5 @@ namespace Shipping.Rates.Tests.Features
             Assert.NotNull(serviceCodes);
             Assert.NotEmpty(serviceCodes);
         }
-    }
+    }*/
 }
