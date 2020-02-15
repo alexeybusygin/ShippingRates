@@ -42,8 +42,8 @@ build:
   verbosity: normal
 
 # scripts to run before build
-#before_build:
-#  - nuget restore Shipping.Rates.sln
+before_build:
+  - nuget restore Shipping.Rates.sln
 #  - ps: $xml = [xml](Get-Content Shipping.Rates.Tests\App.config)
 #  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSLicenseNumber"]/@value').'#text' = $env:UPS_LICENSE_NUMBER
 #  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSUserId"]/@value').'#text' = $env:UPS_PASSWORD
