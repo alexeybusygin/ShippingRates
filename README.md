@@ -1,16 +1,16 @@
-# Shipping.Rates
+# ShippingRates
 
 [![Build status](https://ci.appveyor.com/api/projects/status/gqq8i6nw932bn01v?svg=true)](https://ci.appveyor.com/project/alexeybusygin/shipping-rates/)
-[![NuGet Version](https://img.shields.io/nuget/v/Shipping.Rates.svg?style=flat-square)](https://www.nuget.org/packages/Shipping.Rates)
+[![NuGet Version](https://img.shields.io/nuget/v/ShippingRates.svg?style=flat-square)](https://www.nuget.org/packages/ShippingRates)
 
 .NET wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers.
 
 ## How to Install
 
-Available in the [NuGet Gallery](http://nuget.org/packages/Shipping.Rates):
+Available in the [NuGet Gallery](http://nuget.org/packages/ShippingRates):
 
 ```
-PM> Install-Package Shipping.Rates
+PM> Install-Package ShippingRates
 ```
 
 ## How to Use
@@ -61,7 +61,7 @@ foreach (Rate rate in shipment.Rates)
 }
 ```
 
-Shipping.Rates supports requesting a single rate from UPS and USPS.
+ShippingRates supports requesting a single rate from UPS and USPS.
 To do so, include the rate description as a parameter of the provider constructor.
 ```CSHARP
 rateManager.AddProvider(new USPSProvider(uspsUserId, "Priority Mail"));

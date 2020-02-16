@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 
-using Shipping.Rates.ShippingProviders;
+using ShippingRates.ShippingProviders;
 
-namespace Shipping.Rates.SampleApp
+namespace ShippingRates.SampleApp
 {
     internal class Program
     {

@@ -35,7 +35,7 @@ nuget:
 
 # build configuration
 build:
-  project: Shipping.Rates.sln   # path to Visual Studio solution or project
+  project: ShippingRates.sln    # path to Visual Studio solution or project
   publish_nuget: true           # package projects with .nuspec files and push to artifacts
 
   # MSBuild verbosity level
@@ -43,8 +43,8 @@ build:
 
 # scripts to run before build
 before_build:
-  - nuget restore Shipping.Rates.sln
-  - ps: $xml = [xml](Get-Content Shipping.Rates.Tests\App.config)
+  - nuget restore ShippingRates.sln
+  - ps: $xml = [xml](Get-Content ShippingRates.Tests\App.config)
 #  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSLicenseNumber"]/@value').'#text' = $env:UPS_LICENSE_NUMBER
 #  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSUserId"]/@value').'#text' = $env:UPS_PASSWORD
 #  - ps: $xml.SelectSingleNode('//appSettings/add[@key="UPSPassword"]/@value').'#text' = $env:UPS_USER_ID
@@ -53,7 +53,7 @@ before_build:
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExAccountNumber"]/@value').'#text' = $env:FEDEX_ACCOUNT_NUMBER
   - ps: $xml.SelectSingleNode('//appSettings/add[@key="FedExMeterNumber"]/@value').'#text' = $env:FEDEX_METER_NUMBER
 #  - ps: $xml.SelectSingleNode('//appSettings/add[@key="USPSUserId"]/@value').'#text' = $env:USPS_USER_ID
-  - ps: set-content Shipping.Rates.Tests\App.config $xml.InnerXml
+  - ps: set-content ShippingRates.Tests\App.config $xml.InnerXml
 
 # deployment
 #deploy:
