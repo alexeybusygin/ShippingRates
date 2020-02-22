@@ -75,6 +75,16 @@ namespace ShippingRates.SampleApp
                 }
             }
 
+            // Iterate through the internal errors
+            if (shipment.InternalErrors.Count > 0)
+            {
+                Console.WriteLine("Internal Errors:");
+                foreach (var error in shipment.InternalErrors)
+                {
+                    Console.WriteLine(error);
+                }
+            }
+
             Console.WriteLine("Done!");
         }
     }

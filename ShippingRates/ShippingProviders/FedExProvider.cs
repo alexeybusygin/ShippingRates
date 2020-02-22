@@ -74,7 +74,8 @@ namespace ShippingRates.ShippingProviders
                 {"FEDEX_EXPRESS_SAVER", "FedEx Express Saver"},
                 {"FEDEX_GROUND", "FedEx Ground"},
                 {"GROUND_HOME_DELIVERY", "FedEx Ground Residential"},
-                {"FEDEX_INTERNATIONAL_GROUND", "FedEx International Ground"},
+                {"INTERNATIONAL_GROUND", "FedEx International Ground"},
+                {"INTERNATIONAL_FIRST", "FedEx International First"},
                 {"INTERNATIONAL_ECONOMY", "FedEx International Economy"},
                 {"INTERNATIONAL_PRIORITY", "FedEx International Priority"}
             };

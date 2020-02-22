@@ -247,7 +247,7 @@ namespace ShippingRates.ShippingProviders
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                AddInternalError($"USPS provider exception: {ex.Message}");
             }
         }
 

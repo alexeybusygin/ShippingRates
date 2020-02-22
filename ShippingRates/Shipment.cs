@@ -19,19 +19,28 @@ namespace ShippingRates
             OriginAddress = originAddress;
             DestinationAddress = destinationAddress;
             Packages = packages.AsReadOnly();
-            Rates = new List<Rate>();
-            Errors = new List<Error>();
         }
 
-        public int PackageCount
-        {
-            get { return Packages.Count; }
-        }
-        public List<Rate> Rates { get; }
-        public decimal TotalPackageWeight
-        {
-            get { return Packages.Sum(x => x.Weight); }
-        }
-        public List<Error> Errors { get; }
+        /// <summary>
+        ///     Number of packages in the shipment
+        /// </summary>
+        public int PackageCount =>Packages.Count;
+        /// <summary>
+        ///     Total shipment weight
+        /// </summary>
+        public decimal TotalPackageWeight => Packages.Sum(x => x.Weight);
+        /// <summary>
+        ///     Shipment rates
+        /// </summary>
+        public List<Rate> Rates { get; } = new List<Rate>();
+        /// <summary>
+        ///     Errors returned by service provider (e.g. 'Wrong postal code')
+        /// </summary>
+        public List<Error> Errors { get; } = new List<Error>();
+        /// <summary>
+        ///     Internal library errors during interaction with service provider
+        ///     (e.g. SoapException was trown)
+        /// </summary>
+        public List<string> InternalErrors { get; } = new List<string>();
     }
 }

@@ -14,13 +14,14 @@ namespace ShippingRates.ShippingProviders
     {
         protected string _accountNumber;
         protected string _key;
-		protected string _meterNumber;
+        protected string _meterNumber;
         protected string _password;
         protected bool _useProduction = true;
         protected Dictionary<string, string> _serviceCodes;
 
         /// <summary>
-        /// FedEx allows insured values for items being shipped except when utilizing SmartPost. This setting will this value to be overwritten.
+        ///     FedEx allows insured values for items being shipped except when utilizing SmartPost.
+        ///     This setting will this value to be overwritten.
         /// </summary>
         protected bool _allowInsuredValues = true;
 
@@ -129,11 +130,11 @@ namespace ShippingRates.ShippingProviders
             }
             catch (SoapException e)
             {
-                Debug.WriteLine(e.Detail.InnerText);
+                AddInternalError($"FedEx provider SoapException: {e.Detail.InnerText}");
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
+                AddInternalError($"FedEx provider exception: {e.Message}");
             }
         }
 
@@ -149,11 +150,19 @@ namespace ShippingRates.ShippingProviders
 
                 var key = rateReplyDetail.ServiceType.ToString();
                 var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
-                AddRate(key, _serviceCodes[key], netCharge, deliveryDate);
+
+                if (!_serviceCodes.Keys.Contains(key))
+                {
+                    AddInternalError($"Unknown FedEx rate code: {key}");
+                }
+                else
+                {
+                    AddRate(key, _serviceCodes[key], netCharge, deliveryDate);
+                }
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Sets the destination
         /// </summary>
         /// <param name="request"></param>

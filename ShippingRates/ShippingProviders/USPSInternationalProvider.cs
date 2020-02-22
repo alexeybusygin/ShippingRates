@@ -171,7 +171,7 @@ namespace ShippingRates.ShippingProviders
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                AddInternalError($"USPS International provider exception: {ex.Message}");
             }
         }
 

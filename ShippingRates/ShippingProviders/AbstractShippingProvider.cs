@@ -21,6 +21,11 @@ namespace ShippingRates.ShippingProviders
             Shipment.Errors.Add(error);
         }
 
+        protected void AddInternalError(string error)
+        {
+            Shipment.InternalErrors.Add(error);
+        }
+
         protected void AddRate(string providerCode, string name, decimal totalCharges, DateTime delivery)
         {
             AddRate(new Rate(Name, providerCode, name, totalCharges, delivery));
