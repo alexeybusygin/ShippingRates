@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Text;
 
@@ -18,15 +17,6 @@ namespace ShippingRates.ShippingProviders
         /// If not using the production Rate API, you can use 5531 as the HubID per FedEx documentation.
         /// </summary>
         private string _hubId;
-
-        /// <summary>
-        ///     Paramaterless constructor that loads settings from app.config
-        /// </summary>
-        public FedExSmartPostProvider()
-        {
-            var appSettings = ConfigurationManager.AppSettings;
-            Init(appSettings["FedExKey"], appSettings["FedExPassword"], appSettings["FedExAccountNumber"], appSettings["FedExMeterNumber"], true, appSettings["FedExHubId"]);
-        }
 
         /// <summary>
         /// </summary>

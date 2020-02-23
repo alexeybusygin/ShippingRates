@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -50,60 +49,24 @@ namespace ShippingRates.ShippingProviders
         private readonly int _timeout;
         private readonly string _userId;
 
-        /// <summary>
-        ///     Parameterless construction that pulls data directly from app.config
-        /// </summary>
-        public UPSProvider()
-        {
-            Name = "UPS";
-            var appSettings = ConfigurationManager.AppSettings;
-            _licenseNumber = appSettings["UPSLicenseNumber"];
-            _userId = appSettings["UPSUserId"];
-            _password = appSettings["UPSPassword"];
-            _timeout = DEFAULT_TIMEOUT;
-            _serviceDescription = "";
-            LoadServiceCodes();
-            _shipperNumber = "";
-        }
-
-        public UPSProvider(string licenseNumber, string userId, string password) : this(licenseNumber, userId, password, DEFAULT_TIMEOUT)
+        public UPSProvider(string licenseNumber, string userId, string password) :
+            this(licenseNumber, userId, password, DEFAULT_TIMEOUT)
         {
         }
 
-        public UPSProvider(string licenseNumber, string userId, string password, int timeout)
+        public UPSProvider(string licenseNumber, string userId, string password, int timeout) :
+            this(licenseNumber, userId, password, timeout, "")
         {
-            Name = "UPS";
-            _licenseNumber = licenseNumber;
-            _userId = userId;
-            _password = password;
-            _timeout = timeout;
-            _serviceDescription = "";
-            _shipperNumber = "";
-            LoadServiceCodes();
         }
 
-        public UPSProvider(string licenseNumber, string userId, string password, string serviceDescription)
+        public UPSProvider(string licenseNumber, string userId, string password, string serviceDescription) :
+            this(licenseNumber, userId, password, DEFAULT_TIMEOUT, serviceDescription)
         {
-            Name = "UPS";
-            _licenseNumber = licenseNumber;
-            _userId = userId;
-            _password = password;
-            _timeout = DEFAULT_TIMEOUT;
-            _serviceDescription = serviceDescription;
-            _shipperNumber = "";
-            LoadServiceCodes();
         }
 
-        public UPSProvider(string licenseNumber, string userId, string password, int timeout, string serviceDescription)
+        public UPSProvider(string licenseNumber, string userId, string password, int timeout, string serviceDescription) :
+            this(licenseNumber, userId, password, timeout, serviceDescription, "")
         {
-            Name = "UPS";
-            _licenseNumber = licenseNumber;
-            _userId = userId;
-            _password = password;
-            _timeout = timeout;
-            _serviceDescription = serviceDescription;
-            _shipperNumber = "";
-            LoadServiceCodes();
         }
 
         public UPSProvider(string licenseNumber, string userId, string password, int timeout, string serviceDescription, string shipperNumber)

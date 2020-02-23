@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -84,13 +82,6 @@ namespace ShippingRates.ShippingProviders
             {"Priority Mail Express {0} Padded Flat Rate Envelope Hold For Pickup","Priority Mail Express {0} Padded Flat Rate Envelope Hold For Pickup"},
             {"Priority Mail Express {0} Sunday/Holiday Delivery Padded Flat Rate Envelope","Priority Mail Express {0} Sunday/Holiday Delivery Padded Flat Rate Envelope"}
         };
-
-        public USPSProvider()
-        {
-            Name = "USPS";
-            _userId = ConfigurationManager.AppSettings["USPSUserId"];
-            _service = "ALL";
-        }
 
         /// <summary>
         /// </summary>

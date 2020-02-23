@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
-using System.Web.Services.Protocols;
 
 using ShippingRates.Helpers.Extensions;
 using ShippingRates.RateServiceWebReference;
@@ -14,16 +12,7 @@ namespace ShippingRates.ShippingProviders
     ///     Provides rates from FedEx (Federal Express) excluding SmartPost. Please use <see cref="FedExSmartPostProvider"/> for SmartPost rates.
     /// </summary>
     public class FedExProvider : FedExBaseProvider
-    {        
-        /// <summary>
-        ///     Paramaterless constructor that loads settings from app.config
-        /// </summary>
-        public FedExProvider()
-        {
-            var appSettings = ConfigurationManager.AppSettings;
-            Init(appSettings["FedExKey"], appSettings["FedExPassword"], appSettings["FedExAccountNumber"], appSettings["FedExMeterNumber"], true);
-        }
-
+    {
         /// <summary>
         /// </summary>
         /// <param name="key"></param>

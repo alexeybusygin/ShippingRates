@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -48,13 +46,6 @@ namespace ShippingRates.ShippingProviders
             {"Priority Mail Express International Flat Rate Boxes","Priority Mail Express International Flat Rate Boxes"},
             {"Priority Mail Express International Padded Flat Rate Envelope","Priority Mail Express International Padded Flat Rate Envelope"}
         };
-
-        public USPSInternationalProvider()
-        {
-            Name = "USPS";
-            _userId = ConfigurationManager.AppSettings["USPSUserId"];
-            _service = "ALL";
-        }
 
         /// <summary>
         /// </summary>
