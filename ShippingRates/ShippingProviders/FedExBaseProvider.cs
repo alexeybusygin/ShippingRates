@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Web.Services.Protocols;
 
 using ShippingRates.RateServiceWebReference;
 
@@ -26,42 +24,11 @@ namespace ShippingRates.ShippingProviders
         protected bool _allowInsuredValues = true;
 
         /// <summary>
-        ///     Paramaterless constructor that loads settings from app.config
-        /// </summary>
-        protected FedExBaseProvider()
-        {
-            var appSettings = ConfigurationManager.AppSettings;
-            Init(appSettings["FedExKey"], appSettings["FedExPassword"], appSettings["FedExAccountNumber"], appSettings["FedExMeterNumber"], true);
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="password"></param>
-        /// <param name="accountNumber"></param>
-        /// <param name="meterNumber"></param>
-        protected FedExBaseProvider(string key, string password, string accountNumber, string meterNumber)
-        {
-            Init(key, password, accountNumber, meterNumber, true);
-        }
-
-        private void Init(string key, string password, string accountNumber, string meterNumber, bool useProduction)
-        {
-            Name = "FedEx";
-
-            _key = key;
-            _password = password;
-            _accountNumber = accountNumber;
-            _meterNumber = meterNumber;
-            _useProduction = useProduction;
-        }
-
-		/// <summary>
         /// Sets service codes.
         /// </summary>
         protected abstract void SetServiceCodes();
-		
-		/// <summary>
+
+        /// <summary>
         /// Gets service codes.
         /// </summary>
         /// <returns></returns>
@@ -82,44 +49,48 @@ namespace ShippingRates.ShippingProviders
         protected RateRequest CreateRateRequest()
         {
             // Build the RateRequest
-            var request = new RateRequest();
-
-            request.WebAuthenticationDetail = new WebAuthenticationDetail();
-            request.WebAuthenticationDetail.UserCredential = new WebAuthenticationCredential();
-            request.WebAuthenticationDetail.UserCredential.Key = _key;
-            request.WebAuthenticationDetail.UserCredential.Password = _password;
-
-            request.ClientDetail = new ClientDetail();
-            request.ClientDetail.AccountNumber = _accountNumber;
-            request.ClientDetail.MeterNumber = _meterNumber;
-
-            request.Version = new VersionId();
-
-            request.ReturnTransitAndCommit = true;
-            request.ReturnTransitAndCommitSpecified = true;
+            var request = new RateRequest
+            {
+                WebAuthenticationDetail = new WebAuthenticationDetail
+                {
+                    UserCredential = new WebAuthenticationCredential
+                    {
+                        Key = _key,
+                        Password = _password
+                    }
+                },
+                ClientDetail = new ClientDetail
+                {
+                    AccountNumber = _accountNumber,
+                    MeterNumber = _meterNumber
+                },
+                Version = new VersionId(),
+                ReturnTransitAndCommit = true,
+                ReturnTransitAndCommitSpecified = true
+            };
 
             SetShipmentDetails(request);
 
             return request;
         }
 
-		/// <summary>
+        /// <summary>
         /// Sets shipment details
         /// </summary>
         /// <param name="request"></param>
         protected abstract void SetShipmentDetails(RateRequest request);
 
-		/// <summary>
+        /// <summary>
         /// Gets rates
         /// </summary>
         public override void GetRates()
         {
             var request = CreateRateRequest();
-            var service = new RateService(_useProduction);
+            var service = new RatePortTypeClient(_useProduction);
             try
             {
                 // Call the web service passing in a RateRequest and returning a RateReply
-                var reply = service.getRates(request);
+                var reply = service.getRatesAsync(request).Result.RateReply;
                 //
                 if (reply.HighestSeverity == NotificationSeverityType.SUCCESS || reply.HighestSeverity == NotificationSeverityType.NOTE || reply.HighestSeverity == NotificationSeverityType.WARNING)
                 {
@@ -128,17 +99,13 @@ namespace ShippingRates.ShippingProviders
                 ProcessErrors(reply);
                 ShowNotifications(reply);
             }
-            catch (SoapException e)
-            {
-                AddInternalError($"FedEx provider SoapException: {e.Detail.InnerText}");
-            }
             catch (Exception e)
             {
                 AddInternalError($"FedEx provider exception: {e.Message}");
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Processes the reply
         /// </summary>
         /// <param name="reply"></param>
@@ -168,35 +135,43 @@ namespace ShippingRates.ShippingProviders
         /// <param name="request"></param>
         protected void SetDestination(RateRequest request)
         {
-            request.RequestedShipment.Recipient = new Party();
-            request.RequestedShipment.Recipient.Address = new RateServiceWebReference.Address();
-            request.RequestedShipment.Recipient.Address.StreetLines = new string[1] { "" };
-            request.RequestedShipment.Recipient.Address.City = "";
-            request.RequestedShipment.Recipient.Address.StateOrProvinceCode = "";
-            request.RequestedShipment.Recipient.Address.PostalCode = Shipment.DestinationAddress.PostalCode;
-            request.RequestedShipment.Recipient.Address.CountryCode = Shipment.DestinationAddress.CountryCode;
-            request.RequestedShipment.Recipient.Address.Residential = Shipment.DestinationAddress.IsResidential;
-            request.RequestedShipment.Recipient.Address.ResidentialSpecified = Shipment.DestinationAddress.IsResidential;
+            request.RequestedShipment.Recipient = new Party
+            {
+                Address = new RateServiceWebReference.Address
+                {
+                    StreetLines = new string[1] { "" },
+                    City = "",
+                    StateOrProvinceCode = "",
+                    PostalCode = Shipment.DestinationAddress.PostalCode,
+                    CountryCode = Shipment.DestinationAddress.CountryCode,
+                    Residential = Shipment.DestinationAddress.IsResidential,
+                    ResidentialSpecified = Shipment.DestinationAddress.IsResidential
+                }
+            };
         }
 
-		/// <summary>
+        /// <summary>
         /// Sets the origin
         /// </summary>
         /// <param name="request"></param>
         protected void SetOrigin(RateRequest request)
         {
-            request.RequestedShipment.Shipper = new Party();
-            request.RequestedShipment.Shipper.Address = new RateServiceWebReference.Address();
-            request.RequestedShipment.Shipper.Address.StreetLines = new string[1] { "" };
-            request.RequestedShipment.Shipper.Address.City = "";
-            request.RequestedShipment.Shipper.Address.StateOrProvinceCode = "";
-            request.RequestedShipment.Shipper.Address.PostalCode = Shipment.OriginAddress.PostalCode;
-            request.RequestedShipment.Shipper.Address.CountryCode = Shipment.OriginAddress.CountryCode;
-            request.RequestedShipment.Shipper.Address.Residential = Shipment.OriginAddress.IsResidential;
-            request.RequestedShipment.Shipper.Address.ResidentialSpecified = Shipment.OriginAddress.IsResidential;
+            request.RequestedShipment.Shipper = new Party
+            {
+                Address = new RateServiceWebReference.Address
+                {
+                    StreetLines = new string[1] { "" },
+                    City = "",
+                    StateOrProvinceCode = "",
+                    PostalCode = Shipment.OriginAddress.PostalCode,
+                    CountryCode = Shipment.OriginAddress.CountryCode,
+                    Residential = Shipment.OriginAddress.IsResidential,
+                    ResidentialSpecified = Shipment.OriginAddress.IsResidential
+                }
+            };
         }
 
-		/// <summary>
+        /// <summary>
         /// Sets package line items
         /// </summary>
         /// <param name="request"></param>
