@@ -14,11 +14,6 @@ assembly_info:
   assembly_file_version: "{version}"
   assembly_informational_version: "{version}"
 
-# Automatically register private account and/or project AppVeyor NuGet feeds.
-nuget:
-  account_feed: true
-  project_feed: true
-
 # build configuration
 build:
   project: ShippingRates.sln    # path to Visual Studio solution or project
