@@ -5,7 +5,6 @@
     <Authors>Alexey Busygin, Kyle West</Authors>
     <Description>.NET wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers.</Description>
     <Copyright>Copyright © 2020 Alexey Busygin, Kyle West</Copyright>
-    <Version>0.9.7</Version>
   </PropertyGroup>
 
   <ItemGroup>
