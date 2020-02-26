@@ -6,9 +6,9 @@ using ShippingRates.ShippingProviders;
 
 namespace ShippingRates.SampleApp
 {
-    internal class Program
+    class Program
     {
-        private static void Main()
+        static void Main()
         {
             var appSettings = ConfigurationManager.AppSettings;
 
