@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Alexey Busygin, Kyle West</Authors>
-    <Description>.NET wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers.</Description>
+    <Description>Wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers. .NET Standard 2.0 (.NET Core 2.0+, .NET Framework 4.6.1+)</Description>
     <Copyright>Copyright © 2020 Alexey Busygin, Kyle West</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/alexeybusygin/ShippingRates</PackageProjectUrl>
