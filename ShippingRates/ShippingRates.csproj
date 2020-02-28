@@ -3,20 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Alexey Busygin, Kyle West</Authors>
-    <Description>Wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers. .NET Standard 2.0 (.NET Core 2.0+, .NET Framework 4.6.1+)</Description>
+    <Description>.NET Standard 2.0 wrapper for UPS, FedEx, and USPS shipping rates APIs. Works with .NET Core 2.0+ and .NET Framework 4.6.1+</Description>
     <Copyright>Copyright © 2020 Alexey Busygin, Kyle West</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/alexeybusygin/ShippingRates</PackageProjectUrl>
-    <PackageTags>ups fedex usps shipping rates</PackageTags>
+    <PackageTags>ups fedex usps shipping rates .net .net-standard .net-core</PackageTags>
     <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.*" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.4.*" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.*" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.7.0" />
-    <PackageReference Include="System.ServiceModel.Security" Version="4.4.*" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.1.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup>
