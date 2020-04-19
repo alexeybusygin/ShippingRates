@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -50,60 +50,24 @@ namespace ShippingRates.ShippingProviders
         private readonly int _timeout;
         private readonly string _userId;
 
-        /// <summary>
-        ///     Parameterless construction that pulls data directly from app.config
-        /// </summary>
-        public UPSProvider()
-        {
-            Name = "UPS";
-            var appSettings = ConfigurationManager.AppSettings;
-            _licenseNumber = appSettings["UPSLicenseNumber"];
-            _userId = appSettings["UPSUserId"];
-            _password = appSettings["UPSPassword"];
-            _timeout = DEFAULT_TIMEOUT;
-            _serviceDescription = "";
-            LoadServiceCodes();
-            _shipperNumber = "";
-        }
-
-        public UPSProvider(string licenseNumber, string userId, string password) : this(licenseNumber, userId, password, DEFAULT_TIMEOUT)
+        public UPSProvider(string licenseNumber, string userId, string password) :
+            this(licenseNumber, userId, password, DEFAULT_TIMEOUT)
         {
         }
 
-        public UPSProvider(string licenseNumber, string userId, string password, int timeout)
+        public UPSProvider(string licenseNumber, string userId, string password, int timeout) :
+            this(licenseNumber, userId, password, timeout, "")
         {
-            Name = "UPS";
-            _licenseNumber = licenseNumber;
-            _userId = userId;
-            _password = password;
-            _timeout = timeout;
-            _serviceDescription = "";
-            _shipperNumber = "";
-            LoadServiceCodes();
         }
 
-        public UPSProvider(string licenseNumber, string userId, string password, string serviceDescription)
+        public UPSProvider(string licenseNumber, string userId, string password, string serviceDescription) :
+            this(licenseNumber, userId, password, DEFAULT_TIMEOUT, serviceDescription)
         {
-            Name = "UPS";
-            _licenseNumber = licenseNumber;
-            _userId = userId;
-            _password = password;
-            _timeout = DEFAULT_TIMEOUT;
-            _serviceDescription = serviceDescription;
-            _shipperNumber = "";
-            LoadServiceCodes();
         }
 
-        public UPSProvider(string licenseNumber, string userId, string password, int timeout, string serviceDescription)
+        public UPSProvider(string licenseNumber, string userId, string password, int timeout, string serviceDescription) :
+            this(licenseNumber, userId, password, timeout, serviceDescription, "")
         {
-            Name = "UPS";
-            _licenseNumber = licenseNumber;
-            _userId = userId;
-            _password = password;
-            _timeout = timeout;
-            _serviceDescription = serviceDescription;
-            _shipperNumber = "";
-            LoadServiceCodes();
         }
 
         public UPSProvider(string licenseNumber, string userId, string password, int timeout, string serviceDescription, string shipperNumber)
@@ -261,7 +225,7 @@ namespace ShippingRates.ShippingProviders
             return buffer;
         }
 
-        public override void GetRates()
+        public override async Task GetRates()
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
@@ -275,17 +239,14 @@ namespace ShippingRates.ShippingProviders
             var bytes = BuildRatesRequestMessage();
             //System.Text.Encoding.Convert(Encoding.UTF8, Encoding.ASCII, this.buildRatesRequestMessage());
             request.ContentLength = bytes.Length;
-            var stream = request.GetRequestStream();
+            var stream = await request.GetRequestStreamAsync();
             stream.Write(bytes, 0, bytes.Length);
             stream.Close();
 
-            using (var resp = request.GetResponse() as HttpWebResponse)
+            if (request.GetResponse() is HttpWebResponse resp && resp.StatusCode == HttpStatusCode.OK)
             {
-                if (resp != null && resp.StatusCode == HttpStatusCode.OK)
-                {
-                    var xDoc = XDocument.Load(resp.GetResponseStream());
-                    ParseRatesResponseMessage(xDoc);
-                }
+                var xDoc = XDocument.Load(resp.GetResponseStream());
+                ParseRatesResponseMessage(xDoc);
             }
         }
 

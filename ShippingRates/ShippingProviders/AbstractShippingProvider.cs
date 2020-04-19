@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ShippingRates.ShippingProviders
 {
@@ -9,7 +10,7 @@ namespace ShippingRates.ShippingProviders
     /// </summary>
     public abstract class AbstractShippingProvider : IShippingProvider
     {
-        public virtual void GetRates()
+        public virtual async Task GetRates()
         {
         }
 
@@ -18,12 +19,18 @@ namespace ShippingRates.ShippingProviders
 
         protected void AddError(Error error)
         {
-            Shipment.Errors.Add(error);
+            lock (Shipment)
+            {
+                Shipment.Errors.Add(error);
+            }
         }
 
         protected void AddInternalError(string error)
         {
-            Shipment.InternalErrors.Add(error);
+            lock (Shipment)
+            {
+                Shipment.InternalErrors.Add(error);
+            }
         }
 
         protected void AddRate(string providerCode, string name, decimal totalCharges, DateTime delivery)
@@ -33,11 +40,14 @@ namespace ShippingRates.ShippingProviders
 
         protected void AddRate(Rate rate)
         {
-            if (Shipment.RateAdjusters != null)
+            lock (Shipment)
             {
-                rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
+                if (Shipment.RateAdjusters != null)
+                {
+                    rate = Shipment.RateAdjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current));
+                }
+                Shipment.Rates.Add(rate);
             }
-            Shipment.Rates.Add(rate);
         }
     }
 }

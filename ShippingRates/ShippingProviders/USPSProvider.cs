@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -14,7 +13,7 @@ namespace ShippingRates.ShippingProviders
 {
     /// <summary>
     /// </summary>
-    public class USPSProvider : AbstractShippingProvider
+    public class USPSProvider : USPSBaseProvider
     {
         private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
         private const string REMOVE_FROM_RATE_NAME = "&lt;sup&gt;&amp;reg;&lt;/sup&gt;";
@@ -85,13 +84,6 @@ namespace ShippingRates.ShippingProviders
             {"Priority Mail Express {0} Sunday/Holiday Delivery Padded Flat Rate Envelope","Priority Mail Express {0} Sunday/Holiday Delivery Padded Flat Rate Envelope"}
         };
 
-        public USPSProvider()
-        {
-            Name = "USPS";
-            _userId = ConfigurationManager.AppSettings["USPSUserId"];
-            _service = "ALL";
-        }
-
         /// <summary>
         /// </summary>
         /// <param name="userId"></param>
@@ -150,12 +142,12 @@ namespace ShippingRates.ShippingProviders
             return null;
         }
 
-        public override void GetRates()
+        public override async Task GetRates()
         {
-            GetRates(false);
+            await GetRates(false);
         }
 
-        public void GetRates(bool baseRatesOnly)
+        public async Task GetRates(bool baseRatesOnly)
         {
             // USPS only available for domestic addresses. International is a different API.
             if (!IsDomesticUSPSAvailable())
@@ -166,11 +158,12 @@ namespace ShippingRates.ShippingProviders
             var sb = new StringBuilder();
             var signatureOnDeliveryRequired = false;
 
-            var settings = new XmlWriterSettings();
-
-            settings.Indent = false;
-            settings.OmitXmlDeclaration = true;
-            settings.NewLineHandling = NewLineHandling.None;
+            var settings = new XmlWriterSettings
+            {
+                Indent = false,
+                OmitXmlDeclaration = true,
+                NewLineHandling = NewLineHandling.None
+            };
 
             using (var writer = XmlWriter.Create(sb, settings))
             {
@@ -237,7 +230,7 @@ namespace ShippingRates.ShippingProviders
             {
                 var url = string.Concat(PRODUCTION_URL, "?API=RateV4&XML=", sb.ToString());
                 var webClient = new WebClient();
-                var response = webClient.DownloadString(url);
+                var response = webClient.DownloadString(new System.Uri(url));
                 var specialServiceCodes = new List<String>();
 
                 if (signatureOnDeliveryRequired)
@@ -317,24 +310,7 @@ namespace ShippingRates.ShippingProviders
             }
 
             //check for errors
-            if (document.Descendants("Error").Any())
-            {
-                var errors = from item in document.Descendants("Error")
-                    select
-                        new Error
-                        {
-                            Description = item.Element("Description").ToString(),
-                            Source = item.Element("Source").ToString(),
-                            HelpContext = item.Element("HelpContext").ToString(),
-                            HelpFile = item.Element("HelpFile").ToString(),
-                            Number = item.Element("Number").ToString()
-                        };
-
-                foreach (var err in errors)
-                {
-                    AddError(err);
-                }
-            }
+            ParseErrors(document);
         }
     }
 }

@@ -1,30 +1,15 @@
 ﻿namespace ShippingRates.RateServiceWebReference
 {
-    public partial class RateService
+    public partial class RatePortTypeClient
     {
         /// <summary>
         /// </summary>
         /// <param name="production"></param>
-        public RateService(bool production)
+        public RatePortTypeClient(bool production) :
+            this(GetDefaultBinding(), new System.ServiceModel.EndpointAddress(production
+                ? "https://ws.fedex.com:443/web-services/rate"
+                : "https://wsbeta.fedex.com:443/web-services/rate"))
         {
-            if (production)
-            {
-                Url = "https://ws.fedex.com:443/web-services/rate";
-            }
-            else
-            {
-                Url = "https://wsbeta.fedex.com:443/web-services";
-            }
-
-            if (IsLocalFileSystemWebService(Url))
-            {
-                UseDefaultCredentials = true;
-                useDefaultCredentialsSetExplicitly = false;
-            }
-            else
-            {
-                useDefaultCredentialsSetExplicitly = true;
-            }
         }
     }
 }

@@ -1,0 +1,18 @@
+﻿{
+  "ProviderId": "Microsoft.VisualStudio.ConnectedService.Wcf",
+  "Version": "15.0.31022.994",
+  "ExtendedData": {
+    "inputs": [
+      "../../../../FedEx.v26/RateServiceDefinitions.wsdl"
+    ],
+    "collectionTypes": [
+      "System.Array",
+      "System.Collections.Generic.Dictionary`2"
+    ],
+    "namespaceMappings": [
+      "*, ShippingRates.RateServiceWebReference"
+    ],
+    "targetFramework": "netstandard2.0",
+    "typeReuseMode": "All"
+  }
+}

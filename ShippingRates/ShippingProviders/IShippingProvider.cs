@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace ShippingRates.ShippingProviders
 {
     /// <summary>
@@ -17,6 +19,6 @@ namespace ShippingRates.ShippingProviders
         /// <summary>
         ///     Retrieves rates from the provider.
         /// </summary>
-        void GetRates();
+        Task GetRates();
     }
 }

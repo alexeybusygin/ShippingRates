@@ -4,12 +4,12 @@
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("DotNetShipping")]
+[assembly: AssemblyTitle("SampleApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Kyle West")]
-[assembly: AssemblyProduct("DotNetShipping")]
-[assembly: AssemblyCopyright("Copyright © 2012")]
+[assembly: AssemblyCompany("Alexey Busygin, Kyle West")]
+[assembly: AssemblyProduct("ShippingRates")]
+[assembly: AssemblyCopyright("Copyright © 2020 Alexey Busygin, Kyle West")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

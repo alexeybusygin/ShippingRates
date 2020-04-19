@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShippingRates", "ShippingRates\ShippingRates.csproj", "{0CAC6D52-FFA9-4350-8E36-A22A2A4A8B88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShippingRates", "ShippingRates\ShippingRates.csproj", "{0CAC6D52-FFA9-4350-8E36-A22A2A4A8B88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShippingRates.Tests", "ShippingRates.Tests\ShippingRates.Tests.csproj", "{EC384B8A-DB3C-4225-8E79-C0FA4CDF3D05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShippingRates.Tests", "ShippingRates.Tests\ShippingRates.Tests.csproj", "{EC384B8A-DB3C-4225-8E79-C0FA4CDF3D05}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApp", "SampleApp\SampleApp.csproj", "{D83C0AAE-DAC9-4879-85A4-5CA556587208}"
 EndProject
