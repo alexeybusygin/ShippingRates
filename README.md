@@ -52,7 +52,7 @@ rateManager.AddProvider(new USPSProvider(uspsUserId));
 rateManager.AddRateAdjuster(new PercentageRateAdjuster(.9M));
 
 // Call GetRates()
-Shipment shipment = rateManager.GetRates(origin, destination, packages);
+Shipment shipment = await rateManager.GetRatesAsync(origin, destination, packages);
 
 // Iterate through the rates returned
 foreach (Rate rate in shipment.Rates)
