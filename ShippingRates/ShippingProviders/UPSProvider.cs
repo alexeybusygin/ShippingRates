@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -224,7 +225,7 @@ namespace ShippingRates.ShippingProviders
             return buffer;
         }
 
-        public override void GetRates()
+        public override async Task GetRates()
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
@@ -238,17 +239,14 @@ namespace ShippingRates.ShippingProviders
             var bytes = BuildRatesRequestMessage();
             //System.Text.Encoding.Convert(Encoding.UTF8, Encoding.ASCII, this.buildRatesRequestMessage());
             request.ContentLength = bytes.Length;
-            var stream = request.GetRequestStream();
+            var stream = await request.GetRequestStreamAsync();
             stream.Write(bytes, 0, bytes.Length);
             stream.Close();
 
-            using (var resp = request.GetResponse() as HttpWebResponse)
+            if (request.GetResponse() is HttpWebResponse resp && resp.StatusCode == HttpStatusCode.OK)
             {
-                if (resp != null && resp.StatusCode == HttpStatusCode.OK)
-                {
-                    var xDoc = XDocument.Load(resp.GetResponseStream());
-                    ParseRatesResponseMessage(xDoc);
-                }
+                var xDoc = XDocument.Load(resp.GetResponseStream());
+                ParseRatesResponseMessage(xDoc);
             }
         }
 

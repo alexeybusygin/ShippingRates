@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -12,7 +13,7 @@ namespace ShippingRates.ShippingProviders
 {
     /// <summary>
     /// </summary>
-    public class USPSInternationalProvider : AbstractShippingProvider
+    public class USPSInternationalProvider : USPSBaseProvider
     {
         private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
         private readonly string _service;
@@ -91,7 +92,7 @@ namespace ShippingRates.ShippingProviders
             return null;
         }
 
-        public override void GetRates()
+        public override async Task GetRates()
         {
             var sb = new StringBuilder();
 
@@ -200,24 +201,7 @@ namespace ShippingRates.ShippingProviders
             }
 
             //check for errors
-            if (document.Descendants("Error").Any())
-            {
-                var errors = from item in document.Descendants("Error")
-                    select
-                        new Error
-                        {
-                            Description = item.Element("Description").ToString(),
-                            Source = item.Element("Source").ToString(),
-                            HelpContext = item.Element("HelpContext").ToString(),
-                            HelpFile = item.Element("HelpFile").ToString(),
-                            Number = item.Element("Number").ToString()
-                        };
-
-                foreach (var err in errors)
-                {
-                    AddError(err);
-                }
-            }
+            ParseErrors(document.Root);
         }
     }
 }

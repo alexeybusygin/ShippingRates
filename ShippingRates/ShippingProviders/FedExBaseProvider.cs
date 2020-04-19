@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using ShippingRates.RateServiceWebReference;
 
@@ -83,21 +84,23 @@ namespace ShippingRates.ShippingProviders
         /// <summary>
         /// Gets rates
         /// </summary>
-        public override void GetRates()
+        public override async Task GetRates()
         {
             var request = CreateRateRequest();
             var service = new RatePortTypeClient(_useProduction);
             try
             {
                 // Call the web service passing in a RateRequest and returning a RateReply
-                var reply = service.getRatesAsync(request).Result.RateReply;
+                var reply = await service.getRatesAsync(request);
                 //
-                if (reply.HighestSeverity == NotificationSeverityType.SUCCESS || reply.HighestSeverity == NotificationSeverityType.NOTE || reply.HighestSeverity == NotificationSeverityType.WARNING)
+                if (reply.RateReply.HighestSeverity == NotificationSeverityType.SUCCESS ||
+                    reply.RateReply.HighestSeverity == NotificationSeverityType.NOTE ||
+                    reply.RateReply.HighestSeverity == NotificationSeverityType.WARNING)
                 {
-                    ProcessReply(reply);
+                    ProcessReply(reply.RateReply);
                 }
-                ProcessErrors(reply);
-                ShowNotifications(reply);
+                ProcessErrors(reply.RateReply);
+                ShowNotifications(reply.RateReply);
             }
             catch (Exception e)
             {
@@ -210,10 +213,12 @@ namespace ShippingRates.ShippingProviders
                 if (_allowInsuredValues)
                 {
                     // package insured value
-                    request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue = new Money();
-                    request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue.Amount = package.InsuredValue;
-                    request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue.AmountSpecified = true;
-                    request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue.Currency = "USD";
+                    request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue = new Money
+                    {
+                        Amount = package.InsuredValue,
+                        AmountSpecified = true,
+                        Currency = "USD"
+                    };
                 }
 
                 if (package.SignatureRequiredOnDelivery)
