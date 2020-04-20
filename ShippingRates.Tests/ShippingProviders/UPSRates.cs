@@ -4,8 +4,6 @@ using System.Linq;
 
 using ShippingRates.ShippingProviders;
 
-using Xunit;
-
 namespace ShippingRates.Tests.Features
 {
     /*public class UPSRates

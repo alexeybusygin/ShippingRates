@@ -1,14 +1,15 @@
+using NUnit;
+using NUnit.Framework;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 
 using ShippingRates.ShippingProviders;
 
-using Xunit;
-
-namespace ShippingRates.Tests.Features
+namespace ShippingRates.Tests.ShippingProviders
 {
-    /*public class USPSDomesticRates
+    [TestFixture]
+    public class USPSProviderTests
     {
         private Package Package2;
         private readonly Address DomesticAddress1;
@@ -18,7 +19,12 @@ namespace ShippingRates.Tests.Features
         private readonly Package Package1SignatureRequired;
         private readonly string USPSUserId;
 
-        public USPSDomesticRates()
+        [SetUp]
+        public void Init()
+        {
+        }
+
+        public USPSProviderTests()
         {
             DomesticAddress1 = new Address("278 Buckley Jones Road", "", "", "Cleveland", "MS", "38732", "US");
             DomesticAddress2 = new Address("One Microsoft Way", "", "", "Redmond", "WA", "98052", "US");
@@ -28,10 +34,11 @@ namespace ShippingRates.Tests.Features
             Package1SignatureRequired = new Package(4, 4, 4, 5, 0, null, true);
             Package2 = new Package(6, 6, 6, 5, 100);
 
-            USPSUserId = ConfigurationManager.AppSettings["USPSUserId"];
+            USPSUserId = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory)
+                .USPSUserId;
         }
 
-        [Fact]
+        [Test]
         public void USPS_Domestic_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services()
         {
             var rateManager = new RateManager();
@@ -42,8 +49,9 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.Errors);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.IsEmpty(response.Errors);
+            Assert.IsEmpty(response.InternalErrors);
 
             foreach (var rate in response.Rates)
             {
@@ -54,6 +62,7 @@ namespace ShippingRates.Tests.Features
             }
         }
 
+        /*
         [Fact]
         public void USPS_Domestic_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services_And_Multiple_Packages()
         {
@@ -129,7 +138,7 @@ namespace ShippingRates.Tests.Features
         [Fact]
         public void CanGetUspsServiceCodes()
         {
-            var provider = new USPSProvider();
+            var provider = new USPSProvider(USPSUserId);
             var serviceCodes = provider.GetServiceCodes();
 
             Assert.NotNull(serviceCodes);
@@ -169,6 +178,6 @@ namespace ShippingRates.Tests.Features
                     Assert.NotEqual(signatureTotalCharges, nonSignatureTotalCharges);
                 }
             }
-        }
-    }*/
+        }*/
+    }
 }

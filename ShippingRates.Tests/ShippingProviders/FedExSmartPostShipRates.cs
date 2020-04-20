@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
 
-using Xunit;
-
 namespace ShippingRates.Tests.Features
 {
     /*public abstract class FedExSmartPostShipRatesTestsBase : IDisposable
