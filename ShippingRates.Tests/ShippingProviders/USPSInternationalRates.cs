@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -5,9 +6,10 @@ using System.Linq;
 
 using ShippingRates.ShippingProviders;
 
-namespace ShippingRates.Tests.Features
+namespace ShippingRates.Tests.ShippingProviders
 {
-    /*public class USPSInternationalRates
+    [TestFixture]
+    public class USPSInternationalRates
     {
         private readonly Address _domesticAddress1;
         private readonly Address _domesticAddress2;
@@ -27,10 +29,11 @@ namespace ShippingRates.Tests.Features
             _package1 = new Package(14, 14, 14, 15, 0);
             _package2 = new Package(6, 6, 6, 5, 100);
 
-            _uspsUserId = ConfigurationManager.AppSettings["USPSUserId"];
+            _uspsUserId = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory)
+                .USPSUserId;
         }
 
-        [Fact]
+        [Test]
         public void USPS_Intl_Returns_Multiple_Rates_When_Using_Multiple_Packages_For_All_Services_And_Multiple_Packages()
         {
             var packages = new List<Package>();
@@ -45,8 +48,8 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.Errors);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.IsEmpty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -57,7 +60,7 @@ namespace ShippingRates.Tests.Features
             }
         }
 
-        [Fact]
+        [Test]
         public void USPS_Intl_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services()
         {
             var rateManager = new RateManager();
@@ -68,8 +71,8 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.Errors);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.IsEmpty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -80,7 +83,7 @@ namespace ShippingRates.Tests.Features
             }
         }
 
-        [Fact]
+        [Test]
         public void USPS_Intl_Returns_No_Rates_When_Using_Invalid_Addresses_For_All_Services()
         {
             var rateManager = new RateManager();
@@ -91,10 +94,10 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
             Assert.NotNull(response);
-            Assert.Empty(response.Rates);
+            Assert.IsEmpty(response.Rates);
         }
 
-        [Fact]
+        [Test]
         public void USPS_Intl_Returns_No_Rates_When_Using_Invalid_Addresses_For_Single_Service()
         {
             //can't rate intl with a domestic address
@@ -107,36 +110,36 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
             Assert.NotNull(response);
-            Assert.Empty(response.Rates);
+            Assert.IsEmpty(response.Rates);
         }
 
-        [Fact]
+        [Test]
         public void USPS_Intl_Returns_Single_Rate_When_Using_Valid_Addresses_For_Single_Service()
         {
             var rateManager = new RateManager();
             rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId, "Priority Mail International"));
 
-            var response = rateManager.GetRates(_domesticAddress1, _internationalAddress1, _package1);
+            var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, _package1);
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.Errors);
-            Assert.Equal(response.Rates.Count, 1);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.IsEmpty(response.Errors);
+            Assert.AreEqual(response.Rates.Count, 1);
             Assert.True(response.Rates.First().TotalCharges > 0);
 
             Debug.WriteLine(response.Rates.First().Name + ": " + response.Rates.First().TotalCharges);
         }
 
-        [Fact]
+        [Test]
         public void CanGetUspsInternationalServiceCodes()
         {
-            var provider = new USPSInternationalProvider();
+            var provider = new USPSInternationalProvider(_uspsUserId);
             var serviceCodes = provider.GetServiceCodes();
 
             Assert.NotNull(serviceCodes);
-            Assert.NotEmpty(serviceCodes);
+            Assert.IsNotEmpty(serviceCodes);
         }
-    }*/
+    }
 }
