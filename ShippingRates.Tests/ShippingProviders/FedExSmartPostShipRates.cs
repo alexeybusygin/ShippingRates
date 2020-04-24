@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -7,26 +8,27 @@ using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
 
-using Xunit;
-
-namespace ShippingRates.Tests.Features
+namespace ShippingRates.Tests.ShippingProviders
 {
-    /*public abstract class FedExSmartPostShipRatesTestsBase : IDisposable
+    public abstract class FedExSmartPostShipRatesTestsBase
     {
         protected readonly RateManager _rateManager;
+        protected readonly FedExSmartPostProvider _provider;
 
         protected FedExSmartPostShipRatesTestsBase()
         {
-            var appSettings = ConfigurationManager.AppSettings;
-            var fedexKey = appSettings["FedExKey"];
-            var fedexPassword = appSettings["FedExPassword"];
-            var fedexAccountNumber = appSettings["FedExAccountNumber"];
-            var fedexMeterNumber = appSettings["FedExMeterNumber"];
-            var fedexHubId = appSettings["FedExHubId"];
-            var fedexUseProduction = Convert.ToBoolean(appSettings["FedExUseProduction"]);
+            var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
 
+            var fedexKey = config.FedExKey;
+            var fedexPassword = config.FedExPassword;
+            var fedexAccountNumber = config.FedExAccountNumber;
+            var fedexMeterNumber = config.FedExMeterNumber;
+            var fedexHubId = config.FedExHubId;
+            var fedexUseProduction = config.FedExUseProduction;
+
+            _provider = new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction);
             _rateManager = new RateManager();
-            _rateManager.AddProvider(new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction));
+            _rateManager.AddProvider(_provider);
         }
 
         public void Dispose()
@@ -35,9 +37,11 @@ namespace ShippingRates.Tests.Features
         }
     }
 
+    [TestFixture]
     public class FedExSmartPostShipRates : FedExSmartPostShipRatesTestsBase
     {
-        [Fact]
+        /*
+        [Test]
         public void FedExSmartPostReturnsRates()
         {
             var from = new Address("Annapolis", "MD", "21401", "US");
@@ -53,18 +57,18 @@ namespace ShippingRates.Tests.Features
             foreach (var rate in fedExRates)
             {
                 Assert.True(rate.TotalCharges > 0);
-                Assert.Equal(rate.ProviderCode, "SMART_POST");
+                Assert.AreEqual(rate.ProviderCode, "SMART_POST");
             }
         }
+        */
 
-        [Fact]
+        [Test]
         public void CanGetFedExServiceCodes()
         {
-            var provider = new FedExProvider();
-            var serviceCodes = provider.GetServiceCodes();
+            var serviceCodes = _provider.GetServiceCodes();
 
             Assert.NotNull(serviceCodes);
-            Assert.NotEmpty(serviceCodes);
+            Assert.IsNotEmpty(serviceCodes);
         }
-    }*/
+    }
 }

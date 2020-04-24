@@ -1,39 +1,37 @@
-﻿using System;
-using System.Configuration;
+﻿using NUnit.Framework;
+using System;
 using System.Linq;
 
 using ShippingRates.ShippingProviders;
 
-using Xunit;
-
-namespace ShippingRates.Tests.Features
+namespace ShippingRates.Tests.ShippingProviders
 {
-    /*public abstract class FedExShipRatesTestsBase : IDisposable
+    public abstract class FedExShipRatesTestsBase
     {
         protected readonly RateManager _rateManager;
+        protected readonly FedExProvider _provider;
 
         protected FedExShipRatesTestsBase()
         {
-            var appSettings = ConfigurationManager.AppSettings;
-            var fedexKey = appSettings["FedExKey"];
-            var fedexPassword = appSettings["FedExPassword"];
-            var fedexAccountNumber = appSettings["FedExAccountNumber"];
-            var fedexMeterNumber = appSettings["FedExMeterNumber"];
-            var fedexUseProduction = Convert.ToBoolean(appSettings["FedExUseProduction"]);
+            var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
+
+            var fedexKey = config.FedExKey;
+            var fedexPassword = config.FedExPassword;
+            var fedexAccountNumber = config.FedExAccountNumber;
+            var fedexMeterNumber = config.FedExMeterNumber;
+            var fedexUseProduction = config.FedExUseProduction;
+
+            _provider = new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction);
 
             _rateManager = new RateManager();
-            _rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction));
-        }
-
-        public void Dispose()
-        {
-            
+            _rateManager.AddProvider(_provider);
         }
     }
 
+    [TestFixture]
     public class FedExShipRates : FedExShipRatesTestsBase
     {
-        [Fact]
+        [Test]
         public void FedExReturnsRates()
         {
             var from = new Address("Annapolis", "MD", "21401", "US");
@@ -52,7 +50,11 @@ namespace ShippingRates.Tests.Features
             }
         }
 
-        [Fact]
+        /*
+         * According to docs (24.2.1): "Direct Signature Required is the default service and is
+         * provided at no additional cost."
+         * 
+        [Test]
         public void FedExReturnsDifferentRatesForSignatureOnDelivery()
         {
             var from = new Address("Annapolis", "MD", "21401", "US");
@@ -93,19 +95,18 @@ namespace ShippingRates.Tests.Features
                 {
                     var signatureTotalCharges = signatureRate.TotalCharges;
                     var nonSignatureTotalCharges = nonSignatureRate.TotalCharges;
-                    Assert.NotEqual(signatureTotalCharges, nonSignatureTotalCharges);
+                    Assert.AreNotEqual(signatureTotalCharges, nonSignatureTotalCharges);
                 }
             }
-        }
+        }*/
 
-        [Fact]
+        [Test]
         public void CanGetFedExServiceCodes()
         {
-            var provider = new FedExProvider();
-            var serviceCodes = provider.GetServiceCodes();
+            var serviceCodes = _provider.GetServiceCodes();
 
             Assert.NotNull(serviceCodes);
-            Assert.NotEmpty(serviceCodes);
+            Assert.IsNotEmpty(serviceCodes);
         }
-    }*/
+    }
 }

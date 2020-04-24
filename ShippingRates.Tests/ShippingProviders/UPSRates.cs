@@ -1,14 +1,13 @@
-using System.Configuration;
+using NUnit.Framework;
 using System.Diagnostics;
 using System.Linq;
 
 using ShippingRates.ShippingProviders;
 
-using Xunit;
-
-namespace ShippingRates.Tests.Features
+namespace ShippingRates.Tests.ShippingProviders
 {
-    /*public class UPSRates
+    [TestFixture]
+    public class UPSRates
     {
         private Address InternationalAddress2;
         private Package Package2;
@@ -32,12 +31,14 @@ namespace ShippingRates.Tests.Features
             Package2 = new Package(6, 6, 6, 5, 100);
             Package1SignatureRequired = new Package(4, 4, 4, 5, 0, null, true);
 
-            UPSUserId = ConfigurationManager.AppSettings["UPSUserId"];
-            UPSPassword = ConfigurationManager.AppSettings["UPSPassword"];
-            UPSLicenseNumber = ConfigurationManager.AppSettings["UPSLicenseNumber"];
+            var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
+
+            UPSUserId = config.UPSUserId;
+            UPSPassword = config.UPSPassword;
+            UPSLicenseNumber = config.UPSLicenseNumber;
         }
 
-        [Fact]
+        [Test]
         public void UPS_Domestic_Returns_Rates_When_Using_International_Addresses_For_Single_Service()
         {
             var rateManager = new RateManager();
@@ -48,8 +49,8 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.Errors);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.IsEmpty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -60,7 +61,7 @@ namespace ShippingRates.Tests.Features
             }
         }
 
-        [Fact]
+        [Test]
         public void UPS_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services()
         {
             var rateManager = new RateManager();
@@ -71,8 +72,8 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.Errors);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.IsEmpty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -83,7 +84,7 @@ namespace ShippingRates.Tests.Features
             }
         }
 
-        [Fact]
+        [Test]
         public void UPS_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services_And_Multple_Packages()
         {
             var rateManager = new RateManager();
@@ -94,8 +95,8 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.Errors);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.IsEmpty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -106,7 +107,7 @@ namespace ShippingRates.Tests.Features
             }
         }
 
-        [Fact]
+        [Test]
         public void UPS_Returns_Rates_When_Using_International_Origin_And_Destination_Addresses_For_All_Services()
         {
             var rateManager = new RateManager();
@@ -117,8 +118,8 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.Errors);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.IsEmpty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -129,7 +130,7 @@ namespace ShippingRates.Tests.Features
             }
         }
 
-        [Fact]
+        [Test]
         public void UPS_Returns_Rates_When_Using_International_Destination_Addresses_And_RetailRates_For_All_Services()
         {
             var rateManager = new RateManager();
@@ -143,8 +144,8 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.Errors);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.IsEmpty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -155,7 +156,7 @@ namespace ShippingRates.Tests.Features
             }
         }
 
-        [Fact]
+        [Test]
         public void UPS_Returns_Rates_When_Using_International_Destination_Addresses_For_All_Services()
         {
             var rateManager = new RateManager();
@@ -166,8 +167,8 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.Errors);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.IsEmpty(response.Errors);
 
             foreach (var rate in response.Rates)
             {
@@ -178,7 +179,7 @@ namespace ShippingRates.Tests.Features
             }
         }
 
-        [Fact]
+        [Test]
         public void UPS_Returns_Single_Rate_When_Using_Domestic_Addresses_For_Single_Service()
         {
             var rateManager = new RateManager();
@@ -189,25 +190,25 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response.Rates);
-            Assert.Empty(response.Errors);
-            Assert.Equal(response.Rates.Count, 1);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.IsEmpty(response.Errors);
+            Assert.AreEqual(response.Rates.Count, 1);
             Assert.True(response.Rates.First().TotalCharges > 0);
 
             Debug.WriteLine(response.Rates.First().Name + ": " + response.Rates.First().TotalCharges);
         }
 
-        [Fact]
+        [Test]
         public void CanGetUpsServiceCodes()
         {
-            var provider = new UPSProvider();
+            var provider = new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword);
             var serviceCodes = provider.GetServiceCodes();
 
             Assert.NotNull(serviceCodes);
-            Assert.NotEmpty(serviceCodes);
+            Assert.IsNotEmpty(serviceCodes);
         }
 
-        [Fact]
+        [Test]
         public void Can_Get_Different_Rates_For_Signature_Required_Lookup()
         {
             var rateManager = new RateManager();
@@ -219,17 +220,17 @@ namespace ShippingRates.Tests.Features
             Debug.WriteLine(string.Format("Rates returned: {0}", nonSignatureResponse.Rates.Any() ? nonSignatureResponse.Rates.Count.ToString() : "0"));
 
             Assert.NotNull(nonSignatureResponse);
-            Assert.NotEmpty(nonSignatureResponse.Rates);
-            Assert.Empty(nonSignatureResponse.Errors);
-            Assert.Equal(nonSignatureResponse.Rates.Count, 1);
+            Assert.IsNotEmpty(nonSignatureResponse.Rates);
+            Assert.IsEmpty(nonSignatureResponse.Errors);
+            Assert.AreEqual(nonSignatureResponse.Rates.Count, 1);
             Assert.True(nonSignatureResponse.Rates.First().TotalCharges > 0);
 
             Debug.WriteLine(string.Format("Rates returned: {0}", signatureResponse.Rates.Any() ? signatureResponse.Rates.Count.ToString() : "0"));
 
             Assert.NotNull(signatureResponse);
-            Assert.NotEmpty(signatureResponse.Rates);
-            Assert.Empty(signatureResponse.Errors);
-            Assert.Equal(signatureResponse.Rates.Count, 1);
+            Assert.IsNotEmpty(signatureResponse.Rates);
+            Assert.IsEmpty(signatureResponse.Errors);
+            Assert.AreEqual(signatureResponse.Rates.Count, 1);
             Assert.True(signatureResponse.Rates.First().TotalCharges > 0);
 
             // Now compare prices
@@ -241,9 +242,9 @@ namespace ShippingRates.Tests.Features
                 {
                     var signatureTotalCharges = signatureRate.TotalCharges;
                     var nonSignatureTotalCharges = nonSignatureRate.TotalCharges;
-                    Assert.NotEqual(signatureTotalCharges, nonSignatureTotalCharges);
+                    Assert.AreNotEqual(signatureTotalCharges, nonSignatureTotalCharges);
                 }
             }
         }
-    }*/
+    }
 }

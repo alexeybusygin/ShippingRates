@@ -178,25 +178,13 @@ namespace ShippingRates.ShippingProviders
 
             var rates = document.Descendants("Service").GroupBy(item => (string) item.Element("SvcDescription")).Select(g => new {Name = g.Key, TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Postage")))});
 
-            if (_service == "ALL")
+            foreach (var r in rates)
             {
-                foreach (var r in rates)
-                {
-                    var name = Regex.Replace(r.Name, "&lt.*gt;", "");
+                var name = Regex.Replace(r.Name, "&lt.*gt;", "");
 
+                if (_service == name || _service == "ALL")
+                {
                     AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
-                }
-            }
-            else
-            {
-                foreach (var r in rates)
-                {
-                    var name = Regex.Replace(r.Name, "&lt.*gt;", "");
-
-                    if (_service == name)
-                    {
-                        AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
-                    }
                 }
             }
 
