@@ -44,11 +44,11 @@ namespace ShippingRates
                 return string.Empty;
             }
             try
-            { 
+            {
                 var regionInfo = new RegionInfo(CountryCode);
                 return regionInfo.EnglishName;
             }
-            catch (ArgumentException e)
+            catch
             {
                 //causes the whole application to crash.
             }

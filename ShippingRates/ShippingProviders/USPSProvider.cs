@@ -230,8 +230,8 @@ namespace ShippingRates.ShippingProviders
             {
                 var url = string.Concat(PRODUCTION_URL, "?API=RateV4&XML=", sb.ToString());
                 var webClient = new WebClient();
-                var response = webClient.DownloadString(new System.Uri(url));
-                var specialServiceCodes = new List<String>();
+                var response = webClient.DownloadString(new Uri(url));
+                var specialServiceCodes = new List<string>();
 
                 if (signatureOnDeliveryRequired)
                     specialServiceCodes.Add("119");                                 // 119 represents Adult Signature Required
@@ -273,7 +273,7 @@ namespace ShippingRates.ShippingProviders
                 group item by (string) item.Element("MailService")
                 into g
                 select new {Name = g.Key,
-                            TotalCharges = g.Sum(x => Decimal.Parse((string) x.Element("Rate"))),
+                            TotalCharges = g.Sum(x => decimal.Parse((string) x.Element("Rate"))),
                             DeliveryDate = g.Select(x => (string) x.Element("CommitmentDate")).FirstOrDefault(),
                             SpecialServices = g.Select(x => x.Element("SpecialServices")).FirstOrDefault() };
 
@@ -291,7 +291,7 @@ namespace ShippingRates.ShippingProviders
                         foreach (var specialService in specialServices)
                         {
                             var serviceId = (string)specialService.Element("ServiceID");
-                            var price = Decimal.Parse((string) specialService.Element("Price"));
+                            var price = decimal.Parse((string) specialService.Element("Price"));
 
                             if (includeSpecialServiceCodes.Contains(serviceId.ToString()))
                                 additionalCharges += price;

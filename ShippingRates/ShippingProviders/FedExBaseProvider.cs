@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using ShippingRates.Helpers.Extensions;
 using ShippingRates.RateServiceWebReference;
 
 namespace ShippingRates.ShippingProviders
@@ -144,7 +144,7 @@ namespace ShippingRates.ShippingProviders
         {
             request.RequestedShipment.Recipient = new Party
             {
-                Address = GetFedExAddress(Shipment.DestinationAddress)
+                Address = Shipment.DestinationAddress.GetFedExAddress()
             };
         }
 
@@ -156,39 +156,8 @@ namespace ShippingRates.ShippingProviders
         {
             request.RequestedShipment.Shipper = new Party
             {
-                Address = GetFedExAddress(Shipment.OriginAddress)
+                Address = Shipment.OriginAddress.GetFedExAddress()
             };
-        }
-
-        private RateServiceWebReference.Address GetFedExAddress(Address address)
-        {
-            return new RateServiceWebReference.Address
-            {
-                StreetLines = GetStreetLines(address),
-                City = address.City?.Trim(),
-                StateOrProvinceCode = address.State?.Trim(),
-                PostalCode = address.PostalCode?.Trim(),
-                CountryCode = address.CountryCode?.Trim(),
-                Residential = address.IsResidential,
-                ResidentialSpecified = address.IsResidential,
-            };
-        }
-
-        /// <summary>
-        /// Get street lines array
-        /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
-        private string[] GetStreetLines(Address address)
-        {
-            var streetLines = new List<string>
-            {
-                address.Line1?.Trim(),
-                address.Line2?.Trim(),
-                address.Line3?.Trim()
-            };
-            streetLines = streetLines.Where(l => !string.IsNullOrEmpty(l)).ToList();
-            return streetLines.Any() ? streetLines.ToArray() : new string[] { "" };
         }
 
         /// <summary>
