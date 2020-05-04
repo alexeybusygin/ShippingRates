@@ -40,7 +40,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var r = _rateManager.GetRates(from, to, package);
             var fedExRates = r.Rates.ToList();
-            
+
             Assert.NotNull(r);
             Assert.True(fedExRates.Any());
 
@@ -49,6 +49,28 @@ namespace ShippingRates.Tests.ShippingProviders
                 Assert.True(rate.TotalCharges > 0);
             }
         }
+
+        [Test]
+        public void FedExReturnsErrors()
+        {
+            var from = new Address("Annapolis", "MD", "21401", "US");
+            var to = new Address("", "", "30404", "US");
+            var package = new Package(7, 7, 7, 6, 1);
+
+            var r = _rateManager.GetRates(from, to, package);
+            var fedExRates = r.Rates.ToList();
+
+            Assert.NotNull(r);
+            Assert.False(fedExRates.Any());
+            Assert.AreEqual(r.Errors.Count(), 1);
+
+            var error = r.Errors.FirstOrDefault();
+            Assert.NotNull(error);
+            Assert.AreEqual(error.Number, "521");
+            Assert.NotNull(error.Description);
+            Assert.AreEqual(error.Description.Substring(0, 42), "Destination postal code missing or invalid");
+        }
+
 
         /*
          * According to docs (24.2.1): "Direct Signature Required is the default service and is

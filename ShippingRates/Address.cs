@@ -10,9 +10,9 @@ namespace ShippingRates
         {
         }
 
-		public Address(string line1, string line2, string line3, string city, string state, string postalCode, string countryCode, bool isResidential = false)
-		{
-			Line1 = line1;
+        public Address(string line1, string line2, string line3, string city, string state, string postalCode, string countryCode, bool isResidential = false)
+        {
+            Line1 = line1;
             Line2 = line2;
             Line3 = line3;
             City = city;

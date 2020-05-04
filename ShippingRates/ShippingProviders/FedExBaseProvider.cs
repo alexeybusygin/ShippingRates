@@ -92,15 +92,16 @@ namespace ShippingRates.ShippingProviders
             {
                 // Call the web service passing in a RateRequest and returning a RateReply
                 var reply = await service.getRatesAsync(request);
-                //
-                if (reply.RateReply.HighestSeverity == NotificationSeverityType.SUCCESS ||
-                    reply.RateReply.HighestSeverity == NotificationSeverityType.NOTE ||
-                    reply.RateReply.HighestSeverity == NotificationSeverityType.WARNING)
+
+                if (reply.RateReply != null)
                 {
                     ProcessReply(reply.RateReply);
+                    ProcessErrors(reply.RateReply);
                 }
-                ProcessErrors(reply.RateReply);
-                ShowNotifications(reply.RateReply);
+                else
+                {
+                    AddInternalError($"FedEx provider: API returned NULL result");
+                }
             }
             catch (Exception e)
             {
@@ -114,6 +115,9 @@ namespace ShippingRates.ShippingProviders
         /// <param name="reply"></param>
         protected void ProcessReply(RateReply reply)
         {
+            if (reply.RateReplyDetails == null)
+                return;
+
             foreach (var rateReplyDetail in reply.RateReplyDetails)
             {
                 var netCharge = rateReplyDetail.RatedShipmentDetails.Max(x => x.ShipmentRateDetail.TotalNetCharge.Amount);
@@ -140,16 +144,7 @@ namespace ShippingRates.ShippingProviders
         {
             request.RequestedShipment.Recipient = new Party
             {
-                Address = new RateServiceWebReference.Address
-                {
-                    StreetLines = new string[1] { "" },
-                    City = "",
-                    StateOrProvinceCode = "",
-                    PostalCode = Shipment.DestinationAddress.PostalCode,
-                    CountryCode = Shipment.DestinationAddress.CountryCode,
-                    Residential = Shipment.DestinationAddress.IsResidential,
-                    ResidentialSpecified = Shipment.DestinationAddress.IsResidential
-                }
+                Address = GetFedExAddress(Shipment.DestinationAddress)
             };
         }
 
@@ -161,17 +156,39 @@ namespace ShippingRates.ShippingProviders
         {
             request.RequestedShipment.Shipper = new Party
             {
-                Address = new RateServiceWebReference.Address
-                {
-                    StreetLines = new string[1] { "" },
-                    City = "",
-                    StateOrProvinceCode = "",
-                    PostalCode = Shipment.OriginAddress.PostalCode,
-                    CountryCode = Shipment.OriginAddress.CountryCode,
-                    Residential = Shipment.OriginAddress.IsResidential,
-                    ResidentialSpecified = Shipment.OriginAddress.IsResidential
-                }
+                Address = GetFedExAddress(Shipment.OriginAddress)
             };
+        }
+
+        private RateServiceWebReference.Address GetFedExAddress(Address address)
+        {
+            return new RateServiceWebReference.Address
+            {
+                StreetLines = GetStreetLines(address),
+                City = address.City?.Trim(),
+                StateOrProvinceCode = address.State?.Trim(),
+                PostalCode = address.PostalCode?.Trim(),
+                CountryCode = address.CountryCode?.Trim(),
+                Residential = address.IsResidential,
+                ResidentialSpecified = address.IsResidential,
+            };
+        }
+
+        /// <summary>
+        /// Get street lines array
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        private string[] GetStreetLines(Address address)
+        {
+            var streetLines = new List<string>
+            {
+                address.Line1?.Trim(),
+                address.Line2?.Trim(),
+                address.Line3?.Trim()
+            };
+            streetLines = streetLines.Where(l => !string.IsNullOrEmpty(l)).ToList();
+            return streetLines.Any() ? streetLines.ToArray() : new string[] { "" };
         }
 
         /// <summary>
@@ -216,7 +233,7 @@ namespace ShippingRates.ShippingProviders
                     request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue = new Money
                     {
                         Amount = package.InsuredValue,
-                        AmountSpecified = true,
+                        AmountSpecified = package.InsuredValue > 0,
                         Currency = "USD"
                     };
                 }
@@ -233,24 +250,6 @@ namespace ShippingRates.ShippingProviders
             }
         }
 
-        /// <summary>
-        /// Outputs the notifications to the debug console
-        /// </summary>
-        /// <param name="reply"></param>
-        protected static void ShowNotifications(RateReply reply)
-        {
-            Debug.WriteLine("Notifications");
-            for (var i = 0; i < reply.Notifications.Length; i++)
-            {
-                var notification = reply.Notifications[i];
-                Debug.WriteLine("Notification no. {0}", i);
-                Debug.WriteLine(" Severity: {0}", notification.Severity);
-                Debug.WriteLine(" Code: {0}", notification.Code);
-                Debug.WriteLine(" Message: {0}", notification.Message);
-                Debug.WriteLine(" Source: {0}", notification.Source);
-            }
-        }
-
         private void ProcessErrors(RateReply reply)
         {
             var errorTypes = new NotificationSeverityType[]
@@ -259,10 +258,12 @@ namespace ShippingRates.ShippingProviders
                 NotificationSeverityType.FAILURE
             };
 
+            var noReplyDetails = reply.RateReplyDetails == null;
+
             if (reply.Notifications != null && reply.Notifications.Any())
             {
                 var errors = reply.Notifications
-                    .Where(e => !e.SeveritySpecified || errorTypes.Contains(e.Severity))
+                    .Where(e => !e.SeveritySpecified || errorTypes.Contains(e.Severity) || noReplyDetails)
                     .Select(error =>
                     new Error
                     {
