@@ -83,6 +83,10 @@ foreach (var error in shipment.InternalErrors)
 }
 ```
 
+#### FedEx and 556 There are no valid services available
+
+This one can be tricky to debug. Start with setting at least $1 insurance for your shipment. For some reason, FedEx would not report errors like wrong ZIP code for origin address if there is no insurance set.
+
 ## 3rd Party Docs
 
 Developer documentation is often hard to find. The links below are provided as reference.
