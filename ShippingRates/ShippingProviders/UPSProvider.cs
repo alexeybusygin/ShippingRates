@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -108,145 +109,145 @@ namespace ShippingRates.ShippingProviders
             set { _useProduction = value; }
         }
 
-        private byte[] BuildRatesRequestMessage()
+        private string BuildRatesRequestMessage()
         {
-            Encoding utf8 = new UTF8Encoding(false);
-            var writer = new XmlTextWriter(new MemoryStream(2000), utf8);
-            writer.WriteStartDocument();
-            writer.WriteStartElement("AccessRequest");
-            writer.WriteAttributeString("lang", "en-US");
-            writer.WriteElementString("AccessLicenseNumber", _licenseNumber);
-            writer.WriteElementString("UserId", _userId);
-            writer.WriteElementString("Password", _password);
-            writer.WriteEndDocument();
-            writer.WriteStartDocument();
-            writer.WriteStartElement("RatingServiceSelectionRequest");
-            writer.WriteAttributeString("lang", "en-US");
-            writer.WriteStartElement("Request");
-            writer.WriteStartElement("TransactionReference");
-            writer.WriteElementString("CustomerContext", "Rating and Service");
-            writer.WriteElementString("XpciVersion", "1.0");
-            writer.WriteEndElement(); // </TransactionReference>
-            writer.WriteElementString("RequestAction", "Rate");
-            writer.WriteElementString("RequestOption", string.IsNullOrWhiteSpace(_serviceDescription) ? "Shop" : _serviceDescription);
-            writer.WriteEndElement(); // </Request>
-            writer.WriteStartElement("PickupType");
-            writer.WriteElementString("Code", "03");
-            writer.WriteEndElement(); // </PickupType>
-            writer.WriteStartElement("CustomerClassification");
-
-            if (_useRetailRates)
+            using (var memoryStream = new MemoryStream())
             {
-                writer.WriteElementString("Code", "04"); //04 gets retail rates
-            }
-            else
-            {
-                writer.WriteElementString("Code", string.IsNullOrWhiteSpace(_shipperNumber) ? "01" : "00"); // 00 gets shipper number rates, 01 for daily rates
-            }
-
-            writer.WriteEndElement(); // </CustomerClassification
-            writer.WriteStartElement("Shipment");
-            writer.WriteStartElement("Shipper");
-            if (!string.IsNullOrWhiteSpace(_shipperNumber))
-            {
-                writer.WriteElementString("ShipperNumber", _shipperNumber);
-            }
-            writer.WriteStartElement("Address");
-            writer.WriteElementString("PostalCode", Shipment.OriginAddress.PostalCode);
-            writer.WriteElementString("CountryCode", Shipment.OriginAddress.CountryCode);
-            writer.WriteEndElement(); // </Address>
-            writer.WriteEndElement(); // </Shipper>
-            writer.WriteStartElement("ShipTo");
-            writer.WriteStartElement("Address");
-            if (!string.IsNullOrWhiteSpace(Shipment.DestinationAddress.State))
-            {
-                writer.WriteElementString("StateProvinceCode", Shipment.DestinationAddress.State);
-            }
-			if (!string.IsNullOrWhiteSpace(Shipment.DestinationAddress.PostalCode))
-			{
-                writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
-            }
-            writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
-			if (Shipment.DestinationAddress.IsResidential)
-			{
-				writer.WriteElementString("ResidentialAddressIndicator", "true");
-			}
-			writer.WriteEndElement(); // </Address>
-            writer.WriteEndElement(); // </ShipTo>
-            if (!string.IsNullOrWhiteSpace(_serviceDescription))
-            {
-                writer.WriteStartElement("Service");
-                writer.WriteElementString("Code", _serviceDescription.ToUpsShipCode());
-                writer.WriteEndElement(); //</Service>
-            }
-            if (_useNegotiatedRates)
-            {
-                writer.WriteStartElement("RateInformation");
-                writer.WriteElementString("NegotiatedRatesIndicator", "");
-                writer.WriteEndElement();// </RateInformation>
-            }
-            for (var i = 0; i < Shipment.Packages.Count; i++)
-            {
-                writer.WriteStartElement("Package");
-                writer.WriteStartElement("PackagingType");
-                writer.WriteElementString("Code", "02");
-                writer.WriteEndElement(); //</PackagingType>
-                writer.WriteStartElement("PackageWeight");
-                writer.WriteElementString("Weight", Shipment.Packages[i].RoundedWeight.ToString());
-                writer.WriteEndElement(); // </PackageWeight>
-                writer.WriteStartElement("Dimensions");
-                writer.WriteElementString("Length", Shipment.Packages[i].RoundedLength.ToString());
-                writer.WriteElementString("Width", Shipment.Packages[i].RoundedWidth.ToString());
-                writer.WriteElementString("Height", Shipment.Packages[i].RoundedHeight.ToString());
-                writer.WriteEndElement(); // </Dimensions>
-                writer.WriteStartElement("PackageServiceOptions");
-                writer.WriteStartElement("InsuredValue");
-                writer.WriteElementString("CurrencyCode", "USD");
-                writer.WriteElementString("MonetaryValue", Shipment.Packages[i].InsuredValue.ToString());
-                writer.WriteEndElement(); // </InsuredValue>
-
-                if (Shipment.Packages[i].SignatureRequiredOnDelivery)
+                using (var writer = new XmlTextWriter(memoryStream, Encoding.UTF8))
                 {
-                    writer.WriteStartElement("DeliveryConfirmation");
-                    writer.WriteElementString("DCISType", "2");         // 2 represents Delivery Confirmation Signature Required
-                    writer.WriteEndElement(); // </DeliveryConfirmation>
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("AccessRequest");
+                    writer.WriteAttributeString("lang", "en-US");
+                    writer.WriteElementString("AccessLicenseNumber", _licenseNumber);
+                    writer.WriteElementString("UserId", _userId);
+                    writer.WriteElementString("Password", _password);
+                    writer.WriteEndDocument();
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("RatingServiceSelectionRequest");
+                    writer.WriteAttributeString("lang", "en-US");
+                    writer.WriteStartElement("Request");
+                    writer.WriteStartElement("TransactionReference");
+                    writer.WriteElementString("CustomerContext", "Rating and Service");
+                    writer.WriteElementString("XpciVersion", "1.0");
+                    writer.WriteEndElement(); // </TransactionReference>
+                    writer.WriteElementString("RequestAction", "Rate");
+                    writer.WriteElementString("RequestOption", string.IsNullOrWhiteSpace(_serviceDescription) ? "Shop" : _serviceDescription);
+                    writer.WriteEndElement(); // </Request>
+                    writer.WriteStartElement("PickupType");
+                    writer.WriteElementString("Code", "03");
+                    writer.WriteEndElement(); // </PickupType>
+                    writer.WriteStartElement("CustomerClassification");
+
+                    if (_useRetailRates)
+                    {
+                        writer.WriteElementString("Code", "04"); //04 gets retail rates
+                    }
+                    else
+                    {
+                        writer.WriteElementString("Code", string.IsNullOrWhiteSpace(_shipperNumber) ? "01" : "00"); // 00 gets shipper number rates, 01 for daily rates
+                    }
+
+                    writer.WriteEndElement(); // </CustomerClassification
+                    writer.WriteStartElement("Shipment");
+                    writer.WriteStartElement("Shipper");
+                    if (!string.IsNullOrWhiteSpace(_shipperNumber))
+                    {
+                        writer.WriteElementString("ShipperNumber", _shipperNumber);
+                    }
+                    writer.WriteStartElement("Address");
+                    writer.WriteElementString("PostalCode", Shipment.OriginAddress.PostalCode);
+                    writer.WriteElementString("CountryCode", Shipment.OriginAddress.CountryCode);
+                    writer.WriteEndElement(); // </Address>
+                    writer.WriteEndElement(); // </Shipper>
+                    writer.WriteStartElement("ShipTo");
+                    writer.WriteStartElement("Address");
+                    if (!string.IsNullOrWhiteSpace(Shipment.DestinationAddress.State))
+                    {
+                        writer.WriteElementString("StateProvinceCode", Shipment.DestinationAddress.State);
+                    }
+                    if (!string.IsNullOrWhiteSpace(Shipment.DestinationAddress.PostalCode))
+                    {
+                        writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
+                    }
+                    writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
+                    if (Shipment.DestinationAddress.IsResidential)
+                    {
+                        writer.WriteElementString("ResidentialAddressIndicator", "true");
+                    }
+                    writer.WriteEndElement(); // </Address>
+                    writer.WriteEndElement(); // </ShipTo>
+                    if (!string.IsNullOrWhiteSpace(_serviceDescription))
+                    {
+                        writer.WriteStartElement("Service");
+                        writer.WriteElementString("Code", _serviceDescription.ToUpsShipCode());
+                        writer.WriteEndElement(); //</Service>
+                    }
+                    if (_useNegotiatedRates)
+                    {
+                        writer.WriteStartElement("RateInformation");
+                        writer.WriteElementString("NegotiatedRatesIndicator", "");
+                        writer.WriteEndElement();// </RateInformation>
+                    }
+                    for (var i = 0; i < Shipment.Packages.Count; i++)
+                    {
+                        writer.WriteStartElement("Package");
+                        writer.WriteStartElement("PackagingType");
+                        writer.WriteElementString("Code", "02");
+                        writer.WriteEndElement(); //</PackagingType>
+                        writer.WriteStartElement("PackageWeight");
+                        writer.WriteElementString("Weight", Shipment.Packages[i].RoundedWeight.ToString());
+                        writer.WriteEndElement(); // </PackageWeight>
+                        writer.WriteStartElement("Dimensions");
+                        writer.WriteElementString("Length", Shipment.Packages[i].RoundedLength.ToString());
+                        writer.WriteElementString("Width", Shipment.Packages[i].RoundedWidth.ToString());
+                        writer.WriteElementString("Height", Shipment.Packages[i].RoundedHeight.ToString());
+                        writer.WriteEndElement(); // </Dimensions>
+                        writer.WriteStartElement("PackageServiceOptions");
+                        writer.WriteStartElement("InsuredValue");
+                        writer.WriteElementString("CurrencyCode", "USD");
+                        writer.WriteElementString("MonetaryValue", Shipment.Packages[i].InsuredValue.ToString());
+                        writer.WriteEndElement(); // </InsuredValue>
+
+                        if (Shipment.Packages[i].SignatureRequiredOnDelivery)
+                        {
+                            writer.WriteStartElement("DeliveryConfirmation");
+                            writer.WriteElementString("DCISType", "2");         // 2 represents Delivery Confirmation Signature Required
+                            writer.WriteEndElement(); // </DeliveryConfirmation>
+                        }
+
+                        writer.WriteEndElement(); // </PackageServiceOptions>
+                        writer.WriteEndElement(); // </Package>
+                    }
+                    writer.WriteEndDocument();
+                    writer.Flush();
+                    writer.Close();
                 }
-
-                writer.WriteEndElement(); // </PackageServiceOptions>
-                writer.WriteEndElement(); // </Package>
+                return Encoding.UTF8.GetString(memoryStream.ToArray());
             }
-            writer.WriteEndDocument();
-            writer.Flush();
-            var buffer = new byte[writer.BaseStream.Length];
-            writer.BaseStream.Position = 0;
-            writer.BaseStream.Read(buffer, 0, buffer.Length);
-            writer.Close();
-
-            return buffer;
         }
 
         public override async Task GetRates()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            var request = (HttpWebRequest) WebRequest.Create(RatesUrl);
-            request.Method = "POST";
-            request.Timeout = _timeout * 1000;
-            // Per the UPS documentation, the "ContentType" should be "application/x-www-form-urlencoded".
-            // However, using "text/xml; encoding=UTF-8" lets us avoid converting the byte array returned by
-            // the buildRatesRequestMessage method and (so far) works just fine.
-            request.ContentType = "text/xml; encoding=UTF-8"; //"application/x-www-form-urlencoded";
-            var bytes = BuildRatesRequestMessage();
-            //System.Text.Encoding.Convert(Encoding.UTF8, Encoding.ASCII, this.buildRatesRequestMessage());
-            request.ContentLength = bytes.Length;
-            var stream = await request.GetRequestStreamAsync();
-            stream.Write(bytes, 0, bytes.Length);
-            stream.Close();
-
-            if (request.GetResponse() is HttpWebResponse resp && resp.StatusCode == HttpStatusCode.OK)
+            using (var httpClient = new HttpClient())
             {
-                var xDoc = XDocument.Load(resp.GetResponseStream());
-                ParseRatesResponseMessage(xDoc);
+                httpClient.Timeout = TimeSpan.FromSeconds(_timeout);
+
+                // Per the UPS documentation, the "ContentType" should be "application/x-www-form-urlencoded".
+                // However, using "text/xml; encoding=UTF-8" lets us avoid converting the byte array returned by
+                // the buildRatesRequestMessage method and (so far) works just fine.
+                using (var httpContent = new StringContent(BuildRatesRequestMessage(), Encoding.UTF8, "text/xml"))
+                {
+                    var ratesUri = new Uri(RatesUrl);
+                    var response = await httpClient.PostAsync(ratesUri, httpContent).ConfigureAwait(false);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var xDoc = XDocument.Load(await response.Content.ReadAsStreamAsync().ConfigureAwait(false));
+                        ParseRatesResponseMessage(xDoc);
+                    }
+                }
             }
         }
 

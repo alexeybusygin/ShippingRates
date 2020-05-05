@@ -52,7 +52,7 @@ namespace ShippingRates
                 threads.Add(provider.GetRates());
             }
 
-            await Task.WhenAll(threads);
+            await Task.WhenAll(threads).ConfigureAwait(false);
 
             // return our Shipment instance.
             return shipment;
@@ -79,7 +79,7 @@ namespace ShippingRates
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
         public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, Package package)
         {
-            return await GetRatesAsync(originAddress, destinationAddress, new List<Package> { package });
+            return await GetRatesAsync(originAddress, destinationAddress, new List<Package> { package }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace ShippingRates
         public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, List<Package> packages)
         {
             var shipment = new Shipment(originAddress, destinationAddress, packages) { RateAdjusters = _adjusters };
-            return await GetRates(shipment);
+            return await GetRates(shipment).ConfigureAwait(false);
         }
     }
 }

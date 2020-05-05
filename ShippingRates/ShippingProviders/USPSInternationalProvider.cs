@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
@@ -96,10 +96,12 @@ namespace ShippingRates.ShippingProviders
         {
             var sb = new StringBuilder();
 
-            var settings = new XmlWriterSettings();
-            settings.Indent = false;
-            settings.OmitXmlDeclaration = true;
-            settings.NewLineHandling = NewLineHandling.None;
+            var settings = new XmlWriterSettings
+            {
+                Indent = false,
+                OmitXmlDeclaration = true,
+                NewLineHandling = NewLineHandling.None
+            };
 
             using (var writer = XmlWriter.Create(sb, settings))
             {
@@ -155,11 +157,13 @@ namespace ShippingRates.ShippingProviders
 
             try
             {
-                var url = string.Concat(PRODUCTION_URL, "?API=IntlRateV2&XML=", sb.ToString());
-                var webClient = new WebClient();
-                var response = webClient.DownloadString(url);
+                using (var httpClient = new HttpClient())
+                {
+                    var rateUri = new Uri($"{PRODUCTION_URL}?API=IntlRateV2&XML={sb}");
+                    var response = await httpClient.GetStringAsync(rateUri).ConfigureAwait(false);
 
-                ParseResult(response);
+                    ParseResult(response);
+                }
             }
             catch (Exception ex)
             {

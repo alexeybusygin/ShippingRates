@@ -91,7 +91,7 @@ namespace ShippingRates.ShippingProviders
             try
             {
                 // Call the web service passing in a RateRequest and returning a RateReply
-                var reply = await service.getRatesAsync(request);
+                var reply = await service.getRatesAsync(request).ConfigureAwait(false);
 
                 if (reply.RateReply != null)
                 {
@@ -115,7 +115,7 @@ namespace ShippingRates.ShippingProviders
         /// <param name="reply"></param>
         protected void ProcessReply(RateReply reply)
         {
-            if (reply.RateReplyDetails == null)
+            if (reply?.RateReplyDetails == null)
                 return;
 
             foreach (var rateReplyDetail in reply.RateReplyDetails)

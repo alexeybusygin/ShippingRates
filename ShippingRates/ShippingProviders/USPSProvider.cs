@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,7 +16,6 @@ namespace ShippingRates.ShippingProviders
     public class USPSProvider : USPSBaseProvider
     {
         private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
-        private const string REMOVE_FROM_RATE_NAME = "&lt;sup&gt;&amp;reg;&lt;/sup&gt;";
 
         /// <summary>
         /// If set to ALL, special service types will not be returned. This is a limitation of the USPS API.
@@ -228,15 +227,18 @@ namespace ShippingRates.ShippingProviders
 
             try
             {
-                var url = string.Concat(PRODUCTION_URL, "?API=RateV4&XML=", sb.ToString());
-                var webClient = new WebClient();
-                var response = webClient.DownloadString(new Uri(url));
-                var specialServiceCodes = new List<string>();
+                using (var httpClient = new HttpClient())
+                {
+                    var rateUri = new Uri($"{PRODUCTION_URL}?API=RateV4&XML={sb}");
+                    var response = await httpClient.GetStringAsync(rateUri).ConfigureAwait(false);
 
-                if (signatureOnDeliveryRequired)
-                    specialServiceCodes.Add("119");                                 // 119 represents Adult Signature Required
+                    var specialServiceCodes = new List<string>();
 
-                ParseResult(response, specialServiceCodes);
+                    if (signatureOnDeliveryRequired)
+                        specialServiceCodes.Add("119"); // 119 represents Adult Signature Required
+
+                    ParseResult(response, specialServiceCodes);
+                }
             }
             catch (Exception ex)
             {
@@ -265,7 +267,7 @@ namespace ShippingRates.ShippingProviders
             return (package.Width <= 27 && package.Height <= 17 && package.Length <= 17) || (package.Width <= 17 && package.Height <= 27 && package.Length <= 17) || (package.Width <= 17 && package.Height <= 17 && package.Length <= 27);
         }
 
-        private void ParseResult(string response, IList<String> includeSpecialServiceCodes = null)
+        private void ParseResult(string response, IList<string> includeSpecialServiceCodes = null)
         {
             var document = XElement.Parse(response, LoadOptions.None);
 
