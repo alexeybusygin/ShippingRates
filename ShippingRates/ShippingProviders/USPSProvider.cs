@@ -143,7 +143,7 @@ namespace ShippingRates.ShippingProviders
 
         public override async Task GetRates()
         {
-            await GetRates(false);
+            await GetRates(false).ConfigureAwait(false);
         }
 
         public async Task GetRates(bool baseRatesOnly)
