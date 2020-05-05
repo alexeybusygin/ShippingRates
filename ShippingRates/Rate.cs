@@ -5,7 +5,7 @@ namespace ShippingRates
     /// <summary>
     ///     Summary Name for Rate.
     /// </summary>
-    public class Rate : IComparable
+    public class Rate
     {
         /// <summary>
         ///     Creates a new instance of the <see cref="Rate" /> class.
@@ -44,12 +44,6 @@ namespace ShippingRates
         ///     The total cost of this rate.
         /// </summary>
         public decimal TotalCharges { get; set; }
-
-        public int CompareTo(object obj)
-        {
-            var rateB = (Rate) obj;
-            return GuaranteedDelivery.CompareTo(rateB.GuaranteedDelivery);
-        }
 
         public override string ToString()
         {

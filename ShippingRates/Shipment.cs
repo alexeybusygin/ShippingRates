@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,16 +10,16 @@ namespace ShippingRates
     /// </summary>
     public class Shipment
     {
-        public ReadOnlyCollection<Package> Packages;
+        public ReadOnlyCollection<Package> Packages { get; }
         public ICollection<IRateAdjuster> RateAdjusters;
-        public readonly Address DestinationAddress;
-        public readonly Address OriginAddress;
+        public Address DestinationAddress { get; }
+        public Address OriginAddress { get; }
 
         public Shipment(Address originAddress, Address destinationAddress, List<Package> packages)
         {
-            OriginAddress = originAddress;
-            DestinationAddress = destinationAddress;
-            Packages = packages.AsReadOnly();
+            OriginAddress = originAddress ?? throw new ArgumentNullException(nameof(originAddress));
+            DestinationAddress = destinationAddress ?? throw new ArgumentNullException(nameof(destinationAddress));
+            Packages = packages?.AsReadOnly() ?? throw new ArgumentNullException(nameof(packages));
         }
 
         /// <summary>
