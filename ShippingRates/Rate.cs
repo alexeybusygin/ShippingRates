@@ -15,13 +15,15 @@ namespace ShippingRates
         /// <param name="name">A Name of the rate.</param>
         /// <param name="totalCharges">The total cost of this rate.</param>
         /// <param name="delivery">The guaranteed date and time of delivery for this rate.</param>
-        public Rate(string provider, string providerCode, string name, decimal totalCharges, DateTime delivery)
+        /// <param name="options">Rate options (Saturday delivery etc.)</param>
+        public Rate(string provider, string providerCode, string name, decimal totalCharges, DateTime delivery, RateOptions options = null)
         {
             Provider = provider;
             ProviderCode = providerCode;
             Name = name;
             TotalCharges = totalCharges;
             GuaranteedDelivery = delivery;
+            Options = options ?? new RateOptions();
         }
 
         /// <summary>
@@ -44,10 +46,12 @@ namespace ShippingRates
         ///     The total cost of this rate.
         /// </summary>
         public decimal TotalCharges { get; set; }
+        /// <summary>
+        ///     Rate options
+        /// </summary>
+        public RateOptions Options { get; }
 
-        public override string ToString()
-        {
-            return Provider + Environment.NewLine + "\t" + ProviderCode + Environment.NewLine + "\t" + Name + Environment.NewLine + "\t" + TotalCharges + Environment.NewLine + "\t" + GuaranteedDelivery;
-        }
+        public override string ToString() =>
+            $"{Provider}{Environment.NewLine}\t{ProviderCode}{Environment.NewLine}\t{Name}{Environment.NewLine}\t{TotalCharges}{Environment.NewLine}\t{GuaranteedDelivery}{(Options.SaturdayDelivery ? $"{Environment.NewLine}\tSaturday Delivery" : string.Empty)}";
     }
 }

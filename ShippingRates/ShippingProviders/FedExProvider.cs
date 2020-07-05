@@ -76,22 +76,9 @@ namespace ShippingRates.ShippingProviders
         /// <param name="request"></param>
         protected sealed override void SetShipmentDetails(RateRequest request)
         {
-            request.RequestedShipment = new RequestedShipment();
-            request.RequestedShipment.ShipTimestamp = DateTime.Now; // Shipping date and time
-            request.RequestedShipment.ShipTimestampSpecified = true;
-            request.RequestedShipment.DropoffType = DropoffType.REGULAR_PICKUP; //Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
-            request.RequestedShipment.DropoffTypeSpecified = true;
-            request.RequestedShipment.PackagingType = "YOUR_PACKAGING";
-
             SetOrigin(request);
-
             SetDestination(request);
-
             SetPackageLineItems(request);
-            
-            request.RequestedShipment.RateRequestTypes = new RateRequestType[1];
-            request.RequestedShipment.RateRequestTypes[0] = RateRequestType.LIST;
-            request.RequestedShipment.PackageCount = Shipment.PackageCount.ToString();
         }
     }
 }

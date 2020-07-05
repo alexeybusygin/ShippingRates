@@ -33,9 +33,9 @@ namespace ShippingRates.ShippingProviders
             }
         }
 
-        protected void AddRate(string providerCode, string name, decimal totalCharges, DateTime delivery)
+        protected void AddRate(string providerCode, string name, decimal totalCharges, DateTime delivery, RateOptions options = null)
         {
-            AddRate(new Rate(Name, providerCode, name, totalCharges, delivery));
+            AddRate(new Rate(Name, providerCode, name, totalCharges, delivery, options));
         }
 
         protected void AddRate(Rate rate)

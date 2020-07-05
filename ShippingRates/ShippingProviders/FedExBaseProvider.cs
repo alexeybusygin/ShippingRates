@@ -43,7 +43,7 @@ namespace ShippingRates.ShippingProviders
             return null;
         }
 
-		/// <summary>
+        /// <summary>
         /// Creates the rate request
         /// </summary>
         /// <returns></returns>
@@ -67,8 +67,23 @@ namespace ShippingRates.ShippingProviders
                 },
                 Version = new VersionId(),
                 ReturnTransitAndCommit = true,
-                ReturnTransitAndCommitSpecified = true
+                ReturnTransitAndCommitSpecified = true,
+                RequestedShipment = new RequestedShipment()
+                {
+                    ShipTimestamp = Shipment.Options.ShippingDate ?? DateTime.Now, // Shipping date and time
+                    ShipTimestampSpecified = true,
+                    DropoffType = DropoffType.REGULAR_PICKUP, //Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
+                    DropoffTypeSpecified = true,
+                    PackagingType = "YOUR_PACKAGING",
+                    PackageCount = Shipment.PackageCount.ToString(),
+                    RateRequestTypes = new RateRequestType[1] { RateRequestType.LIST }
+                }
             };
+
+            if (Shipment.Options.SaturdayDelivery)
+            {
+                request.VariableOptions = new[] { ServiceOptionType.SATURDAY_DELIVERY };
+            }
 
             SetShipmentDetails(request);
 
@@ -120,10 +135,7 @@ namespace ShippingRates.ShippingProviders
 
             foreach (var rateReplyDetail in reply.RateReplyDetails)
             {
-                var netCharge = rateReplyDetail.RatedShipmentDetails.Max(x => x.ShipmentRateDetail.TotalNetCharge.Amount);
-
                 var key = rateReplyDetail.ServiceType.ToString();
-                var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
 
                 if (!_serviceCodes.Keys.Contains(key))
                 {
@@ -131,7 +143,13 @@ namespace ShippingRates.ShippingProviders
                 }
                 else
                 {
-                    AddRate(key, _serviceCodes[key], netCharge, deliveryDate);
+                    var netCharge = rateReplyDetail.RatedShipmentDetails.Max(x => x.ShipmentRateDetail.TotalNetCharge.Amount);
+                    var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
+
+                    AddRate(key, _serviceCodes[key], netCharge, deliveryDate, new RateOptions()
+                    {
+                        SaturdayDelivery = rateReplyDetail.AppliedOptions?.Contains(ServiceOptionType.SATURDAY_DELIVERY) ?? false
+                    });
                 }
             }
         }

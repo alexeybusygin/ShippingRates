@@ -14,12 +14,14 @@ namespace ShippingRates
         public ICollection<IRateAdjuster> RateAdjusters;
         public Address DestinationAddress { get; }
         public Address OriginAddress { get; }
+        public ShipmentOptions Options { get; }
 
-        public Shipment(Address originAddress, Address destinationAddress, List<Package> packages)
+        public Shipment(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions options = null)
         {
             OriginAddress = originAddress ?? throw new ArgumentNullException(nameof(originAddress));
             DestinationAddress = destinationAddress ?? throw new ArgumentNullException(nameof(destinationAddress));
             Packages = packages?.AsReadOnly() ?? throw new ArgumentNullException(nameof(packages));
+            Options = options ?? new ShipmentOptions();
         }
 
         /// <summary>

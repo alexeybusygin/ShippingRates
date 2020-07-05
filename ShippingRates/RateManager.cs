@@ -88,10 +88,11 @@ namespace ShippingRates
         /// <param name="originAddress">An instance of <see cref="Address" /> specifying the origin of the shipment.</param>
         /// <param name="destinationAddress">An instance of <see cref="Address" /> specifying the destination of the shipment.</param>
         /// <param name="packages">An instance of <see cref="PackageCollection" /> specifying the packages to be rated.</param>
+        /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public Shipment GetRates(Address originAddress, Address destinationAddress, List<Package> packages)
+        public Shipment GetRates(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions options = null)
         {
-            return GetRatesAsync(originAddress, destinationAddress, packages).Result;
+            return GetRatesAsync(originAddress, destinationAddress, packages, options).Result;
         }
 
         /// <summary>
@@ -100,10 +101,11 @@ namespace ShippingRates
         /// <param name="originAddress">An instance of <see cref="Address" /> specifying the origin of the shipment.</param>
         /// <param name="destinationAddress">An instance of <see cref="Address" /> specifying the destination of the shipment.</param>
         /// <param name="packages">An instance of <see cref="PackageCollection" /> specifying the packages to be rated.</param>
+        /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, List<Package> packages)
+        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions options = null)
         {
-            var shipment = new Shipment(originAddress, destinationAddress, packages) { RateAdjusters = _adjusters };
+            var shipment = new Shipment(originAddress, destinationAddress, packages, options) { RateAdjusters = _adjusters };
             return await GetRates(shipment).ConfigureAwait(false);
         }
     }
