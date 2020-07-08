@@ -64,10 +64,11 @@ namespace ShippingRates
         /// <param name="originAddress">An instance of <see cref="Address" /> specifying the origin of the shipment.</param>
         /// <param name="destinationAddress">An instance of <see cref="Address" /> specifying the destination of the shipment.</param>
         /// <param name="package">An instance of <see cref="Package" /> specifying the package to be rated.</param>
+        /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public Shipment GetRates(Address originAddress, Address destinationAddress, Package package)
+        public Shipment GetRates(Address originAddress, Address destinationAddress, Package package, ShipmentOptions options = null)
         {
-            return GetRates(originAddress, destinationAddress, new List<Package> { package });
+            return GetRates(originAddress, destinationAddress, new List<Package> { package }, options);
         }
 
         /// <summary>
@@ -76,10 +77,11 @@ namespace ShippingRates
         /// <param name="originAddress">An instance of <see cref="Address" /> specifying the origin of the shipment.</param>
         /// <param name="destinationAddress">An instance of <see cref="Address" /> specifying the destination of the shipment.</param>
         /// <param name="package">An instance of <see cref="Package" /> specifying the package to be rated.</param>
+        /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, Package package)
+        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, Package package, ShipmentOptions options = null)
         {
-            return await GetRatesAsync(originAddress, destinationAddress, new List<Package> { package }).ConfigureAwait(false);
+            return await GetRatesAsync(originAddress, destinationAddress, new List<Package> { package }, options).ConfigureAwait(false);
         }
 
         /// <summary>

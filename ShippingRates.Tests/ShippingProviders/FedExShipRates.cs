@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
 
@@ -71,6 +72,27 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.AreEqual(error.Description.Substring(0, 42), "Destination postal code missing or invalid");
         }
 
+        [Test]
+        public async Task FedExSaturdayDelivery()
+        {
+            var from = new Address("Annapolis", "MD", "21401", "US");
+            var to = new Address("Fitchburg", "WI", "53711", "US");
+            var package = new Package(7, 7, 7, 6, 0);
+
+            var today = DateTime.Now;
+            var nextFriday = today.AddDays(5 - (int)today.DayOfWeek);
+
+            var r = await _rateManager.GetRatesAsync(from, to, package, new ShipmentOptions()
+            {
+                ShippingDate = nextFriday,
+                SaturdayDelivery = true
+            });
+            var fedExRates = r.Rates.ToList();
+
+            Assert.NotNull(r);
+            Assert.True(fedExRates.Any());
+            Assert.True(fedExRates.Any(r => r.Options.SaturdayDelivery));
+        }
 
         /*
          * According to docs (24.2.1): "Direct Signature Required is the default service and is
