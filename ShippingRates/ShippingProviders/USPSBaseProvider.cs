@@ -11,7 +11,7 @@ namespace ShippingRates.ShippingProviders
     {
         protected void ParseErrors(XElement response)
         {
-            if (response.Descendants("Error").Any())
+            if (response?.Descendants("Error")?.Any() ?? false)
             {
                 var errors = response
                     .Descendants("Error")

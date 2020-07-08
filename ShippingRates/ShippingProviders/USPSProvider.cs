@@ -22,7 +22,6 @@ namespace ShippingRates.ShippingProviders
         /// </summary>
         private readonly string _service;
 
-        private readonly string _shipDate;
         private readonly string _userId;
 
         /// <summary>
@@ -103,12 +102,11 @@ namespace ShippingRates.ShippingProviders
             _service = service;
         }
 
+        [Obsolete("Please use ShipmentOptions instead, this constructor will be removed in the future")]
         public USPSProvider(string userId, string service, string shipDate)
+            : this(userId, service)
         {
-            Name = "USPS";
-            _userId = userId;
-            _service = service;
-            _shipDate = shipDate;
+            Shipment.Options.ShippingDate = DateTime.Parse(shipDate);
         }
 
         /// <summary>
@@ -210,9 +208,10 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("Height", package.RoundedHeight.ToString());
                     writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
                     writer.WriteElementString("Machinable", IsPackageMachinable(package).ToString());
-                    if (!string.IsNullOrWhiteSpace(_shipDate))
+                    if (Shipment.Options.ShippingDate != null)
                     {
-                        writer.WriteElementString("ShipDate", _shipDate);
+                        writer.WriteElementString("ShipDate",
+                            Shipment.Options.ShippingDate.Value.ToString("yyyy-MM-dd"));
                     }
 
                     if (package.SignatureRequiredOnDelivery)
@@ -301,9 +300,13 @@ namespace ShippingRates.ShippingProviders
                     }
                 }
 
-                if (r.DeliveryDate != null)
+                if (r.DeliveryDate != null && DateTime.TryParse(r.DeliveryDate, out DateTime deliveryDate))
                 {
-                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges + additionalCharges, DateTime.Parse(r.DeliveryDate));
+                    var rateOptions = new RateOptions()
+                    {
+                        SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
+                    };
+                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges + additionalCharges, deliveryDate, rateOptions);
                 }
                 else
                 {

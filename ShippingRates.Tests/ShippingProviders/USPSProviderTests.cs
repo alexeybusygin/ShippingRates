@@ -1,7 +1,8 @@
 using NUnit.Framework;
-using System.Configuration;
+using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
 
@@ -170,6 +171,40 @@ namespace ShippingRates.Tests.ShippingProviders
                     var nonSignatureTotalCharges = nonSignatureRate.TotalCharges;
                     Assert.AreNotEqual(signatureTotalCharges, nonSignatureTotalCharges);
                 }
+            }
+        }
+
+        [Test]
+        public async Task USPS_Domestic_Saturday_Delivery()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new USPSProvider(_uspsUserId));
+
+            var today = DateTime.Now;
+            var nextFriday = today.AddDays(5 - (int)today.DayOfWeek);
+
+            var origin = new Address("", "", "06405", "US");
+            var destination = new Address("", "", "20852", "US");
+
+            var response = await rateManager.GetRatesAsync(origin, destination, Package1, new ShipmentOptions()
+            {
+                ShippingDate = nextFriday,
+                SaturdayDelivery = true
+            });
+
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+
+            Assert.NotNull(response);
+            Assert.IsNotEmpty(response.Rates);
+            Assert.True(response.Rates.Any(r => r.Options.SaturdayDelivery));
+            Assert.IsEmpty(response.Errors);
+
+            foreach (var rate in response.Rates)
+            {
+                Assert.NotNull(rate);
+                Assert.True(rate.TotalCharges > 0);
+
+                Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
         }
     }
