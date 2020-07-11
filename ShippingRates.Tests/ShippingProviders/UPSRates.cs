@@ -1,6 +1,8 @@
 using NUnit.Framework;
+using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
 
@@ -134,8 +136,10 @@ namespace ShippingRates.Tests.ShippingProviders
         public void UPS_Returns_Rates_When_Using_International_Destination_Addresses_And_RetailRates_For_All_Services()
         {
             var rateManager = new RateManager();
-            var provider = new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword);
-            provider.UseRetailRates = true;
+            var provider = new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword)
+            {
+                UseRetailRates = true
+            };
 
             rateManager.AddProvider(provider);
 
@@ -245,6 +249,31 @@ namespace ShippingRates.Tests.ShippingProviders
                     Assert.AreNotEqual(signatureTotalCharges, nonSignatureTotalCharges);
                 }
             }
+        }
+
+        [Test]
+        public async Task UPSSaturdayDelivery()
+        {
+            var from = new Address("Annapolis", "MD", "21401", "US");
+            var to = new Address("Fitchburg", "WI", "53711", "US");
+            var package = new Package(7, 7, 7, 6, 0);
+
+            var today = DateTime.Now;
+            var nextFriday = today.AddDays(5 - (int)today.DayOfWeek);
+
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword));
+
+            var r = await rateManager.GetRatesAsync(from, to, package, new ShipmentOptions()
+            {
+                ShippingDate = nextFriday,
+                SaturdayDelivery = true
+            });
+            var fedExRates = r.Rates.ToList();
+
+            Assert.NotNull(r);
+            Assert.True(fedExRates.Any());
+            Assert.True(fedExRates.Any(r => r.Options.SaturdayDelivery));
         }
     }
 }

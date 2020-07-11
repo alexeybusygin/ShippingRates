@@ -39,10 +39,6 @@ namespace ShippingRates.ShippingProviders
         private const int DEFAULT_TIMEOUT = 10;
         private const string DEVELOPMENT_RATES_URL = "https://wwwcie.ups.com/ups.app/xml/Rate";
         private const string PRODUCTION_RATES_URL = "https://onlinetools.ups.com/ups.app/xml/Rate";
-        private AvailableServices _services = AvailableServices.All;
-        private bool _useNegotiatedRates = false;
-        private bool _useRetailRates = false;
-        private bool _useProduction = true;
         private readonly string _licenseNumber;
         private readonly string _password;
         private readonly Hashtable _serviceCodes = new Hashtable(12);
@@ -83,31 +79,15 @@ namespace ShippingRates.ShippingProviders
              LoadServiceCodes();
         }
 
-        public AvailableServices Services
-        {
-            get { return _services; }
-            set { _services = value; }
-        }
+        public AvailableServices Services { get; set; } = AvailableServices.All;
 
         private string RatesUrl => UseProduction ? PRODUCTION_RATES_URL : DEVELOPMENT_RATES_URL;
 
-        public bool UseRetailRates
-        {
-            get { return _useRetailRates; }
-            set { _useRetailRates = value; }
-        }
+        public bool UseRetailRates { get; set; } = false;
 
-        public bool UseNegotiatedRates
-        {
-             get { return _useNegotiatedRates; }
-             set { _useNegotiatedRates = value; }
-        }
+        public bool UseNegotiatedRates { get; set; } = false;
 
-        public bool UseProduction
-        {
-            get { return _useProduction; }
-            set { _useProduction = value; }
-        }
+        public bool UseProduction { get; set; } = true;
 
         private string BuildRatesRequestMessage()
         {
@@ -122,23 +102,23 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("UserId", _userId);
                     writer.WriteElementString("Password", _password);
                     writer.WriteEndDocument();
+
                     writer.WriteStartDocument();
                     writer.WriteStartElement("RatingServiceSelectionRequest");
                     writer.WriteAttributeString("lang", "en-US");
+
                     writer.WriteStartElement("Request");
-                    writer.WriteStartElement("TransactionReference");
-                    writer.WriteElementString("CustomerContext", "Rating and Service");
-                    writer.WriteElementString("XpciVersion", "1.0");
-                    writer.WriteEndElement(); // </TransactionReference>
                     writer.WriteElementString("RequestAction", "Rate");
                     writer.WriteElementString("RequestOption", string.IsNullOrWhiteSpace(_serviceDescription) ? "Shop" : _serviceDescription);
+                    writer.WriteElementString("SubVersion", "1801");
                     writer.WriteEndElement(); // </Request>
+
                     writer.WriteStartElement("PickupType");
                     writer.WriteElementString("Code", "03");
                     writer.WriteEndElement(); // </PickupType>
-                    writer.WriteStartElement("CustomerClassification");
 
-                    if (_useRetailRates)
+                    writer.WriteStartElement("CustomerClassification");
+                    if (UseRetailRates)
                     {
                         writer.WriteElementString("Code", "04"); //04 gets retail rates
                     }
@@ -146,8 +126,8 @@ namespace ShippingRates.ShippingProviders
                     {
                         writer.WriteElementString("Code", string.IsNullOrWhiteSpace(_shipperNumber) ? "01" : "00"); // 00 gets shipper number rates, 01 for daily rates
                     }
-
                     writer.WriteEndElement(); // </CustomerClassification
+
                     writer.WriteStartElement("Shipment");
                     writer.WriteStartElement("Shipper");
                     if (!string.IsNullOrWhiteSpace(_shipperNumber))
@@ -159,6 +139,7 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("CountryCode", Shipment.OriginAddress.CountryCode);
                     writer.WriteEndElement(); // </Address>
                     writer.WriteEndElement(); // </Shipper>
+
                     writer.WriteStartElement("ShipTo");
                     writer.WriteStartElement("Address");
                     if (!string.IsNullOrWhiteSpace(Shipment.DestinationAddress.State))
@@ -176,18 +157,36 @@ namespace ShippingRates.ShippingProviders
                     }
                     writer.WriteEndElement(); // </Address>
                     writer.WriteEndElement(); // </ShipTo>
+
                     if (!string.IsNullOrWhiteSpace(_serviceDescription))
                     {
                         writer.WriteStartElement("Service");
                         writer.WriteElementString("Code", _serviceDescription.ToUpsShipCode());
                         writer.WriteEndElement(); //</Service>
                     }
-                    if (_useNegotiatedRates)
+                    if (UseNegotiatedRates)
                     {
                         writer.WriteStartElement("RateInformation");
                         writer.WriteElementString("NegotiatedRatesIndicator", "");
                         writer.WriteEndElement();// </RateInformation>
                     }
+                    if (Shipment.Options.ShippingDate != null)
+                    {
+                        writer.WriteStartElement("DeliveryTimeInformation");
+                        writer.WriteElementString("PackageBillType", "03");
+                        writer.WriteStartElement("Pickup");
+                        writer.WriteElementString("Date", Shipment.Options.ShippingDate.Value.ToString("yyyyMMdd"));
+                        writer.WriteElementString("Time", "1000");
+                        writer.WriteEndElement();// </Pickup>
+                        writer.WriteEndElement();// </DeliveryTimeInformation>
+                    }
+                    if (Shipment.Options.SaturdayDelivery)
+                    {
+                        writer.WriteStartElement("ShipmentServiceOptions");
+                        writer.WriteElementString("SaturdayDelivery", "");
+                        writer.WriteEndElement();// </ShipmentServiceOptions>
+                    }
+
                     for (var i = 0; i < Shipment.Packages.Count; i++)
                     {
                         writer.WriteStartElement("Package");
@@ -218,6 +217,9 @@ namespace ShippingRates.ShippingProviders
                         writer.WriteEndElement(); // </PackageServiceOptions>
                         writer.WriteEndElement(); // </Package>
                     }
+                    writer.WriteEndElement();   // </Shipment>
+                    writer.WriteEndElement();   // </RatingServiceSelectionRequest>
+
                     writer.WriteEndDocument();
                     writer.Flush();
                     writer.Close();
@@ -317,7 +319,7 @@ namespace ShippingRates.ShippingProviders
                         description = _serviceCodes[name].ToString();
                     }
                     var totalCharges = Convert.ToDecimal(rateNode.XPathSelectElement("TotalCharges/MonetaryValue").Value);
-                    if (_useNegotiatedRates)
+                    if (UseNegotiatedRates)
                     {
                         var negotiatedRate = rateNode.XPathSelectElement("NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue");
                         if (negotiatedRate != null) // check for negotiated rate
@@ -325,7 +327,7 @@ namespace ShippingRates.ShippingProviders
                             totalCharges = Convert.ToDecimal(negotiatedRate.Value);
                         }
                     }
-                    var delivery = DateTime.Parse("1/1/1900 12:00 AM");
+
                     var date = rateNode.XPathSelectElement("GuaranteedDaysToDelivery").Value;
                     if (date == "") // no gauranteed delivery date, so use MaxDate to ensure correct sorting
                     {
@@ -333,7 +335,8 @@ namespace ShippingRates.ShippingProviders
                     }
                     else
                     {
-                        date = DateTime.Now.AddDays(Convert.ToDouble(date)).ToShortDateString();
+                        date = (Shipment.Options.ShippingDate ?? DateTime.Now)
+                            .AddDays(Convert.ToDouble(date)).ToShortDateString();
                     }
                     var deliveryTime = rateNode.XPathSelectElement("ScheduledDeliveryTime").Value;
                     if (deliveryTime == "") // no scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
@@ -344,12 +347,12 @@ namespace ShippingRates.ShippingProviders
                     {
                         date += " " + deliveryTime.Replace("Noon", "PM").Replace("P.M.", "PM").Replace("A.M.", "AM");
                     }
-                    if (date != "")
-                    {
-                        delivery = DateTime.Parse(date);
-                    }
+                    var deliveryDate = DateTime.Parse(date);
 
-                    AddRate(name, description, totalCharges, delivery);
+                    AddRate(name, description, totalCharges, deliveryDate, new RateOptions()
+                    {
+                        SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
+                    });
                 }
             }
         }
