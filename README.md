@@ -63,6 +63,33 @@ USPS requires a separate API call for retrieving rates international services.
 
 The call works the same but use the USPSInternationalProvider instead. Your current USPS credentials will work with this and will return the available services between the origin and destination addresses.
 
+## Shipping Options
+
+Shipping options can be passed to the `GetRates` function as `ShipmentOptions` object.
+
+```CSHARP
+var shipment = await rateManager.GetRatesAsync(origin, destination, packages,
+    new ShipmentOptions() {
+        SaturdayDelivery = true,
+        ShippingDate = new DateTime(2020, 7, 15)
+    });
+```
+
+The following options are available:
+
+| Name | Default Value | Meaning |
+| ---- | ------------- | ------- |
+| SaturdayDelivery | False | Enable Saturday Delivery option for shipping rates. |
+| ShippingDate | null | Pickup date. Current date and time is used if not specified. |
+
+### Saturday Delivery
+
+If `ShipmentOptions.SaturdayDelivery` is set, then you can expect to receive some Saturday Delivery methods. You can check it with `Rate.Options.SaturdayDelivery` property:
+
+```CSHARP
+var anySaturdayDeliveryMethods = shipment.Rates.Any(r => r.Options.SaturdayDelivery);
+```    
+
 ## Error Handling
 
 Normally `RateManager.GetRates` wouldn't throw any exceptions. All errors are caught and reported in two properties: `Errors` and `InternalErrors`. `Errors` are for errors coming from APIs (incorrect address etc.) It should be quite safe to show them to the end-user. `InternalErrors` are errors happened during API calls processing (SOAP, HTTP requests) and errors from inside the ShippingRates. They can be used for debugging and internal reporting. Iterating through Errors and InternalErrors:
