@@ -181,7 +181,7 @@ namespace ShippingRates.Tests.ShippingProviders
             rateManager.AddProvider(new USPSProvider(_uspsUserId));
 
             var today = DateTime.Now;
-            var nextFriday = today.AddDays(5 - (int)today.DayOfWeek);
+            var nextFriday = today.AddDays(12 - (int)today.DayOfWeek);
 
             var origin = new Address("", "", "06405", "US");
             var destination = new Address("", "", "20852", "US");

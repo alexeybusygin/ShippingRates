@@ -259,7 +259,7 @@ namespace ShippingRates.Tests.ShippingProviders
             var package = new Package(7, 7, 7, 6, 0);
 
             var today = DateTime.Now;
-            var nextFriday = today.AddDays(5 - (int)today.DayOfWeek);
+            var nextFriday = today.AddDays(12 - (int)today.DayOfWeek);
 
             var rateManager = new RateManager();
             rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword));
