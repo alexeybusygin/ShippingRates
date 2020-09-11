@@ -6,7 +6,7 @@ namespace ShippingRates
 {
     public class ShipmentOptions
     {
-        public bool SaturdayDelivery { get; set; } = false;
-        public DateTime? ShippingDate { get; set; } = null;
+        public bool SaturdayDelivery { get; set; }
+        public DateTime? ShippingDate { get; set; }
     }
 }

@@ -17,6 +17,8 @@ namespace ShippingRates.ShippingProviders
     /// </summary>
     public class UPSProvider : AbstractShippingProvider
     {
+        public override string Name { get => "UPS"; }
+
         // These values need to stay in sync with the values in the "loadServiceCodes" method.
 
         public enum AvailableServices
@@ -69,7 +71,6 @@ namespace ShippingRates.ShippingProviders
 
         public UPSProvider(string licenseNumber, string userId, string password, int timeout, string serviceDescription, string shipperNumber)
         {
-             Name = "UPS";
              _licenseNumber = licenseNumber;
              _userId = userId;
              _password = password;
@@ -83,9 +84,9 @@ namespace ShippingRates.ShippingProviders
 
         private string RatesUrl => UseProduction ? PRODUCTION_RATES_URL : DEVELOPMENT_RATES_URL;
 
-        public bool UseRetailRates { get; set; } = false;
+        public bool UseRetailRates { get; set; }
 
-        public bool UseNegotiatedRates { get; set; } = false;
+        public bool UseNegotiatedRates { get; set; }
 
         public bool UseProduction { get; set; } = true;
 
@@ -329,7 +330,7 @@ namespace ShippingRates.ShippingProviders
                     }
 
                     var date = rateNode.XPathSelectElement("GuaranteedDaysToDelivery").Value;
-                    if (date == "") // no gauranteed delivery date, so use MaxDate to ensure correct sorting
+                    if (string.IsNullOrEmpty(date)) // no gauranteed delivery date, so use MaxDate to ensure correct sorting
                     {
                         date = DateTime.MaxValue.ToShortDateString();
                     }
@@ -339,7 +340,7 @@ namespace ShippingRates.ShippingProviders
                             .AddDays(Convert.ToDouble(date)).ToShortDateString();
                     }
                     var deliveryTime = rateNode.XPathSelectElement("ScheduledDeliveryTime").Value;
-                    if (deliveryTime == "") // no scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
+                    if (string.IsNullOrEmpty(deliveryTime)) // no scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
                     {
                         date += " 11:59:00 PM";
                     }

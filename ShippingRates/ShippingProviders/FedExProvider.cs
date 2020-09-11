@@ -13,6 +13,8 @@ namespace ShippingRates.ShippingProviders
     /// </summary>
     public class FedExProvider : FedExBaseProvider
     {
+        public override string Name { get => "FedEx"; }
+
         /// <summary>
         /// </summary>
         /// <param name="key"></param>
@@ -20,9 +22,7 @@ namespace ShippingRates.ShippingProviders
         /// <param name="accountNumber"></param>
         /// <param name="meterNumber"></param>
         public FedExProvider(string key, string password, string accountNumber, string meterNumber)
-        {
-            Init(key, password, accountNumber, meterNumber, true);
-        }
+            : this(key, password, accountNumber, meterNumber, true) { }
 
         /// <summary>
         /// </summary>
@@ -32,43 +32,26 @@ namespace ShippingRates.ShippingProviders
         /// <param name="meterNumber"></param>
         /// <param name="useProduction"></param>
         public FedExProvider(string key, string password, string accountNumber, string meterNumber, bool useProduction)
-        {
-            Init(key, password, accountNumber, meterNumber, useProduction);
-        }
-
-        private void Init(string key, string password, string accountNumber, string meterNumber, bool useProduction)
-        {
-            Name = "FedEx";
-            _key = key;
-            _password = password;
-            _accountNumber = accountNumber;
-            _meterNumber = meterNumber;
-            _useProduction = useProduction;
-
-            SetServiceCodes();
-        }
+            : base(key, password, accountNumber, meterNumber, useProduction) { }
 
         /// <summary>
         /// Sets service codes.
         /// </summary>
-        protected sealed override void SetServiceCodes()
+        protected override Dictionary<string, string> ServiceCodes => new Dictionary<string, string>
         {
-            _serviceCodes = new Dictionary<string, string>
-            {
-                {"PRIORITY_OVERNIGHT", "FedEx Priority Overnight"},
-                {"FEDEX_2_DAY", "FedEx 2nd Day"},
-                {"FEDEX_2_DAY_AM", "FedEx 2nd Day A.M."},
-                {"STANDARD_OVERNIGHT", "FedEx Standard Overnight"},
-                {"FIRST_OVERNIGHT", "FedEx First Overnight"},
-                {"FEDEX_EXPRESS_SAVER", "FedEx Express Saver"},
-                {"FEDEX_GROUND", "FedEx Ground"},
-                {"GROUND_HOME_DELIVERY", "FedEx Ground Residential"},
-                {"INTERNATIONAL_GROUND", "FedEx International Ground"},
-                {"INTERNATIONAL_FIRST", "FedEx International First"},
-                {"INTERNATIONAL_ECONOMY", "FedEx International Economy"},
-                {"INTERNATIONAL_PRIORITY", "FedEx International Priority"}
-            };
-        }
+            {"PRIORITY_OVERNIGHT", "FedEx Priority Overnight"},
+            {"FEDEX_2_DAY", "FedEx 2nd Day"},
+            {"FEDEX_2_DAY_AM", "FedEx 2nd Day A.M."},
+            {"STANDARD_OVERNIGHT", "FedEx Standard Overnight"},
+            {"FIRST_OVERNIGHT", "FedEx First Overnight"},
+            {"FEDEX_EXPRESS_SAVER", "FedEx Express Saver"},
+            {"FEDEX_GROUND", "FedEx Ground"},
+            {"GROUND_HOME_DELIVERY", "FedEx Ground Residential"},
+            {"INTERNATIONAL_GROUND", "FedEx International Ground"},
+            {"INTERNATIONAL_FIRST", "FedEx International First"},
+            {"INTERNATIONAL_ECONOMY", "FedEx International Economy"},
+            {"INTERNATIONAL_PRIORITY", "FedEx International Priority"}
+        };
 
         /// <summary>
         /// Sets shipment details

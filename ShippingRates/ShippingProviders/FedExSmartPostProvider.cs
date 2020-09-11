@@ -13,10 +13,12 @@ namespace ShippingRates.ShippingProviders
     /// </summary>
     public class FedExSmartPostProvider : FedExBaseProvider
     {
+        public override string Name { get => "FedExSmartPost"; }
+
         /// <summary>
         /// If not using the production Rate API, you can use 5531 as the HubID per FedEx documentation.
         /// </summary>
-        private string _hubId;
+        private readonly string _hubId;
 
         /// <summary>
         /// </summary>
@@ -26,9 +28,7 @@ namespace ShippingRates.ShippingProviders
         /// <param name="meterNumber"></param>
         /// <param name="hubId">If specified, the FedEx Rate API will only return SmartPost service type rates. Leave empty to get all service types.</param>
         public FedExSmartPostProvider(string key, string password, string accountNumber, string meterNumber, string hubId)
-        {
-            Init(key, password, accountNumber, meterNumber, true, hubId);
-        }
+            : this(key, password, accountNumber, meterNumber, hubId, true) { }
 
         /// <summary>
         /// </summary>
@@ -39,37 +39,20 @@ namespace ShippingRates.ShippingProviders
         /// <param name="hubId">If specified, the FedEx Rate API will only return SmartPost service type rates. Leave empty to get all service types.</param>
         /// <param name="useProduction"></param>
         public FedExSmartPostProvider(string key, string password, string accountNumber, string meterNumber, string hubId, bool useProduction)
+            : base(key, password, accountNumber, meterNumber, useProduction)
         {
-            Init(key, password, accountNumber, meterNumber, useProduction, hubId);
-        }
-
-        private void Init(string key, string password, string accountNumber, string meterNumber, bool useProduction, string hubId)
-        {
-            Name = "FedExSmartPost";
-
             // SmartPost does not allow insured values
             _allowInsuredValues = false;
-
-            _key = key;
-            _password = password;
-            _accountNumber = accountNumber;
-            _meterNumber = meterNumber;
-            _useProduction = useProduction;
             _hubId = hubId;
-
-            SetServiceCodes();
         }
 
         /// <summary>
         /// Sets the service codes.
         /// </summary>
-        protected sealed override void SetServiceCodes()
+        protected override Dictionary<string, string> ServiceCodes => new Dictionary<string, string>
         {
-            _serviceCodes = new Dictionary<string, string>
-            {
-                {"SMART_POST", "FedEx Smart Post"}
-            };
-        }
+            {"SMART_POST", "FedEx Smart Post"}
+        };
 
         /// <summary>
         /// Sets shipment details

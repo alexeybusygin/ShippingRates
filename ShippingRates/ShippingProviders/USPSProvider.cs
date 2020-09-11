@@ -87,7 +87,6 @@ namespace ShippingRates.ShippingProviders
         /// <param name="userId"></param>
         public USPSProvider(string userId)
         {
-            Name = "USPS";
             _userId = userId;
             _service = "ALL";
         }
@@ -97,7 +96,6 @@ namespace ShippingRates.ShippingProviders
         /// <param name="userId"></param>
         public USPSProvider(string userId, string service)
         {
-            Name = "USPS";
             _userId = userId;
             _service = service;
         }
@@ -250,13 +248,15 @@ namespace ShippingRates.ShippingProviders
             return Shipment.OriginAddress.IsUnitedStatesAddress() && Shipment.DestinationAddress.IsUnitedStatesAddress();
         }
 
-        public bool IsPackageLarge(Package package)
+        public static bool IsPackageLarge(Package package)
         {
-            return (package.IsOversize || package.Width > 12 || package.Length > 12 || package.Height > 12);
+            package = package ?? throw new ArgumentNullException(nameof(package));
+            return package.IsOversize || package.Width > 12 || package.Length > 12 || package.Height > 12;
         }
 
-        public bool IsPackageMachinable(Package package)
+        public static bool IsPackageMachinable(Package package)
         {
+            package = package ?? throw new ArgumentNullException(nameof(package));
             // Machinable parcels cannot be larger than 27 x 17 x 17 and cannot weight more than 25 lbs.
             if (package.Weight > 25)
             {

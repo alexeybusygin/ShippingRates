@@ -11,7 +11,7 @@ namespace ShippingRates
     public class Shipment
     {
         public ReadOnlyCollection<Package> Packages { get; }
-        public ICollection<IRateAdjuster> RateAdjusters;
+        public ICollection<IRateAdjuster> RateAdjusters { get; set; }
         public Address DestinationAddress { get; }
         public Address OriginAddress { get; }
         public ShipmentOptions Options { get; }

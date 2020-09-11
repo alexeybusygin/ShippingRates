@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
 namespace ShippingRates.ShippingProviders
 {
-    public class USPSBaseProvider : AbstractShippingProvider
+    public abstract class USPSBaseProvider : AbstractShippingProvider
     {
+        public override string Name { get => "USPS"; }
+
         protected void ParseErrors(XElement response)
         {
             if (response?.Descendants("Error")?.Any() ?? false)

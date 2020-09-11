@@ -10,11 +10,8 @@ namespace ShippingRates.ShippingProviders
     /// </summary>
     public abstract class AbstractShippingProvider : IShippingProvider
     {
-        public virtual async Task GetRates()
-        {
-        }
-
-        public string Name { get; set; }
+        public abstract Task GetRates();
+        public abstract string Name { get; }
         public Shipment Shipment { get; set; }
 
         protected void AddError(Error error)

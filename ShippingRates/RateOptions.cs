@@ -10,6 +10,6 @@ namespace ShippingRates
         /// Saturday Delivery indicator. This flag will be set only if Saturday delivery was requested
         /// by the ShipmentOptions.SaturdayDelivery value.
         /// </summary>
-        public bool SaturdayDelivery { get; set; } = false;
+        public bool SaturdayDelivery { get; set; }
     }
 }
