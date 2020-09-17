@@ -94,6 +94,21 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.True(fedExRates.Any(r => r.Options.SaturdayDelivery));
         }
 
+        [Test]
+        public async Task FedExCurrency()
+        {
+            var from = new Address("", "", "220-8515", "JP");
+            var to = new Address("", "", "058357", "SG");
+            var package = new Package(1, 1, 1, 5, 1);
+
+            var r = await _rateManager.GetRatesAsync(from, to, package);
+            var fedExRates = r.Rates.ToList();
+
+            Assert.NotNull(r);
+            Assert.True(fedExRates.Any());
+            Assert.False(fedExRates.Any(r => r.TotalCharges > 1000));
+        }
+
         /*
          * According to docs (24.2.1): "Direct Signature Required is the default service and is
          * provided at no additional cost."

@@ -143,7 +143,7 @@ namespace ShippingRates.ShippingProviders
                 }
                 else
                 {
-                    var netCharge = rateReplyDetail.RatedShipmentDetails.Max(x => x.ShipmentRateDetail.TotalNetCharge.Amount);
+                    var netCharge = rateReplyDetail.RatedShipmentDetails.Max(r => GetCurrencyConvertedRate(r.ShipmentRateDetail));
                     var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
 
                     AddRate(key, _serviceCodes[key], netCharge, deliveryDate, new RateOptions()
@@ -152,6 +152,20 @@ namespace ShippingRates.ShippingProviders
                     });
                 }
             }
+        }
+
+        private static decimal GetCurrencyConvertedRate(ShipmentRateDetail rateDetail)
+        {
+            if (rateDetail?.TotalNetCharge == null)
+                return 0;
+
+            var hasCurrencyRate = rateDetail.CurrencyExchangeRate?.RateSpecified ?? false
+                && rateDetail.CurrencyExchangeRate.Rate != 1
+                && rateDetail.CurrencyExchangeRate.Rate != 0;
+
+            return hasCurrencyRate
+                ? Math.Round(rateDetail.TotalNetCharge.Amount / rateDetail.CurrencyExchangeRate.Rate, 2)
+                : rateDetail.TotalNetCharge.Amount;
         }
 
         /// <summary>
