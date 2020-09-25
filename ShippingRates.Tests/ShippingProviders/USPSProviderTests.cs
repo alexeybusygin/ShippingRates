@@ -181,7 +181,8 @@ namespace ShippingRates.Tests.ShippingProviders
             rateManager.AddProvider(new USPSProvider(_uspsUserId));
 
             var today = DateTime.Now;
-            var nextFriday = today.AddDays(12 - (int)today.DayOfWeek);
+            var nextFriday = today.AddDays(12 - (int)today.DayOfWeek).Date + new TimeSpan(10, 0, 0);
+            var nextThursday = nextFriday.AddDays(-1);
 
             var origin = new Address("", "", "06405", "US");
             var destination = new Address("", "", "20852", "US");
@@ -192,12 +193,26 @@ namespace ShippingRates.Tests.ShippingProviders
                 SaturdayDelivery = true
             });
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
-
             Assert.NotNull(response);
             Assert.IsNotEmpty(response.Rates);
-            Assert.True(response.Rates.Any(r => r.Options.SaturdayDelivery));
+
+            // Sometimes only Priority Mail Express 2-Day works and we have to try it on Thursday
+            if (!response.Rates.Any(r => r.Options.SaturdayDelivery))
+            {
+                response = await rateManager.GetRatesAsync(origin, destination, Package1, new ShipmentOptions()
+                {
+                    ShippingDate = nextThursday,
+                    SaturdayDelivery = true
+                });
+
+                Assert.NotNull(response);
+                Assert.IsNotEmpty(response.Rates);
+            }
+
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+
             Assert.IsEmpty(response.Errors);
+            Assert.True(response.Rates.Any(r => r.Options.SaturdayDelivery));
 
             foreach (var rate in response.Rates)
             {
