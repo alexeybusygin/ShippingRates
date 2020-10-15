@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -20,25 +21,39 @@ namespace ShippingRates.ShippingProviders
     {
         public override string Name { get => "DHL"; }
 
-        // These values need to stay in sync with the values in the "loadServiceCodes" method.
-
-        public enum AvailableServices
+        public static Dictionary<char, string> AvailableServices => new Dictionary<char, string>
         {
-            NextDayAir = 1,
-            SecondDayAir = 2,
-            Ground = 4,
-            WorldwideExpress = 8,
-            WorldwideExpedited = 16,
-            Standard = 32,
-            ThreeDaySelect = 64,
-            NextDayAirSaver = 128,
-            NextDayAirEarlyAM = 256,
-            WorldwideExpressPlus = 512,
-            SecondDayAirAM = 1024,
-            ExpressSaver = 2048,
-            SurePost = 4096,
-            All = 8191
-        }
+            { '1', "EXPRESS DOMESTIC 12:00" },
+            { '4', "JETLINE" },
+            { '5', "SPRINTLINE" },
+            { '7', "EXPRESS EASY" },
+            { '8', "EXPRESS EASY" },
+            { 'B', "EXPRESS BREAKBULK" },
+            { 'C', "MEDICAL EXPRESS" },
+            { 'D', "EXPRESS WORLDWIDE" },
+            { 'E', "EXPRESS 9:00" },
+            { 'F', "FREIGHT WORLDWIDE" },
+            { 'G', "DOMESTIC ECONOMY SELECT" },
+            { 'H', "ECONOMY SELECT" },
+            { 'I', "EXPRESS DOMESTIC 9:00" },
+            { 'J', "JUMBO BOX" },
+            { 'K', "EXPRESS 9:00" },
+            { 'L', "EXPRESS 10:30" },
+            { 'M', "EXPRESS 10:30" },
+            { 'N', "EXPRESS DOMESTIC" },
+            { 'O', "EXPRESS DOMESTIC 10:30" },
+            { 'P', "EXPRESS WORLDWIDE" },
+            { 'Q', "MEDICAL EXPRESS" },
+            { 'R', "GLOBALMAIL BUSINESS" },
+            { 'S', "SAME DAY" },
+            { 'T', "EXPRESS 12:00" },
+            { 'U', "EXPRESS WORLDWIDE" },
+            { 'V', "EUROPACK" },
+            { 'W', "ECONOMY SELECT" },
+            { 'X', "EXPRESS ENVELOPE" },
+            { 'Y', "EXPRESS 12:00" }
+        };
+
         private const int DefaultTimeout = 10;
         private const string TestServicesUrl = "http://xmlpitest-ea.dhl.com/XMLShippingServlet";
         private const string ProductionServicesUrl = "";
@@ -46,40 +61,50 @@ namespace ShippingRates.ShippingProviders
         private readonly string _password;
         private readonly int _timeout;
         private readonly bool _useProduction;
-        private readonly Hashtable _serviceCodes = new Hashtable(12);
+        private readonly char[] _serviceCodes;
 
         public DHLProvider(string siteId, string password, bool useProduction) :
-            this(siteId, password, useProduction, DefaultTimeout)
+            this(siteId, password, useProduction, null, DefaultTimeout)
         {
         }
 
-        public DHLProvider(string siteId, string password, bool useProduction, int timeout)
+        public DHLProvider(string siteId, string password, bool useProduction, char[] services, int timeout)
         {
             _siteId = siteId;
             _password = password;
             _timeout = timeout;
             _useProduction = useProduction;
-            LoadServiceCodes();
+            _serviceCodes = (services ?? Array.Empty<char>())
+                .Where(c => AvailableServices.ContainsKey(c)).ToArray();
         }
-
-        public AvailableServices Services { get; set; } = AvailableServices.All;
 
         private Uri RatesUri => new Uri(_useProduction ? ProductionServicesUrl : TestServicesUrl);
 
-        private string BuildRatesRequestMessage(DateTime messageTime, string messageReference)
+        private string BuildRatesRequestMessage(
+            DateTime requestDateTime,
+            DateTime pickupDateTime,
+            string messageReference)
         {
+            var requestCulture = CultureInfo.CreateSpecificCulture("en-US");
+            var xmlSettings = new XmlWriterSettings()
+            {
+                Indent = true,
+                Encoding = Encoding.UTF8
+            };
+
+            var isDomestic = Shipment.OriginAddress.CountryCode == Shipment.DestinationAddress.CountryCode;
+
             using (var memoryStream = new MemoryStream())
             {
-                using (var writer = new XmlTextWriter(memoryStream, Encoding.UTF8))
+                using (var writer = XmlWriter.Create(memoryStream, xmlSettings))
                 {
-                    //writer.WriteAttributeString("lang", "en-US");
-
                     writer.WriteStartDocument();
+                    writer.WriteStartElement("p", "DCTRequest", "http://www.dhl.com");
                     writer.WriteStartElement("GetQuote");
 
                     writer.WriteStartElement("Request");
                     writer.WriteStartElement("ServiceHeader");
-                    writer.WriteElementString("MessageTime", messageTime.ToString("s", CultureInfo.CreateSpecificCulture("en-US")));
+                    writer.WriteElementString("MessageTime", requestDateTime.ToString("O", requestCulture));
                     writer.WriteElementString("MessageReference", messageReference);
                     writer.WriteElementString("SiteID", _siteId);
                     writer.WriteElementString("Password", _password);
@@ -88,92 +113,65 @@ namespace ShippingRates.ShippingProviders
 
                     writer.WriteStartElement("From");
                     writer.WriteElementString("CountryCode", Shipment.OriginAddress.CountryCode);
-                    writer.WriteElementString("PostalCode", Shipment.OriginAddress.PostalCode);
+                    writer.WriteElementString("Postalcode", Shipment.OriginAddress.PostalCode);
                     writer.WriteEndElement(); // </From>
 
-                    writer.WriteStartElement("PickupType");
-                    writer.WriteElementString("Code", "03");
-                    writer.WriteEndElement(); // </PickupType>
+                    writer.WriteStartElement("BkgDetails");
+                    writer.WriteElementString("PaymentCountryCode", Shipment.OriginAddress.CountryCode);
+                    writer.WriteElementString("Date", pickupDateTime.ToString("yyyy-MM-dd", requestCulture));
+                    writer.WriteElementString("ReadyTime", $"PT{pickupDateTime:HH}H{pickupDateTime:mm}M");
+                    writer.WriteElementString("ReadyTimeGMTOffset", pickupDateTime.ToString("zzz", requestCulture));
+                    writer.WriteElementString("DimensionUnit", "IN");
+                    writer.WriteElementString("WeightUnit", "LB");
 
-                    writer.WriteStartElement("CustomerClassification");
-                    writer.WriteEndElement(); // </CustomerClassification
-
-                    writer.WriteStartElement("Shipment");
-                    writer.WriteStartElement("Shipper");
-                    writer.WriteStartElement("Address");
-                    writer.WriteElementString("PostalCode", Shipment.OriginAddress.PostalCode);
-                    writer.WriteElementString("CountryCode", Shipment.OriginAddress.CountryCode);
-                    writer.WriteEndElement(); // </Address>
-                    writer.WriteEndElement(); // </Shipper>
-
-                    writer.WriteStartElement("ShipTo");
-                    writer.WriteStartElement("Address");
-                    if (!string.IsNullOrWhiteSpace(Shipment.DestinationAddress.State))
+                    writer.WriteStartElement("Pieces");
+                    for (var i = 0; i < Shipment.Packages.Count; i++)
                     {
-                        writer.WriteElementString("StateProvinceCode", Shipment.DestinationAddress.State);
+                        writer.WriteStartElement("Piece");
+                        writer.WriteElementString("PieceID", $"{i + 1}");
+                        writer.WriteElementString("Height", Shipment.Packages[i].RoundedHeight.ToString(requestCulture));
+                        writer.WriteElementString("Depth", Shipment.Packages[i].RoundedLength.ToString(requestCulture));
+                        writer.WriteElementString("Width", Shipment.Packages[i].RoundedWidth.ToString(requestCulture));
+                        writer.WriteElementString("Weight", Shipment.Packages[i].RoundedWeight.ToString(requestCulture));
+                        writer.WriteEndElement(); // </Piece>
                     }
-                    if (!string.IsNullOrWhiteSpace(Shipment.DestinationAddress.PostalCode))
-                    {
-                        writer.WriteElementString("PostalCode", Shipment.DestinationAddress.PostalCode);
-                    }
-                    writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
-                    if (Shipment.DestinationAddress.IsResidential)
-                    {
-                        writer.WriteElementString("ResidentialAddressIndicator", "true");
-                    }
-                    writer.WriteEndElement(); // </Address>
-                    writer.WriteEndElement(); // </ShipTo>
+                    writer.WriteEndElement(); // </Pieces>
 
-                    if (Shipment.Options.ShippingDate != null)
+                    writer.WriteElementString("IsDutiable", "N");
+                    writer.WriteElementString("NetworkTypeCode", "AL");
+
+                    writer.WriteStartElement("QtdShp");
+                    if (_serviceCodes.Any())
                     {
-                        writer.WriteStartElement("DeliveryTimeInformation");
-                        writer.WriteElementString("PackageBillType", "03");
-                        writer.WriteStartElement("Pickup");
-                        writer.WriteElementString("Date", Shipment.Options.ShippingDate.Value.ToString("yyyyMMdd"));
-                        writer.WriteElementString("Time", "1000");
-                        writer.WriteEndElement();// </Pickup>
-                        writer.WriteEndElement();// </DeliveryTimeInformation>
+                        foreach (var serviceCode in _serviceCodes)
+                        {
+                            writer.WriteElementString("GlobalProductCode", serviceCode.ToString());
+                        }
                     }
                     if (Shipment.Options.SaturdayDelivery)
                     {
-                        writer.WriteStartElement("ShipmentServiceOptions");
-                        writer.WriteElementString("SaturdayDelivery", "");
-                        writer.WriteEndElement();// </ShipmentServiceOptions>
+                        writer.WriteStartElement("QtdShpExChrg");
+                        writer.WriteElementString("SpecialServiceType", isDomestic ? "AG" : "AA");
+                        writer.WriteEndElement(); // </QtdShpExChrg>
                     }
+                    writer.WriteEndElement(); // </QtdShp>
 
-                    for (var i = 0; i < Shipment.Packages.Count; i++)
+                    var totalInsurance = Shipment.Packages.Sum(p => p.InsuredValue);
+                    if (totalInsurance > 0)
                     {
-                        writer.WriteStartElement("Package");
-                        writer.WriteStartElement("PackagingType");
-                        writer.WriteElementString("Code", "02");
-                        writer.WriteEndElement(); //</PackagingType>
-                        writer.WriteStartElement("PackageWeight");
-                        writer.WriteElementString("Weight", Shipment.Packages[i].RoundedWeight.ToString());
-                        writer.WriteEndElement(); // </PackageWeight>
-                        writer.WriteStartElement("Dimensions");
-                        writer.WriteElementString("Length", Shipment.Packages[i].RoundedLength.ToString());
-                        writer.WriteElementString("Width", Shipment.Packages[i].RoundedWidth.ToString());
-                        writer.WriteElementString("Height", Shipment.Packages[i].RoundedHeight.ToString());
-                        writer.WriteEndElement(); // </Dimensions>
-                        writer.WriteStartElement("PackageServiceOptions");
-                        writer.WriteStartElement("InsuredValue");
-                        writer.WriteElementString("CurrencyCode", "USD");
-                        writer.WriteElementString("MonetaryValue", Shipment.Packages[i].InsuredValue.ToString());
-                        writer.WriteEndElement(); // </InsuredValue>
-
-                        if (Shipment.Packages[i].SignatureRequiredOnDelivery)
-                        {
-                            writer.WriteStartElement("DeliveryConfirmation");
-                            writer.WriteElementString("DCISType", "2");         // 2 represents Delivery Confirmation Signature Required
-                            writer.WriteEndElement(); // </DeliveryConfirmation>
-                        }
-
-                        writer.WriteEndElement(); // </PackageServiceOptions>
-                        writer.WriteEndElement(); // </Package>
+                        writer.WriteElementString("InsuredValue", $"{totalInsurance:N}");
+                        writer.WriteElementString("InsuredCurrency", "USD");
                     }
-                    writer.WriteEndElement();   // </Shipment>
 
-                    writer.WriteEndElement();   // </GetQuote>
+                    writer.WriteEndElement(); // </BkgDetails>
+
+                    writer.WriteStartElement("To");
+                    writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
+                    writer.WriteElementString("Postalcode", Shipment.DestinationAddress.PostalCode);
+                    writer.WriteEndElement(); // </From>
+
+                    writer.WriteEndElement(); // </GetQuote>
+                    writer.WriteEndElement(); // </p:DCTRequest>
                     writer.WriteEndDocument();
                     writer.Flush();
                     writer.Close();
@@ -190,138 +188,105 @@ namespace ShippingRates.ShippingProviders
             {
                 httpClient.Timeout = TimeSpan.FromSeconds(_timeout);
 
-                var request = BuildRatesRequestMessage(DateTime.Now, Guid.NewGuid().ToString());
+                var request = BuildRatesRequestMessage(
+                    DateTime.Now,
+                    Shipment.Options.ShippingDate ?? DateTime.Now,
+                    GetMessageId());
+
                 using (var httpContent = new StringContent(request, Encoding.UTF8, "text/xml"))
                 {
                     var response = await httpClient.PostAsync(RatesUri, httpContent).ConfigureAwait(false);
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var xDoc = XDocument.Load(await response.Content.ReadAsStreamAsync().ConfigureAwait(false));
-                        ParseRatesResponseMessage(xDoc);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <returns></returns>
-        public IDictionary<string, string> GetServiceCodes()
-        {
-            if (_serviceCodes != null && _serviceCodes.Count > 0)
-            {
-                var serviceCodes = new Dictionary<string, string>();
-
-                foreach (var serviceCodeKey in _serviceCodes.Keys)
-                {
-                    var serviceCode = (AvailableService)_serviceCodes[serviceCodeKey];
-                    serviceCodes.Add((string)serviceCodeKey, serviceCode.Name);
-                }
-
-                return serviceCodes;
-            }
-
-            return null;
-        }
-
-        private void LoadServiceCodes()
-        {
-            _serviceCodes.Add("01", new AvailableService("UPS Next Day Air", 1));
-            _serviceCodes.Add("02", new AvailableService("UPS Second Day Air", 2));
-            _serviceCodes.Add("03", new AvailableService("UPS Ground", 4));
-            _serviceCodes.Add("07", new AvailableService("UPS Worldwide Express", 8));
-            _serviceCodes.Add("08", new AvailableService("UPS Worldwide Expedited", 16));
-            _serviceCodes.Add("11", new AvailableService("UPS Standard", 32));
-            _serviceCodes.Add("12", new AvailableService("UPS 3-Day Select", 64));
-            _serviceCodes.Add("13", new AvailableService("UPS Next Day Air Saver", 128));
-            _serviceCodes.Add("14", new AvailableService("UPS Next Day Air Early AM", 256));
-            _serviceCodes.Add("54", new AvailableService("UPS Worldwide Express Plus", 512));
-            _serviceCodes.Add("59", new AvailableService("UPS 2nd Day Air AM", 1024));
-            _serviceCodes.Add("65", new AvailableService("UPS Express Saver", 2048));
-            _serviceCodes.Add("93", new AvailableService("UPS Sure Post", 4096));
-        }
-
-        private void ParseRatesResponseMessage(XDocument xDoc)
-        {
-            if (xDoc.Root != null)
-            {
-                var ratedShipment = xDoc.Root.Elements("RatedShipment");
-                foreach (var rateNode in ratedShipment)
-                {
-                    var name = rateNode.XPathSelectElement("Service/Code").Value;
-                    AvailableService service;
-                    if (_serviceCodes.ContainsKey(name))
-                    {
-                        service = (AvailableService) _serviceCodes[name];
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                    if (((int) Services & service.EnumValue) != service.EnumValue)
-                    {
-                        continue;
-                    }
-                    var description = "";
-                    if (_serviceCodes.ContainsKey(name))
-                    {
-                        description = _serviceCodes[name].ToString();
-                    }
-                    var totalCharges = Convert.ToDecimal(rateNode.XPathSelectElement("TotalCharges/MonetaryValue").Value);
-                    /*if (UseNegotiatedRates)
-                    {
-                        var negotiatedRate = rateNode.XPathSelectElement("NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue");
-                        if (negotiatedRate != null) // check for negotiated rate
+                        var responseBody = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                        using (var reader = XmlReader.Create(responseBody))
                         {
-                            totalCharges = Convert.ToDecimal(negotiatedRate.Value);
+                            var responseXml = XElement.Load(reader);
+                            ParseRatesResponseMessage(responseXml);
                         }
-                    }*/
-
-                    var date = rateNode.XPathSelectElement("GuaranteedDaysToDelivery").Value;
-                    if (string.IsNullOrEmpty(date)) // no gauranteed delivery date, so use MaxDate to ensure correct sorting
-                    {
-                        date = DateTime.MaxValue.ToShortDateString();
                     }
-                    else
-                    {
-                        date = (Shipment.Options.ShippingDate ?? DateTime.Now)
-                            .AddDays(Convert.ToDouble(date)).ToShortDateString();
-                    }
-                    var deliveryTime = rateNode.XPathSelectElement("ScheduledDeliveryTime").Value;
-                    if (string.IsNullOrEmpty(deliveryTime)) // no scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
-                    {
-                        date += " 11:59:00 PM";
-                    }
-                    else
-                    {
-                        date += " " + deliveryTime.Replace("Noon", "PM").Replace("P.M.", "PM").Replace("A.M.", "AM");
-                    }
-                    var deliveryDate = DateTime.Parse(date);
-
-                    AddRate(name, description, totalCharges, deliveryDate, new RateOptions()
-                    {
-                        SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
-                    });
                 }
             }
         }
 
-        private struct AvailableService
-        {
-            public readonly int EnumValue;
-            public readonly string Name;
+        private static string GetMessageId() => Guid.NewGuid().ToString().Replace("-", "");
 
-            public AvailableService(string name, int enumValue)
+        private void ParseRatesResponseMessage(XElement xDoc)
+        {
+            if (xDoc == null)
             {
-                Name = name;
-                EnumValue = enumValue;
+                AddInternalError("Invalid response from DHL");
+                return;
             }
 
-            public override string ToString()
+            ParseRates(xDoc.XPathSelectElements("GetQuoteResponse/BkgDetails/QtdShp"));
+            ParseErrors(xDoc.XPathSelectElements("GetQuoteResponse/Note/Condition"));
+        }
+
+        private void ParseRates(IEnumerable<XElement> rates)
+        {
+            foreach (var rateNode in rates)
             {
-                return Name;
+                var serviceCode = rateNode.Element("GlobalProductCode")?.Value;
+                if (string.IsNullOrEmpty(serviceCode) || !AvailableServices.ContainsKey(serviceCode[0]))
+                {
+                    AddInternalError($"Unknown DHL Global Product Code: {serviceCode}");
+                    continue;
+                }
+                if (_serviceCodes.Any() && !_serviceCodes.Contains(serviceCode[0]))
+                {
+                    continue;
+                }
+
+                var name = rateNode.Element("ProductShortName")?.Value;
+                var description = AvailableServices[serviceCode[0]];
+
+                var totalCharges = Convert.ToDecimal(rateNode.Element("ShippingCharge")?.Value, CultureInfo.InvariantCulture);
+                var currencyCode = rateNode.Element("CurrencyCode")?.Value;
+
+                var deliveryDateValue = rateNode.XPathSelectElement("DeliveryDate")?.Value;
+                var deliveryTimeValue = rateNode.XPathSelectElement("DeliveryTime")?.Value;
+
+                if (!DateTime.TryParse(deliveryDateValue, out DateTime deliveryDate))
+                    deliveryDate = DateTime.MaxValue;
+
+                if (!string.IsNullOrEmpty(deliveryTimeValue) && deliveryTimeValue.Length >= 4)
+                {
+                    // Parse PTxxH or PTxxHyyM to time
+                    var indexOfH = deliveryTimeValue.IndexOf('H');
+                    if (indexOfH >= 3)
+                    {
+                        var hours = int.Parse(deliveryTimeValue.Substring(2, indexOfH - 2), CultureInfo.InvariantCulture);
+                        var minutes = 0;
+
+                        var indexOfM = deliveryTimeValue.IndexOf('M');
+                        if (indexOfM > indexOfH)
+                        {
+                            minutes = int.Parse(deliveryTimeValue.Substring(indexOfH + 1, indexOfM - indexOfH - 1), CultureInfo.InvariantCulture);
+                        }
+
+                        deliveryDate = deliveryDate.Date + new TimeSpan(hours, minutes, 0);
+                    }
+                }
+
+                AddRate(name, description, totalCharges, deliveryDate, new RateOptions()
+                {
+                    SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
+                },
+                currencyCode);
+            }
+        }
+
+        private void ParseErrors(IEnumerable<XElement> errors)
+        {
+            foreach (var errorNode in errors)
+            {
+                AddError(new Error()
+                {
+                    Number = errorNode.Element("ConditionCode")?.Value,
+                    Description = errorNode.Element("ConditionData")?.Value
+                });
             }
         }
     }
