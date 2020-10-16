@@ -50,7 +50,8 @@ namespace ShippingRates.ShippingProviders
             {"INTERNATIONAL_GROUND", "FedEx International Ground"},
             {"INTERNATIONAL_FIRST", "FedEx International First"},
             {"INTERNATIONAL_ECONOMY", "FedEx International Economy"},
-            {"INTERNATIONAL_PRIORITY", "FedEx International Priority"}
+            {"INTERNATIONAL_PRIORITY", "FedEx International Priority"},
+            {"EUROPE_FIRST_INTERNATIONAL_PRIORITY", "FedEx International Priority" }
         };
 
         /// <summary>
