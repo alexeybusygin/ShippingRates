@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
 
@@ -8,7 +9,7 @@ namespace ShippingRates.SampleApp
 {
     class Program
     {
-        static void Main()
+        static async Task Main()
         {
             var appSettings = ConfigurationManager.AppSettings;
 
@@ -28,6 +29,10 @@ namespace ShippingRates.SampleApp
             // You will need a userId to use the USPS provider. Your account will also need access to the production servers.
             var uspsUserId = appSettings["USPSUserId"];
 
+            // You will need a Site ID and Password to use DHL provider.
+            var dhlSiteId = appSettings["DHLSiteId"];
+            var dhlPassword = appSettings["DHLPassword"];
+
             // Setup package and destination/origin addresses
             var packages = new List<Package>
             {
@@ -37,6 +42,10 @@ namespace ShippingRates.SampleApp
 
             var origin = new Address("", "", "06405", "US");
             var destination = new Address("", "", "20852", "US"); // US Address
+            //var origin = new Address("Amsterdam", "", "1043 AG", "NL"); // Netherlands Address
+            //var destination  = new Address("London", "", "SW1A 2AA", "GB"); // Great Britain Address
+            //var destination = new Address("", "", "88888", "US"); // Wrong US Address
+            //var destination = new Address("Domont", "", "95330", "FR"); // France Address
             //var destination = new Address("", "", "00907", "PR"); // Puerto Rico Address
             //var destination = new Address("", "", "L4W 1S2", "CA"); // Canada Address
             //var destination = new Address("", "", "SW1E 5JL", "GB"); // UK Address
@@ -45,17 +54,21 @@ namespace ShippingRates.SampleApp
             var rateManager = new RateManager();
 
             // Add desired DotNetShippingProviders
-            rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword) {UseProduction = false});
+            rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword) { UseProduction = false });
             rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction));
             rateManager.AddProvider(new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction));
             rateManager.AddProvider(new USPSProvider(uspsUserId));
             rateManager.AddProvider(new USPSInternationalProvider(uspsUserId));
+            rateManager.AddProvider(new DHLProvider(dhlSiteId, dhlPassword, useProduction: false));
 
             // (Optional) Add RateAdjusters
             rateManager.AddRateAdjuster(new PercentageRateAdjuster(.9M));
 
             // Call GetRates()
-            var shipment = rateManager.GetRates(origin, destination, packages);
+            var shipment = await rateManager.GetRatesAsync(origin, destination, packages,
+                new ShipmentOptions() {
+                    SaturdayDelivery = true
+                });
 
             // Iterate through the rates returned
             foreach (var rate in shipment.Rates)
