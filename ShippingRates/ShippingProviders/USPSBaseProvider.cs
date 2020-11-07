@@ -12,6 +12,8 @@ namespace ShippingRates.ShippingProviders
     {
         public override string Name { get => "USPS"; }
 
+        protected const string USPSCurrencyCode = "USD";
+
         protected void ParseErrors(XElement response)
         {
             if (response?.Descendants("Error")?.Any() ?? false)

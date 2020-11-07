@@ -77,7 +77,8 @@ namespace ShippingRates.ShippingProviders
                     DropoffTypeSpecified = true,
                     PackagingType = "YOUR_PACKAGING",
                     PackageCount = Shipment.PackageCount.ToString(),
-                    RateRequestTypes = new RateRequestType[1] { RateRequestType.LIST }
+                    RateRequestTypes = GetRateRequestTypes().ToArray(),
+                    PreferredCurrency = Shipment.Options.GetCurrencyCode()
                 }
             };
 
@@ -89,6 +90,15 @@ namespace ShippingRates.ShippingProviders
             SetShipmentDetails(request);
 
             return request;
+        }
+
+        private IEnumerable<RateRequestType> GetRateRequestTypes()
+        {
+            yield return RateRequestType.LIST;
+            if (!string.IsNullOrEmpty(Shipment.Options.PreferredCurrencyCode))
+            {
+                yield return RateRequestType.PREFERRED;
+            }
         }
 
         /// <summary>
@@ -144,29 +154,41 @@ namespace ShippingRates.ShippingProviders
                 }
                 else
                 {
-                    var netCharge = rateReplyDetail.RatedShipmentDetails.Max(r => GetCurrencyConvertedRate(r.ShipmentRateDetail));
+                    var rates = rateReplyDetail.RatedShipmentDetails.Select(r => GetCurrencyConvertedRate(r.ShipmentRateDetail));
+                    rates = rates.Any(r => r.currencyCode == Shipment.Options.GetCurrencyCode())
+                        ? rates.Where(r => r.currencyCode == Shipment.Options.GetCurrencyCode())
+                        : rates;
+
+                    var netCharge = rates.OrderByDescending(r => r.amount).FirstOrDefault();
                     var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
 
-                    AddRate(key, ServiceCodes[key], netCharge, deliveryDate, new RateOptions()
+                    AddRate(key, ServiceCodes[key], netCharge.amount, deliveryDate, new RateOptions()
                     {
                         SaturdayDelivery = rateReplyDetail.AppliedOptions?.Contains(ServiceOptionType.SATURDAY_DELIVERY) ?? false
-                    });
+                    },
+                    netCharge.currencyCode);
                 }
             }
         }
 
-        private static decimal GetCurrencyConvertedRate(ShipmentRateDetail rateDetail)
+        private (decimal amount, string currencyCode) GetCurrencyConvertedRate(ShipmentRateDetail rateDetail)
         {
             if (rateDetail?.TotalNetCharge == null)
-                return 0;
+                return (0, ShipmentOptions.DefaultCurrencyCode);
 
-            var hasCurrencyRate = rateDetail.CurrencyExchangeRate?.RateSpecified ?? false
+            if (rateDetail.TotalNetCharge.Currency == Shipment.Options.GetCurrencyCode())
+            {
+                return (rateDetail.TotalNetCharge.Amount, rateDetail.TotalNetCharge.Currency);
+            }
+
+            var hasCurrencyRate = (rateDetail.CurrencyExchangeRate?.RateSpecified ?? false)
+                && rateDetail.TotalNetCharge.Currency == rateDetail.CurrencyExchangeRate.FromCurrency
                 && rateDetail.CurrencyExchangeRate.Rate != 1
                 && rateDetail.CurrencyExchangeRate.Rate != 0;
 
             return hasCurrencyRate
-                ? Math.Round(rateDetail.TotalNetCharge.Amount / rateDetail.CurrencyExchangeRate.Rate, 2)
-                : rateDetail.TotalNetCharge.Amount;
+                ? (Math.Round(rateDetail.TotalNetCharge.Amount / rateDetail.CurrencyExchangeRate.Rate, 2), rateDetail.CurrencyExchangeRate.IntoCurrency)
+                : (rateDetail.TotalNetCharge.Amount, rateDetail.TotalNetCharge.Currency);
         }
 
         /// <summary>

@@ -130,6 +130,7 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteEndElement(); // </CustomerClassification
 
                     writer.WriteStartElement("Shipment");
+
                     writer.WriteStartElement("Shipper");
                     if (!string.IsNullOrWhiteSpace(_shipperNumber))
                     {
@@ -186,6 +187,10 @@ namespace ShippingRates.ShippingProviders
                         writer.WriteStartElement("ShipmentServiceOptions");
                         writer.WriteElementString("SaturdayDelivery", "");
                         writer.WriteEndElement();// </ShipmentServiceOptions>
+                    }
+                    if (Shipment.HasDocumentsOnly)
+                    {
+                        writer.WriteElementString("DocumentsOnly", "true");
                     }
 
                     for (var i = 0; i < Shipment.Packages.Count; i++)
@@ -320,12 +325,14 @@ namespace ShippingRates.ShippingProviders
                         description = _serviceCodes[name].ToString();
                     }
                     var totalCharges = Convert.ToDecimal(rateNode.XPathSelectElement("TotalCharges/MonetaryValue").Value);
+                    var currencyCode = rateNode.XPathSelectElement("TotalCharges/CurrencyCode").Value;
                     if (UseNegotiatedRates)
                     {
                         var negotiatedRate = rateNode.XPathSelectElement("NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue");
                         if (negotiatedRate != null) // check for negotiated rate
                         {
                             totalCharges = Convert.ToDecimal(negotiatedRate.Value);
+                            currencyCode = rateNode.XPathSelectElement("NegotiatedRates/NetSummaryCharges/GrandTotal/CurrencyCode").Value;
                         }
                     }
 
@@ -353,7 +360,7 @@ namespace ShippingRates.ShippingProviders
                     AddRate(name, description, totalCharges, deliveryDate, new RateOptions()
                     {
                         SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
-                    });
+                    }, currencyCode);
                 }
             }
         }

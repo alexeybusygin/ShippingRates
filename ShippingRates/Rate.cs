@@ -17,7 +17,7 @@ namespace ShippingRates
         /// <param name="delivery">The guaranteed date and time of delivery for this rate.</param>
         /// <param name="options">Rate options (Saturday delivery etc.)</param>
         /// <param name="currencyCode">Currency code (USD, EUR, etc), required for DHL</param>
-        public Rate(string provider, string providerCode, string name, decimal totalCharges, DateTime delivery, RateOptions options = null, string currencyCode = null)
+        public Rate(string provider, string providerCode, string name, decimal totalCharges, DateTime delivery, RateOptions options, string currencyCode)
         {
             Provider = provider;
             ProviderCode = providerCode;
@@ -49,13 +49,13 @@ namespace ShippingRates
         /// </summary>
         public decimal TotalCharges { get; set; }
         /// <summary>
-        ///     Rate options
-        /// </summary>
-        public RateOptions Options { get; }
-        /// <summary>
         ///     Currency code, if applicable
         /// </summary>
         public string CurrencyCode { get; }
+        /// <summary>
+        ///     Rate options
+        /// </summary>
+        public RateOptions Options { get; }
 
         public override string ToString() =>
             $"{Provider}{Environment.NewLine}\t{ProviderCode}{Environment.NewLine}\t{Name}{Environment.NewLine}\t{TotalCharges} {CurrencyCode}{Environment.NewLine}\t{GuaranteedDelivery}{(Options.SaturdayDelivery ? $"{Environment.NewLine}\tSaturday Delivery" : string.Empty)}";

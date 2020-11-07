@@ -186,7 +186,7 @@ namespace ShippingRates.ShippingProviders
 
                 if (_service == name || _service == "ALL")
                 {
-                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
+                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30), null, USPSCurrencyCode);
                 }
             }
 

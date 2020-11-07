@@ -306,11 +306,11 @@ namespace ShippingRates.ShippingProviders
                     {
                         SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
                     };
-                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges + additionalCharges, deliveryDate, rateOptions);
+                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges + additionalCharges, deliveryDate, rateOptions, USPSCurrencyCode);
                 }
                 else
                 {
-                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges + additionalCharges, DateTime.Now.AddDays(30));
+                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges + additionalCharges, DateTime.Now.AddDays(30), null, USPSCurrencyCode);
                 }
             }
 

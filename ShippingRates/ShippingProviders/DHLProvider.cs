@@ -56,7 +56,7 @@ namespace ShippingRates.ShippingProviders
 
         private const int DefaultTimeout = 10;
         private const string TestServicesUrl = "http://xmlpitest-ea.dhl.com/XMLShippingServlet";
-        private const string ProductionServicesUrl = "";
+        private const string ProductionServicesUrl = "https://xmlpi-ea.dhl.com/XMLShippingServlet";
         private readonly string _siteId;
         private readonly string _password;
         private readonly int _timeout;
@@ -64,7 +64,12 @@ namespace ShippingRates.ShippingProviders
         private readonly char[] _serviceCodes;
 
         public DHLProvider(string siteId, string password, bool useProduction) :
-            this(siteId, password, useProduction, null, DefaultTimeout)
+            this(siteId, password, useProduction, null)
+        {
+        }
+
+        public DHLProvider(string siteId, string password, bool useProduction, char[] services) :
+            this(siteId, password, useProduction, services, DefaultTimeout)
         {
         }
 
@@ -93,6 +98,7 @@ namespace ShippingRates.ShippingProviders
             };
 
             var isDomestic = Shipment.OriginAddress.CountryCode == Shipment.DestinationAddress.CountryCode;
+            var isDutiable = !Shipment.HasDocumentsOnly && !isDomestic;
 
             using (var memoryStream = new MemoryStream())
             {
@@ -111,10 +117,7 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteEndElement(); // </ServiceHeader>
                     writer.WriteEndElement(); // </Request>
 
-                    writer.WriteStartElement("From");
-                    writer.WriteElementString("CountryCode", Shipment.OriginAddress.CountryCode);
-                    writer.WriteElementString("Postalcode", Shipment.OriginAddress.PostalCode);
-                    writer.WriteEndElement(); // </From>
+                    WriteAddress(writer, "From", Shipment.OriginAddress);
 
                     writer.WriteStartElement("BkgDetails");
                     writer.WriteElementString("PaymentCountryCode", Shipment.OriginAddress.CountryCode);
@@ -137,7 +140,7 @@ namespace ShippingRates.ShippingProviders
                     }
                     writer.WriteEndElement(); // </Pieces>
 
-                    writer.WriteElementString("IsDutiable", "N");
+                    writer.WriteElementString("IsDutiable", isDutiable ? "Y" : "N");
                     writer.WriteElementString("NetworkTypeCode", "AL");
 
                     writer.WriteStartElement("QtdShp");
@@ -165,10 +168,15 @@ namespace ShippingRates.ShippingProviders
 
                     writer.WriteEndElement(); // </BkgDetails>
 
-                    writer.WriteStartElement("To");
-                    writer.WriteElementString("CountryCode", Shipment.DestinationAddress.CountryCode);
-                    writer.WriteElementString("Postalcode", Shipment.DestinationAddress.PostalCode);
-                    writer.WriteEndElement(); // </From>
+                    WriteAddress(writer, "To", Shipment.DestinationAddress);
+
+                    if (isDutiable)
+                    {
+                        writer.WriteStartElement("Dutiable");
+                        writer.WriteElementString("DeclaredCurrency", "USD");
+                        writer.WriteElementString("DeclaredValue", $"{totalInsurance:N}");
+                        writer.WriteEndElement(); // </Dutiable>
+                    }
 
                     writer.WriteEndElement(); // </GetQuote>
                     writer.WriteEndElement(); // </p:DCTRequest>
@@ -178,6 +186,18 @@ namespace ShippingRates.ShippingProviders
                 }
                 return Encoding.UTF8.GetString(memoryStream.ToArray());
             }
+        }
+
+        private static void WriteAddress(XmlWriter writer, string name, Address address)
+        {
+            writer.WriteStartElement(name);
+            writer.WriteElementString("CountryCode",address.CountryCode);
+            writer.WriteElementString("Postalcode", address.PostalCode);
+            if (!string.IsNullOrWhiteSpace(address.City))
+            {
+                writer.WriteElementString("City", address.City);
+            }
+            writer.WriteEndElement(); // </From>
         }
 
         public override async Task GetRates()

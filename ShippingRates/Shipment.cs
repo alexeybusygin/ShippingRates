@@ -33,6 +33,10 @@ namespace ShippingRates
         /// </summary>
         public decimal TotalPackageWeight => Packages.Sum(x => x.Weight);
         /// <summary>
+        ///     Documents only in the shipment
+        /// </summary>
+        public bool HasDocumentsOnly => !Packages.Any(p => !p.IsDocumentsOnly);
+        /// <summary>
         ///     Shipment rates
         /// </summary>
         public List<Rate> Rates { get; } = new List<Rate>();
