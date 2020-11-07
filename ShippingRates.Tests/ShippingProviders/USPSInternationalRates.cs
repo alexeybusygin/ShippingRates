@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
 
@@ -139,6 +140,20 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Assert.NotNull(serviceCodes);
             Assert.IsNotEmpty(serviceCodes);
+        }
+
+        [Test]
+        public async Task USPSCurrency()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId));
+
+            var response = await rateManager.GetRatesAsync(_domesticAddress1, _internationalAddress2, _package1);
+            var rates = response.Rates;
+
+            Assert.NotNull(response);
+            Assert.True(rates.Any());
+            Assert.False(rates.Any(r => r.CurrencyCode != "USD"));
         }
     }
 }

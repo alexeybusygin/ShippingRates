@@ -275,5 +275,23 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.True(fedExRates.Any());
             Assert.True(fedExRates.Any(r => r.Options.SaturdayDelivery));
         }
+
+        // Euro rates for shipping in Europe
+        [Test]
+        public async Task UPSCurrency()
+        {
+            var from = new Address("Amsterdam", "", "1043 AG", "NL");
+            var to = new Address("London", "", "SW1A 2AA", "GB");
+            var package = new Package(1, 1, 1, 5, 1);
+
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new UPSProvider(UPSLicenseNumber, UPSUserId, UPSPassword));
+            var r = await rateManager.GetRatesAsync(from, to, package);
+            var fedExRates = r.Rates.ToList();
+
+            Assert.NotNull(r);
+            Assert.True(fedExRates.Any());
+            Assert.False(fedExRates.Any(r => r.CurrencyCode != "EUR"));
+        }
     }
 }

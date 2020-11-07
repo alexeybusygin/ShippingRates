@@ -17,6 +17,8 @@ namespace ShippingRates.ShippingProviders
     /// </summary>
     public class UPSProvider : AbstractShippingProvider
     {
+        public override string Name { get => "UPS"; }
+
         // These values need to stay in sync with the values in the "loadServiceCodes" method.
 
         public enum AvailableServices
@@ -69,7 +71,6 @@ namespace ShippingRates.ShippingProviders
 
         public UPSProvider(string licenseNumber, string userId, string password, int timeout, string serviceDescription, string shipperNumber)
         {
-             Name = "UPS";
              _licenseNumber = licenseNumber;
              _userId = userId;
              _password = password;
@@ -83,9 +84,9 @@ namespace ShippingRates.ShippingProviders
 
         private string RatesUrl => UseProduction ? PRODUCTION_RATES_URL : DEVELOPMENT_RATES_URL;
 
-        public bool UseRetailRates { get; set; } = false;
+        public bool UseRetailRates { get; set; }
 
-        public bool UseNegotiatedRates { get; set; } = false;
+        public bool UseNegotiatedRates { get; set; }
 
         public bool UseProduction { get; set; } = true;
 
@@ -129,6 +130,7 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteEndElement(); // </CustomerClassification
 
                     writer.WriteStartElement("Shipment");
+
                     writer.WriteStartElement("Shipper");
                     if (!string.IsNullOrWhiteSpace(_shipperNumber))
                     {
@@ -185,6 +187,10 @@ namespace ShippingRates.ShippingProviders
                         writer.WriteStartElement("ShipmentServiceOptions");
                         writer.WriteElementString("SaturdayDelivery", "");
                         writer.WriteEndElement();// </ShipmentServiceOptions>
+                    }
+                    if (Shipment.HasDocumentsOnly)
+                    {
+                        writer.WriteElementString("DocumentsOnly", "true");
                     }
 
                     for (var i = 0; i < Shipment.Packages.Count; i++)
@@ -319,17 +325,19 @@ namespace ShippingRates.ShippingProviders
                         description = _serviceCodes[name].ToString();
                     }
                     var totalCharges = Convert.ToDecimal(rateNode.XPathSelectElement("TotalCharges/MonetaryValue").Value);
+                    var currencyCode = rateNode.XPathSelectElement("TotalCharges/CurrencyCode").Value;
                     if (UseNegotiatedRates)
                     {
                         var negotiatedRate = rateNode.XPathSelectElement("NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue");
                         if (negotiatedRate != null) // check for negotiated rate
                         {
                             totalCharges = Convert.ToDecimal(negotiatedRate.Value);
+                            currencyCode = rateNode.XPathSelectElement("NegotiatedRates/NetSummaryCharges/GrandTotal/CurrencyCode").Value;
                         }
                     }
 
                     var date = rateNode.XPathSelectElement("GuaranteedDaysToDelivery").Value;
-                    if (date == "") // no gauranteed delivery date, so use MaxDate to ensure correct sorting
+                    if (string.IsNullOrEmpty(date)) // no gauranteed delivery date, so use MaxDate to ensure correct sorting
                     {
                         date = DateTime.MaxValue.ToShortDateString();
                     }
@@ -339,7 +347,7 @@ namespace ShippingRates.ShippingProviders
                             .AddDays(Convert.ToDouble(date)).ToShortDateString();
                     }
                     var deliveryTime = rateNode.XPathSelectElement("ScheduledDeliveryTime").Value;
-                    if (deliveryTime == "") // no scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
+                    if (string.IsNullOrEmpty(deliveryTime)) // no scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
                     {
                         date += " 11:59:00 PM";
                     }
@@ -352,7 +360,7 @@ namespace ShippingRates.ShippingProviders
                     AddRate(name, description, totalCharges, deliveryDate, new RateOptions()
                     {
                         SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
-                    });
+                    }, currencyCode);
                 }
             }
         }

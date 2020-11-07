@@ -10,11 +10,8 @@ namespace ShippingRates.ShippingProviders
     /// </summary>
     public abstract class AbstractShippingProvider : IShippingProvider
     {
-        public virtual async Task GetRates()
-        {
-        }
-
-        public string Name { get; set; }
+        public abstract Task GetRates();
+        public abstract string Name { get; }
         public Shipment Shipment { get; set; }
 
         protected void AddError(Error error)
@@ -33,12 +30,12 @@ namespace ShippingRates.ShippingProviders
             }
         }
 
-        protected void AddRate(string providerCode, string name, decimal totalCharges, DateTime delivery, RateOptions options = null)
+        protected void AddRate(string providerCode, string name, decimal totalCharges, DateTime delivery, RateOptions options, string currencyCode)
         {
-            AddRate(new Rate(Name, providerCode, name, totalCharges, delivery, options));
+            AddRate(new Rate(Name, providerCode, name, totalCharges, delivery, options, currencyCode));
         }
 
-        protected void AddRate(Rate rate)
+        private void AddRate(Rate rate)
         {
             lock (Shipment)
             {

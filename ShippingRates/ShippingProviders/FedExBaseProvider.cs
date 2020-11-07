@@ -11,12 +11,12 @@ namespace ShippingRates.ShippingProviders
 {
     public abstract class FedExBaseProvider : AbstractShippingProvider
     {
-        protected string _accountNumber;
-        protected string _key;
-        protected string _meterNumber;
-        protected string _password;
-        protected bool _useProduction = true;
-        protected Dictionary<string, string> _serviceCodes;
+        protected string AccountNumber { get; }
+        protected string Key { get; }
+        protected string MeterNumber { get; }
+        protected string Password { get; }
+        protected bool UseProduction { get; }
+        protected abstract Dictionary<string, string> ServiceCodes { get; }
 
         /// <summary>
         ///     FedEx allows insured values for items being shipped except when utilizing SmartPost.
@@ -24,24 +24,25 @@ namespace ShippingRates.ShippingProviders
         /// </summary>
         protected bool _allowInsuredValues = true;
 
-        /// <summary>
-        /// Sets service codes.
-        /// </summary>
-        protected abstract void SetServiceCodes();
+        public FedExBaseProvider(
+            string key,
+            string password,
+            string accountNumber,
+            string meterNumber,
+            bool useProduction)
+        {
+            Key = key;
+            Password = password;
+            AccountNumber = accountNumber;
+            MeterNumber = meterNumber;
+            UseProduction = useProduction;
+        }
 
         /// <summary>
         /// Gets service codes.
         /// </summary>
         /// <returns></returns>
-        public IDictionary<string, string> GetServiceCodes()
-        {
-            if (_serviceCodes != null && _serviceCodes.Count > 0)
-            {
-                return new Dictionary<string, string>(_serviceCodes);
-            }
-
-            return null;
-        }
+        public IDictionary<string, string> GetServiceCodes() => (ServiceCodes?.Count ?? 0) > 0 ? ServiceCodes : null;
 
         /// <summary>
         /// Creates the rate request
@@ -56,14 +57,14 @@ namespace ShippingRates.ShippingProviders
                 {
                     UserCredential = new WebAuthenticationCredential
                     {
-                        Key = _key,
-                        Password = _password
+                        Key = Key,
+                        Password = Password
                     }
                 },
                 ClientDetail = new ClientDetail
                 {
-                    AccountNumber = _accountNumber,
-                    MeterNumber = _meterNumber
+                    AccountNumber = AccountNumber,
+                    MeterNumber = MeterNumber
                 },
                 Version = new VersionId(),
                 ReturnTransitAndCommit = true,
@@ -76,7 +77,8 @@ namespace ShippingRates.ShippingProviders
                     DropoffTypeSpecified = true,
                     PackagingType = "YOUR_PACKAGING",
                     PackageCount = Shipment.PackageCount.ToString(),
-                    RateRequestTypes = new RateRequestType[1] { RateRequestType.LIST }
+                    RateRequestTypes = GetRateRequestTypes().ToArray(),
+                    PreferredCurrency = Shipment.Options.GetCurrencyCode()
                 }
             };
 
@@ -88,6 +90,15 @@ namespace ShippingRates.ShippingProviders
             SetShipmentDetails(request);
 
             return request;
+        }
+
+        private IEnumerable<RateRequestType> GetRateRequestTypes()
+        {
+            yield return RateRequestType.LIST;
+            if (!string.IsNullOrEmpty(Shipment.Options.PreferredCurrencyCode))
+            {
+                yield return RateRequestType.PREFERRED;
+            }
         }
 
         /// <summary>
@@ -102,7 +113,7 @@ namespace ShippingRates.ShippingProviders
         public override async Task GetRates()
         {
             var request = CreateRateRequest();
-            var service = new RatePortTypeClient(_useProduction);
+            var service = new RatePortTypeClient(UseProduction);
             try
             {
                 // Call the web service passing in a RateRequest and returning a RateReply
@@ -137,35 +148,47 @@ namespace ShippingRates.ShippingProviders
             {
                 var key = rateReplyDetail.ServiceType.ToString();
 
-                if (!_serviceCodes.Keys.Contains(key))
+                if (!ServiceCodes.Keys.Contains(key))
                 {
                     AddInternalError($"Unknown FedEx rate code: {key}");
                 }
                 else
                 {
-                    var netCharge = rateReplyDetail.RatedShipmentDetails.Max(r => GetCurrencyConvertedRate(r.ShipmentRateDetail));
+                    var rates = rateReplyDetail.RatedShipmentDetails.Select(r => GetCurrencyConvertedRate(r.ShipmentRateDetail));
+                    rates = rates.Any(r => r.currencyCode == Shipment.Options.GetCurrencyCode())
+                        ? rates.Where(r => r.currencyCode == Shipment.Options.GetCurrencyCode())
+                        : rates;
+
+                    var netCharge = rates.OrderByDescending(r => r.amount).FirstOrDefault();
                     var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
 
-                    AddRate(key, _serviceCodes[key], netCharge, deliveryDate, new RateOptions()
+                    AddRate(key, ServiceCodes[key], netCharge.amount, deliveryDate, new RateOptions()
                     {
                         SaturdayDelivery = rateReplyDetail.AppliedOptions?.Contains(ServiceOptionType.SATURDAY_DELIVERY) ?? false
-                    });
+                    },
+                    netCharge.currencyCode);
                 }
             }
         }
 
-        private static decimal GetCurrencyConvertedRate(ShipmentRateDetail rateDetail)
+        private (decimal amount, string currencyCode) GetCurrencyConvertedRate(ShipmentRateDetail rateDetail)
         {
             if (rateDetail?.TotalNetCharge == null)
-                return 0;
+                return (0, ShipmentOptions.DefaultCurrencyCode);
 
-            var hasCurrencyRate = rateDetail.CurrencyExchangeRate?.RateSpecified ?? false
+            if (rateDetail.TotalNetCharge.Currency == Shipment.Options.GetCurrencyCode())
+            {
+                return (rateDetail.TotalNetCharge.Amount, rateDetail.TotalNetCharge.Currency);
+            }
+
+            var hasCurrencyRate = (rateDetail.CurrencyExchangeRate?.RateSpecified ?? false)
+                && rateDetail.TotalNetCharge.Currency == rateDetail.CurrencyExchangeRate.FromCurrency
                 && rateDetail.CurrencyExchangeRate.Rate != 1
                 && rateDetail.CurrencyExchangeRate.Rate != 0;
 
             return hasCurrencyRate
-                ? Math.Round(rateDetail.TotalNetCharge.Amount / rateDetail.CurrencyExchangeRate.Rate, 2)
-                : rateDetail.TotalNetCharge.Amount;
+                ? (Math.Round(rateDetail.TotalNetCharge.Amount / rateDetail.CurrencyExchangeRate.Rate, 2), rateDetail.CurrencyExchangeRate.IntoCurrency)
+                : (rateDetail.TotalNetCharge.Amount, rateDetail.TotalNetCharge.Currency);
         }
 
         /// <summary>

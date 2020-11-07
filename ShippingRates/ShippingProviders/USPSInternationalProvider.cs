@@ -53,7 +53,6 @@ namespace ShippingRates.ShippingProviders
         /// <param name="userId"></param>
         public USPSInternationalProvider(string userId)
         {
-            Name = "USPS";
             _userId = userId;
             _service = "ALL";
         }
@@ -63,7 +62,6 @@ namespace ShippingRates.ShippingProviders
         /// <param name="userId"></param>
         public USPSInternationalProvider(string userId, string service)
         {
-            Name = "USPS";
             _userId = userId;
             _service = service;
         }
@@ -188,7 +186,7 @@ namespace ShippingRates.ShippingProviders
 
                 if (_service == name || _service == "ALL")
                 {
-                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30));
+                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30), null, USPSCurrencyCode);
                 }
             }
 
