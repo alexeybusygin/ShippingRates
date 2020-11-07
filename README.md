@@ -26,6 +26,8 @@ rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword
 rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
 // You will need a userId to use the USPS provider. Your account will also need access to the production servers.
 rateManager.AddProvider(new USPSProvider(uspsUserId));
+// You will need a Site ID and Password to use DHL provider.
+rateManager.AddProvider(new DHLProvider(dhlSiteId, dhlPassword, useProduction: false));
 
 // (Optional) Add RateAdjusters
 rateManager.AddRateAdjuster(new PercentageRateAdjuster(.9M));
@@ -71,7 +73,8 @@ Shipping options can be passed to the `GetRates` function as `ShipmentOptions` o
 var shipment = await rateManager.GetRatesAsync(origin, destination, packages,
     new ShipmentOptions() {
         SaturdayDelivery = true,
-        ShippingDate = new DateTime(2020, 7, 15)
+        ShippingDate = new DateTime(2020, 7, 15),
+        PreferredCurrencyCode = "EUR"   // For FedEx only
     });
 ```
 
@@ -81,6 +84,7 @@ The following options are available:
 | ---- | ------------- | ------- |
 | SaturdayDelivery | False | Enable Saturday Delivery option for shipping rates. |
 | ShippingDate | null | Pickup date. Current date and time is used if not specified. |
+| PreferredCurrencyCode | USD | Preferred rates currency code in the ISO format. Applies to FedEx only. |
 
 ### Saturday Delivery
 
@@ -121,6 +125,7 @@ Developer documentation is often hard to find. The links below are provided as r
 * [FedEx](http://www.fedex.com/us/developer/)
 * [USPS](https://www.usps.com/business/web-tools-apis/welcome.htm)
 * [UPS](https://www.ups.com/upsdeveloperkit)
+* [DHL](https://xmlportal.dhl.com/capability_and_qoute#cap_quote)
 
 ## Credits
 
