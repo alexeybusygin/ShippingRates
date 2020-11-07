@@ -3,7 +3,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/gqq8i6nw932bn01v?svg=true)](https://ci.appveyor.com/project/alexeybusygin/shippingrates/)
 [![NuGet Version](https://img.shields.io/nuget/v/ShippingRates.svg?style=flat-square)](https://www.nuget.org/packages/ShippingRates)
 
-.NET wrapper to UPS, FedEx, and USPS APIs. Use it to retrieve shipping rates from these carriers.
+.NET wrapper to UPS, FedEx, USPS and DHL APIs. Use it to retrieve shipping rates from these carriers.
 
 ## How to Install
 
