@@ -7,6 +7,6 @@
     <authors>$author$</authors>
     <owners>$author$</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>.NET wrapper to UPS, FedEx, and USPS shipping rates APIs.</description>
+    <description>.NET wrapper to UPS, FedEx, USPS, and DHL shipping rates APIs.</description>
   </metadata>
 </package>
