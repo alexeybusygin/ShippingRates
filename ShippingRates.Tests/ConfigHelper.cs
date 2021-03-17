@@ -10,9 +10,9 @@ namespace ShippingRates.Tests
         public static IConfigurationRoot GetConfigurationRoot(string outputPath)
         {
             return new ConfigurationBuilder()
-                .SetBasePath(outputPath)
+                .SetBasePath(outputPath)                            // For local testing
                 .AddJsonFile("appsettings.json", optional: true)
-                .AddEnvironmentVariables("ShippingRates.")
+                .AddEnvironmentVariables("ShippingRates.")          // For CI
                 .Build();
         }
 
