@@ -21,5 +21,6 @@ namespace ShippingRates.Tests
 
         public string DHLSiteId { get; set; }
         public string DHLPassword { get; set; }
+        public string DHLAccountNumber { get; set; }
     }
 }

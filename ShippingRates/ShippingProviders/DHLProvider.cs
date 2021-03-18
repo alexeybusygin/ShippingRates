@@ -54,14 +54,12 @@ namespace ShippingRates.ShippingProviders
             { 'Y', "EXPRESS 12:00" }
         };
 
-        private const int DefaultTimeout = 10;
+        public const int DefaultTimeout = 10;
+
+        private readonly DHLProviderConfiguration _configuration;
+
         private const string TestServicesUrl = "http://xmlpitest-ea.dhl.com/XMLShippingServlet";
         private const string ProductionServicesUrl = "https://xmlpi-ea.dhl.com/XMLShippingServlet";
-        private readonly string _siteId;
-        private readonly string _password;
-        private readonly int _timeout;
-        private readonly bool _useProduction;
-        private readonly char[] _serviceCodes;
 
         public DHLProvider(string siteId, string password, bool useProduction) :
             this(siteId, password, useProduction, null)
@@ -73,17 +71,21 @@ namespace ShippingRates.ShippingProviders
         {
         }
 
-        public DHLProvider(string siteId, string password, bool useProduction, char[] services, int timeout)
+        public DHLProvider(string siteId, string password, bool useProduction, char[] services, int timeout) :
+            this(new DHLProviderConfiguration(siteId, password, useProduction)
+            {
+                TimeOut = timeout
+            }
+            .IncludeServices(services))
         {
-            _siteId = siteId;
-            _password = password;
-            _timeout = timeout;
-            _useProduction = useProduction;
-            _serviceCodes = (services ?? Array.Empty<char>())
-                .Where(c => AvailableServices.ContainsKey(c)).ToArray();
         }
 
-        private Uri RatesUri => new Uri(_useProduction ? ProductionServicesUrl : TestServicesUrl);
+        public DHLProvider(DHLProviderConfiguration configuration)
+        {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        }
+
+        private Uri RatesUri => new Uri(_configuration.UseProduction ? ProductionServicesUrl : TestServicesUrl);
 
         private string BuildRatesRequestMessage(
             DateTime requestDateTime,
@@ -112,8 +114,8 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteStartElement("ServiceHeader");
                     writer.WriteElementString("MessageTime", requestDateTime.ToString("O", requestCulture));
                     writer.WriteElementString("MessageReference", messageReference);
-                    writer.WriteElementString("SiteID", _siteId);
-                    writer.WriteElementString("Password", _password);
+                    writer.WriteElementString("SiteID", _configuration.SiteId);
+                    writer.WriteElementString("Password", _configuration.Password);
                     writer.WriteEndElement(); // </ServiceHeader>
                     writer.WriteEndElement(); // </Request>
 
@@ -140,13 +142,17 @@ namespace ShippingRates.ShippingProviders
                     }
                     writer.WriteEndElement(); // </Pieces>
 
+                    if (!string.IsNullOrEmpty(_configuration.PaymentAccountNumber))
+                    {
+                        writer.WriteElementString("PaymentAccountNumber", _configuration.PaymentAccountNumber);
+                    }
                     writer.WriteElementString("IsDutiable", isDutiable ? "Y" : "N");
                     writer.WriteElementString("NetworkTypeCode", "AL");
 
                     writer.WriteStartElement("QtdShp");
-                    if (_serviceCodes.Any())
+                    if (_configuration.ServicesIncluded.Any())
                     {
-                        foreach (var serviceCode in _serviceCodes)
+                        foreach (var serviceCode in _configuration.ServicesIncluded)
                         {
                             writer.WriteElementString("GlobalProductCode", serviceCode.ToString());
                         }
@@ -206,7 +212,7 @@ namespace ShippingRates.ShippingProviders
 
             using (var httpClient = new HttpClient())
             {
-                httpClient.Timeout = TimeSpan.FromSeconds(_timeout);
+                httpClient.Timeout = TimeSpan.FromSeconds(_configuration.TimeOut);
 
                 var request = BuildRatesRequestMessage(
                     DateTime.Now,
@@ -242,10 +248,14 @@ namespace ShippingRates.ShippingProviders
 
             ParseRates(xDoc.XPathSelectElements("GetQuoteResponse/BkgDetails/QtdShp"));
             ParseErrors(xDoc.XPathSelectElements("GetQuoteResponse/Note/Condition"));
+            ParseErrors(xDoc.XPathSelectElements("Response/Status/Condition"));
         }
 
         private void ParseRates(IEnumerable<XElement> rates)
         {
+            var includedServices = _configuration.ServicesIncluded;
+            var excludedServices = _configuration.ServicesExcluded;
+
             foreach (var rateNode in rates)
             {
                 var serviceCode = rateNode.Element("GlobalProductCode")?.Value;
@@ -254,7 +264,8 @@ namespace ShippingRates.ShippingProviders
                     AddInternalError($"Unknown DHL Global Product Code: {serviceCode}");
                     continue;
                 }
-                if (_serviceCodes.Any() && !_serviceCodes.Contains(serviceCode[0]))
+                if ((includedServices.Any() && !includedServices.Contains(serviceCode[0])) ||
+                    (excludedServices.Any() && excludedServices.Contains(serviceCode[0])))
                 {
                     continue;
                 }

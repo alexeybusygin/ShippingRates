@@ -49,6 +49,7 @@ namespace ShippingRates.SampleApp
             //var destination = new Address("", "", "00907", "PR"); // Puerto Rico Address
             //var destination = new Address("", "", "L4W 1S2", "CA"); // Canada Address
             //var destination = new Address("", "", "SW1E 5JL", "GB"); // UK Address
+            //var destination = new Address("", "", "1042 AG", "NL");   // Netherlands Address
 
             // Create RateManager
             var rateManager = new RateManager();
@@ -59,7 +60,10 @@ namespace ShippingRates.SampleApp
             rateManager.AddProvider(new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction));
             rateManager.AddProvider(new USPSProvider(uspsUserId));
             rateManager.AddProvider(new USPSInternationalProvider(uspsUserId));
-            rateManager.AddProvider(new DHLProvider(dhlSiteId, dhlPassword, useProduction: false));
+
+            var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: false)
+                .ExcludeServices(new char[] { 'C' });
+            rateManager.AddProvider(new DHLProvider(dhlConfiguration));
 
             // (Optional) Add RateAdjusters
             rateManager.AddRateAdjuster(new PercentageRateAdjuster(.9M));

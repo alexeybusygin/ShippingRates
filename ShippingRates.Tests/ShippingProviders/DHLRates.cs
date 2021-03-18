@@ -14,12 +14,27 @@ namespace ShippingRates.Tests.ShippingProviders
 
         protected DHLRatesTestsBase()
         {
-            var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
+            _rateManager = GetRateManager(GetConfiguration());
+        }
 
-            _provider = new DHLProvider(config.DHLSiteId, config.DHLPassword, false);
+        protected DHLProviderConfiguration GetConfiguration()
+        {
+            var config = GetApplicationConfiguration();
 
-            _rateManager = new RateManager();
-            _rateManager.AddProvider(_provider);
+            return new DHLProviderConfiguration(config.DHLSiteId, config.DHLPassword, false);
+        }
+
+        protected TestsConfiguration GetApplicationConfiguration() =>
+            ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
+
+        protected RateManager GetRateManager(DHLProviderConfiguration configuration)
+        {
+            var provider = new DHLProvider(configuration);
+
+            var rateManager = new RateManager();
+            rateManager.AddProvider(provider);
+
+            return rateManager;
         }
     }
 
@@ -43,6 +58,53 @@ namespace ShippingRates.Tests.ShippingProviders
             {
                 Assert.True(rate.TotalCharges > 0);
             }
+        }
+
+        [Test]
+        public void DHLIncludeAndExcludeServices()
+        {
+            var from = new Address("", "", "75003", "FR");
+            var to = new Address("", "", "75011", "FR");
+            var package = new Package(7, 7, 7, 6, 0);
+
+            var configuration1 = GetConfiguration().IncludeServices(new char[] { 'I' });
+
+            var r1 = GetRateManager(configuration1).GetRates(from, to, package);
+            var rates1 = r1.Rates.ToList();
+
+            Assert.True((rates1?.Count() ?? 0) == 1);
+            Assert.True(rates1.Any(r => r.Name.Contains("DOMESTIC 9:00")));
+
+            var configuration2 = GetConfiguration().ExcludeServices(new char[] { 'C' });
+
+            var r2 = GetRateManager(configuration2).GetRates(from, to, package);
+            var rates2 = r2.Rates.ToList();
+
+            Assert.True(rates2?.Any() ?? false);
+            Assert.False(rates2.Any(r => r.Name.Contains("MEDICAL")));
+        }
+
+        [Test]
+        public void DHLIncludePaymentAccountNumber()
+        {
+            var from = new Address("", "", "75003", "FR");
+            var to = new Address("", "", "75011", "FR");
+            var package = new Package(7, 7, 7, 6, 0);
+
+            var r1 = _rateManager.GetRates(from, to, package);
+            var rates1 = r1.Rates.ToList();
+
+            var configuration2 = GetConfiguration();
+            configuration2.PaymentAccountNumber = GetApplicationConfiguration().DHLAccountNumber;
+
+            var r2 = GetRateManager(configuration2).GetRates(from, to, package);
+            var rates2 = r2.Rates.ToList();
+
+            Assert.True(rates1?.Any() ?? false);
+            Assert.True(rates2?.Any() ?? false);
+            Assert.True(
+                rates1.Count() != rates2.Count() ||
+                rates1.Sum(r => r.TotalCharges) != rates2.Sum(r => r.TotalCharges));
         }
 
         [Test]
