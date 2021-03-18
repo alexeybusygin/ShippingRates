@@ -1451,6 +1451,9 @@ namespace ShippingRates.RateServiceWebReference
         TARP,
         
         /// <remarks/>
+        THIRD_PARTY_BILLING,
+        
+        /// <remarks/>
         THIRD_PARTY_CONSIGNEE,
         
         /// <remarks/>
