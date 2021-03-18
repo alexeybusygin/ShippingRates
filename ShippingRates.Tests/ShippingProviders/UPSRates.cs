@@ -26,12 +26,12 @@ namespace ShippingRates.Tests.ShippingProviders
         {
             DomesticAddress1 = new Address("278 Buckley Jones Road", "", "", "Cleveland", "MS", "38732", "US");
             DomesticAddress2 = new Address("One Microsoft Way", "", "", "Redmond", "WA", "98052", "US");
-            InternationalAddress1 = new Address("Porscheplatz 1", "", "", "70435 Stuttgart", "", "", "DE");
-            InternationalAddress2 = new Address("80-100 Victoria St", "", "", "London SW1E 5JL", "", "", "GB");
+            InternationalAddress1 = new Address("Porscheplatz 1", "", "", "Stuttgart", "", "70435", "DE");
+            InternationalAddress2 = new Address("80-100 Victoria St", "", "", "London", "", "SW1E 5JL", "GB");
 
-            Package1 = new Package(4, 4, 4, 5, 0);
+            Package1 = new Package(4, 4, 4, 5, 1);
             Package2 = new Package(6, 6, 6, 5, 100);
-            Package1SignatureRequired = new Package(4, 4, 4, 5, 0, null, true);
+            Package1SignatureRequired = new Package(4, 4, 4, 5, 1, null, true);
 
             var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
 
