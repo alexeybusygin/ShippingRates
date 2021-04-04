@@ -302,6 +302,20 @@ namespace ShippingRates.ShippingProviders
         {
             if (xDoc.Root != null)
             {
+                var response = xDoc.Root.XPathSelectElement("Response");
+                if (response != null)
+                {
+                    var responseErrors = response.Elements("Error");
+                    foreach (var responseError in responseErrors)
+                    {
+                        AddError(new Error
+                        {
+                            Description = responseError.XPathSelectElement("ErrorDescription")?.Value,
+                            Number = responseError.XPathSelectElement("ErrorCode")?.Value,
+                        });
+                    }
+                }
+
                 var ratedShipment = xDoc.Root.Elements("RatedShipment");
                 foreach (var rateNode in ratedShipment)
                 {
