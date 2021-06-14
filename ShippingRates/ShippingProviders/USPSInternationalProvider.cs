@@ -129,8 +129,8 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteAttributeString("ID", i.ToString());
                     writer.WriteElementString("Pounds", package.PoundsAndOunces.Pounds.ToString());
                     writer.WriteElementString("Ounces", package.PoundsAndOunces.Ounces.ToString());
-                    writer.WriteElementString("MailType", "Package");
-                    writer.WriteElementString("ValueOfContents", package.InsuredValue < 0 ? package.InsuredValue.ToString() : "100"); //todo: figure out best way to come up with insured value
+                    writer.WriteElementString("MailType", "All");
+                    writer.WriteElementString("ValueOfContents", package.InsuredValue.ToString());
                     writer.WriteElementString("Country", Shipment.DestinationAddress.GetCountryName());
                     writer.WriteElementString("Container", "RECTANGULAR");
                     writer.WriteElementString("Size", "REGULAR");
@@ -140,6 +140,15 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
                     writer.WriteElementString("OriginZip", Shipment.OriginAddress.PostalCode);
                     writer.WriteElementString("CommercialFlag", Commercial ? "Y" : "N");
+
+                    // ContentType must be set to Documents to get First-Class International Mail rates
+                    if (package is DocumentsPackage)
+                    {
+                        writer.WriteStartElement("Content");
+                        writer.WriteElementString("ContentType", "Documents");
+                        writer.WriteEndElement();
+                    }
+
                     //TODO: Figure out DIM Weights
                     //writer.WriteElementString("Size", package.IsOversize ? "LARGE" : "REGULAR");
                     //writer.WriteElementString("Length", package.RoundedLength.ToString());
