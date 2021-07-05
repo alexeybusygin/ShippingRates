@@ -12,7 +12,6 @@ namespace ShippingRates
         public DocumentsPackage(decimal weight, decimal insuredValue, bool signatureRequiredOnDelivery = false)
             : base(0, 0, 0, weight, insuredValue, null, signatureRequiredOnDelivery)
         {
-            IsDocumentsOnly = true;
         }
     }
 }

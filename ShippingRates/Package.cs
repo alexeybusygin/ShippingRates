@@ -53,7 +53,6 @@ namespace ShippingRates
         public decimal Height { get; set; }
         public decimal InsuredValue { get; set; }
         public bool IsOversize { get; set; }
-        public bool IsDocumentsOnly { get; set; }
         public decimal Length { get; set; }
         public decimal RoundedHeight
         {

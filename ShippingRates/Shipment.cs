@@ -35,7 +35,7 @@ namespace ShippingRates
         /// <summary>
         ///     Documents only in the shipment
         /// </summary>
-        public bool HasDocumentsOnly => !Packages.Any(p => !p.IsDocumentsOnly);
+        public bool HasDocumentsOnly => Packages.All(p => p is DocumentsPackage);
         /// <summary>
         ///     Shipment rates
         /// </summary>
