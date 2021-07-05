@@ -222,5 +222,23 @@ namespace ShippingRates.Tests.ShippingProviders
                 Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
         }
+
+        [Test]
+        public async Task USPS_ThreeAndAHalfOunceLetter_Qualifies_For_First_Class_Mail_Letter()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new USPSProvider(_uspsUserId));
+
+            const decimal firstClassLetterMaxWeight = 0.21875m; // 3.5 ounces
+            var firstClassLetter = new DocumentsPackage(firstClassLetterMaxWeight, 0);
+
+            var origin = new Address("", "", "06405", "US");
+            var destination = new Address("", "", "20852", "US");
+
+            var response = await rateManager.GetRatesAsync(origin, destination, firstClassLetter);
+
+            Assert.True(response.Rates.Any(r =>
+                r.ProviderCode is "First-Class Mail Stamped Letter" or "First-Class Mail Metered Letter"));
+        }
     }
 }

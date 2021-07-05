@@ -86,9 +86,7 @@ namespace ShippingRates
                 }
 
                 poundsAndOunces.Pounds = (int) Math.Truncate(Weight);
-                var decimalPart = (Weight - poundsAndOunces.Pounds) * 16;
-
-                poundsAndOunces.Ounces = (int) Math.Ceiling(decimalPart);
+                poundsAndOunces.Ounces = (Weight - poundsAndOunces.Pounds) * 16;
 
                 return poundsAndOunces;
             }

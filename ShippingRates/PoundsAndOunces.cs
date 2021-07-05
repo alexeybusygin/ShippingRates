@@ -6,6 +6,6 @@
     public struct PoundsAndOunces
     {
         public int Pounds { get; set; }
-        public int Ounces { get; set; }
+        public decimal Ounces { get; set; }
     }
 }

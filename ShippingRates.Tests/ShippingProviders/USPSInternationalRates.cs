@@ -11,10 +11,14 @@ namespace ShippingRates.Tests.ShippingProviders
     [TestFixture]
     public class USPSInternationalRates
     {
+        private const decimal FirstClassLetterMaxWeight = 0.21875m; // 3.5 ounces
+
         private readonly Address _domesticAddress1;
         private readonly Address _domesticAddress2;
         private readonly Address _internationalAddress1;
         private readonly Address _internationalAddress2;
+        private readonly DocumentsPackage _firstClassLetterWithNoValue;
+        private readonly DocumentsPackage _firstClassLetterWithValue;
         private readonly Package _package1;
         private readonly Package _package2;
         private readonly string _uspsUserId;
@@ -26,6 +30,8 @@ namespace ShippingRates.Tests.ShippingProviders
             _internationalAddress1 = new Address("Jubail", "Jubail", "31951", "SA"); //has limited intl services available
             _internationalAddress2 = new Address("80-100 Victoria St", "", "", "London", "", "SW1E 5JL", "GB");
 
+            _firstClassLetterWithNoValue = new DocumentsPackage(FirstClassLetterMaxWeight, 0);
+            _firstClassLetterWithValue = new DocumentsPackage(FirstClassLetterMaxWeight, 1);
             _package1 = new Package(14, 14, 14, 15, 0);
             _package2 = new Package(6, 6, 6, 5, 100);
 
@@ -133,6 +139,38 @@ namespace ShippingRates.Tests.ShippingProviders
         }
 
         [Test]
+        public void USPS_Intl_Returns_First_Class_Mail_Rates_For_FirstClassLetterWithNoValue()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId));
+
+            var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, _firstClassLetterWithNoValue);
+            Assert.True(response.Rates.Any(IsFirstClassMailRate));
+        }
+
+        [Test]
+        public void USPS_Intl_Returns_No_First_Class_Mail_Rates_For_FirstClassLetterWithValue()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId));
+
+            var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, _firstClassLetterWithValue);
+            Assert.False(response.Rates.Any(IsFirstClassMailRate));
+        }
+
+        [Test]
+        public void USPS_Intl_Returns_No_First_Class_Mail_Rates_For_Package()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId));
+
+            var package = new Package(7m, 5m, 0.1m, FirstClassLetterMaxWeight, 0);
+
+            var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, package);
+            Assert.False(response.Rates.Any(IsFirstClassMailRate));
+        }
+
+        [Test]
         public void CanGetUspsInternationalServiceCodes()
         {
             var provider = new USPSInternationalProvider(_uspsUserId);
@@ -154,6 +192,12 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.NotNull(response);
             Assert.True(rates.Any());
             Assert.False(rates.Any(r => r.CurrencyCode != "USD"));
+        }
+
+        private bool IsFirstClassMailRate(Rate rate)
+        {
+            return rate.ProviderCode is "First-Class Mail International Letter" or
+                "First-Class Mail International Large Envelope";
         }
     }
 }

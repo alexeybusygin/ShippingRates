@@ -7,13 +7,15 @@ namespace ShippingRates.Tests.Units
     {
         [Theory]
         [TestCase(3.5, 3, 8)]
-        [TestCase(5.8, 5, 13)]
-        [TestCase(6.2, 6, 4)]
-        public void PoundsAndOuncesCalculatedCorrectly(decimal weight, int pounds, int ounces)
+        [TestCase(5.8, 5, 12.8)]
+        [TestCase(6.2, 6, 3.2)]
+        [TestCase(0.21875, 0, 3.5)]
+        [TestCase(0.8125, 0, 13)]
+        public void PoundsAndOuncesCalculatedCorrectly(decimal weight, int pounds, decimal ounces)
         {
             var package = new Package(1, 2, 3, weight, 100);
-            Assert.AreEqual(package.PoundsAndOunces.Pounds, pounds);
-            Assert.AreEqual(package.PoundsAndOunces.Ounces, ounces);
+            Assert.AreEqual(pounds, package.PoundsAndOunces.Pounds);
+            Assert.AreEqual(ounces, package.PoundsAndOunces.Ounces);
         }
     }
 }
