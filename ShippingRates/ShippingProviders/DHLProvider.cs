@@ -168,7 +168,7 @@ namespace ShippingRates.ShippingProviders
                     var totalInsurance = Shipment.Packages.Sum(p => p.InsuredValue);
                     if (totalInsurance > 0)
                     {
-                        writer.WriteElementString("InsuredValue", $"{totalInsurance:N}");
+                        writer.WriteElementString("InsuredValue", $"{totalInsurance.ToString("N", requestCulture)}");
                         writer.WriteElementString("InsuredCurrency", "USD");
                     }
 
@@ -180,7 +180,7 @@ namespace ShippingRates.ShippingProviders
                     {
                         writer.WriteStartElement("Dutiable");
                         writer.WriteElementString("DeclaredCurrency", "USD");
-                        writer.WriteElementString("DeclaredValue", $"{totalInsurance:N}");
+                        writer.WriteElementString("DeclaredValue", $"{totalInsurance.ToString("N", requestCulture)}");
                         writer.WriteEndElement(); // </Dutiable>
                     }
 
