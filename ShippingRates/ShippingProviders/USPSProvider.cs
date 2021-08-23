@@ -1,3 +1,4 @@
+using ShippingRates.ShippingProviders.USPS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,8 @@ namespace ShippingRates.ShippingProviders
         private readonly string _service;
 
         private readonly string _userId;
+
+        private readonly SpecialServices[] _specialServices;
 
         /// <summary>
         /// Service codes. {0} is a placeholder for 1-Day, 2-Day, 3-Day, Military, DPO or a space
@@ -85,22 +88,26 @@ namespace ShippingRates.ShippingProviders
         /// <summary>
         /// </summary>
         /// <param name="userId"></param>
-        public USPSProvider(string userId)
-        {
-            _userId = userId;
-            _service = "ALL";
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="userId"></param>
-        public USPSProvider(string userId, string service)
+        public USPSProvider(string userId, string service = Services.All)
         {
             _userId = userId;
             _service = service;
         }
 
-        [Obsolete("Please use ShipmentOptions instead, this constructor will be removed in the future")]
+        public USPSProvider(USPSProviderConfiguration configuration)
+        {
+            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _userId = configuration.UserId;
+            _service = configuration.Service;
+            _specialServices = configuration.SpecialServices;
+
+            if (string.IsNullOrEmpty(_service))
+            {
+                _service = Services.All;
+            }
+        }
+
+        [Obsolete("Please use ShipmentOptions instead for the shipDate, this constructor will be removed in the future")]
         public USPSProvider(string userId, string service, string shipDate)
             : this(userId, service)
         {
@@ -116,7 +123,7 @@ namespace ShippingRates.ShippingProviders
             if (_serviceCodes != null && _serviceCodes.Count > 0)
             {
                 var serviceCodes = new Dictionary<string, string>();
-                var variableValues = new List<String>() {"1-Day", "2-Day", "3-Day", "Military", "DPO"};
+                var variableValues = new List<string>() {"1-Day", "2-Day", "3-Day", "Military", "DPO"};
 
                 foreach (var variableValue in variableValues)
                 {
@@ -151,7 +158,7 @@ namespace ShippingRates.ShippingProviders
             }
 
             var sb = new StringBuilder();
-            var signatureOnDeliveryRequired = false;
+            var specialServices = GetSpecialServicesForShipment(Shipment);
 
             var settings = new XmlWriterSettings
             {
@@ -205,19 +212,31 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("Length", package.RoundedLength.ToString());
                     writer.WriteElementString("Height", package.RoundedHeight.ToString());
                     writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
-                    writer.WriteElementString("Machinable", IsPackageMachinable(package).ToString());
+                    writer.WriteElementString("Value", package.InsuredValue.ToString());
+                    if (RequiresMachinable(_service))
+                    {
+                        writer.WriteElementString("Machinable", IsPackageMachinable(package).ToString());
+                    }
                     if (Shipment.Options.ShippingDate != null)
                     {
                         writer.WriteElementString("ShipDate",
                             Shipment.Options.ShippingDate.Value.ToString("yyyy-MM-dd"));
                     }
 
-                    if (package.SignatureRequiredOnDelivery)
-                        signatureOnDeliveryRequired = true;
+                    if (AllowsSpecialServices(_service) && specialServices.Any())
+                    {
+                        writer.WriteStartElement("SpecialServices");
+                        foreach (var service in specialServices)
+                        {
+                            writer.WriteElementString("SpecialService", ((int)service).ToString());
+                        }
+                        writer.WriteEndElement();
+                    }
 
                     writer.WriteEndElement();
                     i++;
                 }
+
                 writer.WriteEndElement();
                 writer.Flush();
             }
@@ -229,18 +248,34 @@ namespace ShippingRates.ShippingProviders
                     var rateUri = new Uri($"{PRODUCTION_URL}?API=RateV4&XML={sb}");
                     var response = await httpClient.GetStringAsync(rateUri).ConfigureAwait(false);
 
-                    var specialServiceCodes = new List<string>();
-
-                    if (signatureOnDeliveryRequired)
-                        specialServiceCodes.Add("119"); // 119 represents Adult Signature Required
-
-                    ParseResult(response, specialServiceCodes);
+                    ParseResult(response, specialServices);
                 }
             }
             catch (Exception ex)
             {
                 AddInternalError($"USPS provider exception: {ex.Message}");
             }
+        }
+
+        public List<SpecialServices> GetSpecialServicesForShipment(Shipment shipment)
+        {
+            shipment = shipment ?? throw new ArgumentNullException(nameof(shipment));
+            var shipmentSpecialServices = new List<SpecialServices>(_specialServices ?? Array.Empty<SpecialServices>());
+
+            if (shipment.Packages.Any(p => p.SignatureRequiredOnDelivery))
+            {
+                shipmentSpecialServices.Add(SpecialServices.AdultSignatureRequired);
+                shipmentSpecialServices.Add(SpecialServices.CertifiedMailAdultSignatureRequired);
+            }
+
+            if (shipment.Packages.Any(p => p.InsuredValue > 0))
+            {
+                shipmentSpecialServices.Add(SpecialServices.Insurance);
+                shipmentSpecialServices.Add(SpecialServices.InsurancePriorityMail);
+                shipmentSpecialServices.Add(SpecialServices.InsurancePriorityMailExpress);
+            }
+
+            return shipmentSpecialServices;
         }
 
         public bool IsDomesticUSPSAvailable()
@@ -266,7 +301,7 @@ namespace ShippingRates.ShippingProviders
             return (package.Width <= 27 && package.Height <= 17 && package.Length <= 17) || (package.Width <= 17 && package.Height <= 27 && package.Length <= 17) || (package.Width <= 17 && package.Height <= 17 && package.Length <= 27);
         }
 
-        private void ParseResult(string response, IList<string> includeSpecialServiceCodes = null)
+        private void ParseResult(string response, IList<SpecialServices> includeSpecialServiceCodes = null)
         {
             var document = XElement.Parse(response, LoadOptions.None);
 
@@ -291,10 +326,10 @@ namespace ShippingRates.ShippingProviders
                     {
                         foreach (var specialService in specialServices)
                         {
-                            var serviceId = (string)specialService.Element("ServiceID");
+                            var serviceId = (int)specialService.Element("ServiceID");
                             var price = decimal.Parse((string) specialService.Element("Price"));
 
-                            if (includeSpecialServiceCodes.Contains(serviceId.ToString()))
+                            if (includeSpecialServiceCodes.Contains((SpecialServices)serviceId))
                                 additionalCharges += price;
                         }
                     }
@@ -316,6 +351,19 @@ namespace ShippingRates.ShippingProviders
 
             //check for errors
             ParseErrors(document);
+        }
+
+        public static bool RequiresMachinable(string service)
+        {
+            return
+                service == Services.FirstClass || // TODO: Check for (FirstClassMailType = 'LETTER' or FirstClassMailType = 'FLAT')]
+                service == Services.All ||
+                service == Services.Online;
+        }
+
+        public static bool AllowsSpecialServices(string service)
+        {
+            return service != Services.All && service != Services.Online && service != Services.Plus;
         }
     }
 }
