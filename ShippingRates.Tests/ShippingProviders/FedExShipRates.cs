@@ -10,7 +10,9 @@ namespace ShippingRates.Tests.ShippingProviders
     public abstract class FedExShipRatesTestsBase
     {
         protected readonly RateManager _rateManager;
+        protected readonly RateManager _rateManagerNegotiated;
         protected readonly FedExProvider _provider;
+        protected readonly FedExProvider _providerNegotiated;
 
         protected FedExShipRatesTestsBase()
         {
@@ -26,6 +28,14 @@ namespace ShippingRates.Tests.ShippingProviders
 
             _rateManager = new RateManager();
             _rateManager.AddProvider(_provider);
+
+            _providerNegotiated = new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction)
+            {
+                UseNegotiatedRates = true
+            };
+
+            _rateManagerNegotiated = new RateManager();
+            _rateManagerNegotiated.AddProvider(_providerNegotiated);
         }
     }
 
@@ -70,6 +80,32 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.AreEqual(error.Number, "521");
             Assert.NotNull(error.Description);
             Assert.AreEqual(error.Description.Substring(0, 42), "Destination postal code missing or invalid");
+        }
+
+
+        [Test]
+        public void FedExNegotiatedRates()
+        {
+            var from = new Address("Annapolis", "MD", "21401", "US");
+            var to = new Address("Fitchburg", "WI", "53711", "US");
+            var package = new Package(7, 7, 7, 6, 1);
+
+            var r = _rateManager.GetRates(from, to, package);
+            var rates = r.Rates.ToList();
+
+            var rN = _rateManagerNegotiated.GetRates(from, to, package);
+            var ratesNegotiated = rN.Rates.ToList();
+
+            Assert.NotNull(r);
+            Assert.NotNull(rN);
+            Assert.True(rates.Any());
+            Assert.True(ratesNegotiated.Any());
+
+            var groundRate = rates.FirstOrDefault(r => r.ProviderCode == "FEDEX_GROUND");
+            var groundNRate = ratesNegotiated.FirstOrDefault(r => r.ProviderCode == "FEDEX_GROUND");
+            Assert.NotNull(groundRate);
+            Assert.NotNull(groundNRate);
+            Assert.AreNotEqual(groundRate.TotalCharges, groundNRate.TotalCharges);
         }
 
         [Test]

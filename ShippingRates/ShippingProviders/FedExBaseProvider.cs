@@ -11,6 +11,8 @@ namespace ShippingRates.ShippingProviders
 {
     public abstract class FedExBaseProvider : AbstractShippingProvider
     {
+        public bool UseNegotiatedRates { get; set; } = false;
+
         protected string AccountNumber { get; }
         protected string Key { get; }
         protected string MeterNumber { get; }
@@ -154,7 +156,8 @@ namespace ShippingRates.ShippingProviders
                 }
                 else
                 {
-                    var rates = rateReplyDetail.RatedShipmentDetails.Select(r => GetCurrencyConvertedRate(r.ShipmentRateDetail));
+                    var rateDetails = GetRateDetailsByRateType(rateReplyDetail);
+                    var rates = rateDetails.Select(r => GetCurrencyConvertedRate(r.ShipmentRateDetail));
                     rates = rates.Any(r => r.currencyCode == Shipment.Options.GetCurrencyCode())
                         ? rates.Where(r => r.currencyCode == Shipment.Options.GetCurrencyCode())
                         : rates;
@@ -171,24 +174,43 @@ namespace ShippingRates.ShippingProviders
             }
         }
 
+        private RatedShipmentDetail[] GetRateDetailsByRateType(RateReplyDetail rateReplyDetail)
+        {
+            var negotiatedRateTypes = new ReturnedRateType[]
+            {
+                ReturnedRateType.PAYOR_ACCOUNT_PACKAGE,
+                ReturnedRateType.PAYOR_ACCOUNT_SHIPMENT,
+                ReturnedRateType.NEGOTIATED
+            };
+
+            return rateReplyDetail.RatedShipmentDetails
+                .Where(rsd =>
+                    (UseNegotiatedRates && negotiatedRateTypes.Contains(rsd.ShipmentRateDetail.RateType)) ||
+                    (!UseNegotiatedRates && !negotiatedRateTypes.Contains(rsd.ShipmentRateDetail.RateType)))
+                .ToArray();
+        }
+
         private (decimal amount, string currencyCode) GetCurrencyConvertedRate(ShipmentRateDetail rateDetail)
         {
+            var shipmentCurrencyCode = Shipment.Options.GetCurrencyCode();
+
             if (rateDetail?.TotalNetCharge == null)
-                return (0, ShipmentOptions.DefaultCurrencyCode);
+                return (0, shipmentCurrencyCode);
 
-            if (rateDetail.TotalNetCharge.Currency == Shipment.Options.GetCurrencyCode())
-            {
-                return (rateDetail.TotalNetCharge.Amount, rateDetail.TotalNetCharge.Currency);
-            }
+            var needCurrencyConversion = rateDetail.TotalNetCharge.Currency != shipmentCurrencyCode;
+            if (!needCurrencyConversion)
+                return (rateDetail.TotalNetCharge.Amount, shipmentCurrencyCode);
 
-            var hasCurrencyRate = (rateDetail.CurrencyExchangeRate?.RateSpecified ?? false)
-                && rateDetail.TotalNetCharge.Currency == rateDetail.CurrencyExchangeRate.FromCurrency
+            var canConvertCurrency = (rateDetail.CurrencyExchangeRate?.RateSpecified ?? false)
+                && rateDetail.TotalNetCharge.Currency == rateDetail.CurrencyExchangeRate.IntoCurrency
+                && shipmentCurrencyCode == rateDetail.CurrencyExchangeRate.FromCurrency
                 && rateDetail.CurrencyExchangeRate.Rate != 1
                 && rateDetail.CurrencyExchangeRate.Rate != 0;
 
-            return hasCurrencyRate
-                ? (Math.Round(rateDetail.TotalNetCharge.Amount / rateDetail.CurrencyExchangeRate.Rate, 2), rateDetail.CurrencyExchangeRate.IntoCurrency)
-                : (rateDetail.TotalNetCharge.Amount, rateDetail.TotalNetCharge.Currency);
+            if (!canConvertCurrency)
+                return (rateDetail.TotalNetCharge.Amount, rateDetail.TotalNetCharge.Currency);
+
+            return (Math.Round(rateDetail.TotalNetCharge.Amount / rateDetail.CurrencyExchangeRate.Rate, 2), shipmentCurrencyCode);
         }
 
         /// <summary>
