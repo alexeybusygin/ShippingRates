@@ -60,6 +60,8 @@ A list of valid shipping methods can be found in the documentation links below.
 
 See the sample app in this repository for a working example.
 
+More information can be found in [Wiki](https://github.com/alexeybusygin/ShippingRates/wiki).
+
 #### International Rates
 USPS requires a separate API call for retrieving rates international services.
 
@@ -74,7 +76,8 @@ var shipment = await rateManager.GetRatesAsync(origin, destination, packages,
     new ShipmentOptions() {
         SaturdayDelivery = true,
         ShippingDate = new DateTime(2020, 7, 15),
-        PreferredCurrencyCode = "EUR"   // For FedEx only
+        PreferredCurrencyCode = "EUR",  // For FedEx only
+        FedExOneRate = true             // For FedEx only
     });
 ```
 
@@ -85,6 +88,7 @@ The following options are available:
 | SaturdayDelivery | False | Enable Saturday Delivery option for shipping rates. |
 | ShippingDate | null | Pickup date. Current date and time is used if not specified. |
 | PreferredCurrencyCode | USD | Preferred rates currency code in the ISO format. Applies to FedEx only. |
+| FedExOneRate | False | Use FedEx One Rate pricing option. Applies to FedEx only. |
 
 ### Saturday Delivery
 
