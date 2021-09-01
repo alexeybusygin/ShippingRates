@@ -192,22 +192,25 @@ namespace ShippingRates.ShippingProviders
 
         private (decimal amount, string currencyCode) GetCurrencyConvertedRate(ShipmentRateDetail rateDetail)
         {
+            var shipmentCurrencyCode = Shipment.Options.GetCurrencyCode();
+
             if (rateDetail?.TotalNetCharge == null)
-                return (0, ShipmentOptions.DefaultCurrencyCode);
+                return (0, shipmentCurrencyCode);
 
-            if (rateDetail.TotalNetCharge.Currency == Shipment.Options.GetCurrencyCode())
-            {
-                return (rateDetail.TotalNetCharge.Amount, rateDetail.TotalNetCharge.Currency);
-            }
+            var needCurrencyConversion = rateDetail.TotalNetCharge.Currency != shipmentCurrencyCode;
+            if (!needCurrencyConversion)
+                return (rateDetail.TotalNetCharge.Amount, shipmentCurrencyCode);
 
-            var hasCurrencyRate = (rateDetail.CurrencyExchangeRate?.RateSpecified ?? false)
-                && rateDetail.TotalNetCharge.Currency == rateDetail.CurrencyExchangeRate.FromCurrency
+            var canConvertCurrency = (rateDetail.CurrencyExchangeRate?.RateSpecified ?? false)
+                && rateDetail.TotalNetCharge.Currency == rateDetail.CurrencyExchangeRate.IntoCurrency
+                && shipmentCurrencyCode == rateDetail.CurrencyExchangeRate.FromCurrency
                 && rateDetail.CurrencyExchangeRate.Rate != 1
                 && rateDetail.CurrencyExchangeRate.Rate != 0;
 
-            return hasCurrencyRate
-                ? (Math.Round(rateDetail.TotalNetCharge.Amount / rateDetail.CurrencyExchangeRate.Rate, 2), rateDetail.CurrencyExchangeRate.IntoCurrency)
-                : (rateDetail.TotalNetCharge.Amount, rateDetail.TotalNetCharge.Currency);
+            if (!canConvertCurrency)
+                return (rateDetail.TotalNetCharge.Amount, rateDetail.TotalNetCharge.Currency);
+
+            return (Math.Round(rateDetail.TotalNetCharge.Amount / rateDetail.CurrencyExchangeRate.Rate, 2), shipmentCurrencyCode);
         }
 
         /// <summary>
