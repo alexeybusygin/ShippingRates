@@ -84,6 +84,15 @@ namespace ShippingRates.ShippingProviders
                 }
             };
 
+            if (Shipment.Options.FedExOneRate)
+            {
+                request.RequestedShipment.PackagingType = "FEDEX_MEDIUM_BOX";
+                request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested()
+                {
+                    SpecialServiceTypes = new[] { "FEDEX_ONE_RATE" }
+                };
+            }
+
             if (Shipment.Options.SaturdayDelivery)
             {
                 request.VariableOptions = new[] { ServiceOptionType.SATURDAY_DELIVERY };
