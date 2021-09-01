@@ -197,6 +197,24 @@ namespace ShippingRates.Tests.ShippingProviders
             AssertRatesAreDifferent(specialServicesResponse.Rates, noSpecialServicesResponse.Rates);
         }
 
+        [Test]
+        public void USPSDiscountedRates()
+        {
+            var rateManager1 = new RateManager();
+            rateManager1.AddProvider(new USPSProvider(_uspsUserId, Services.All));
+
+            var rateManager2 = new RateManager();
+            rateManager2.AddProvider(new USPSProvider(_uspsUserId, Services.Online));
+
+            var rates = rateManager1.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+            var discountedRates = rateManager2.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+
+            AssertIsValidNonEmptyResponse(rates);
+            AssertIsValidNonEmptyResponse(discountedRates);
+
+            AssertRatesAreDifferent(rates.Rates, discountedRates.Rates);
+        }
+
         private static void AssertIsValidNonEmptyResponse(Shipment shipment)
         {
             Assert.NotNull(shipment);
@@ -207,14 +225,19 @@ namespace ShippingRates.Tests.ShippingProviders
 
         private static void AssertRatesAreDifferent(List<Rate> ratesA, List<Rate> ratesB)
         {
+            var hasDifference = false;
             foreach (var rateA in ratesA)
             {
                 var rateB = ratesB.FirstOrDefault(x => x.Name == rateA.Name);
                 if (rateB != null)
                 {
-                    Assert.AreNotEqual(rateA.TotalCharges, rateB.TotalCharges);
+                    hasDifference |= (rateA.TotalCharges != rateB.TotalCharges);
                 }
+                if (hasDifference)
+                    break;
             }
+
+            Assert.IsTrue(hasDifference);
         }
 
         [Test]

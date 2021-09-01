@@ -307,6 +307,7 @@ namespace ShippingRates.ShippingProviders
                 into g
                 select new {Name = g.Key,
                             TotalCharges = g.Sum(x => decimal.Parse((string) x.Element("Rate"))),
+                            TotalCommercialCharges = g.Sum(x => decimal.Parse((string) x.Element("CommercialRate") ?? "0")),
                             DeliveryDate = g.Select(x => (string) x.Element("CommitmentDate")).FirstOrDefault(),
                             SpecialServices = g.Select(x => x.Element("SpecialServices")).FirstOrDefault() };
 
@@ -332,17 +333,20 @@ namespace ShippingRates.ShippingProviders
                     }
                 }
 
+                var isNegotiatedRate = _service == Services.Online && r.TotalCommercialCharges > 0;
+                var totalCharges = isNegotiatedRate ? r.TotalCommercialCharges : r.TotalCharges;
+
                 if (r.DeliveryDate != null && DateTime.TryParse(r.DeliveryDate, out DateTime deliveryDate))
                 {
                     var rateOptions = new RateOptions()
                     {
                         SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
                     };
-                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges + additionalCharges, deliveryDate, rateOptions, USPSCurrencyCode);
+                    AddRate(name, string.Concat("USPS ", name), totalCharges + additionalCharges, deliveryDate, rateOptions, USPSCurrencyCode);
                 }
                 else
                 {
-                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges + additionalCharges, DateTime.Now.AddDays(30), null, USPSCurrencyCode);
+                    AddRate(name, string.Concat("USPS ", name), totalCharges + additionalCharges, DateTime.Now.AddDays(30), null, USPSCurrencyCode);
                 }
             }
 
