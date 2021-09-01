@@ -16,8 +16,6 @@ namespace ShippingRates.ShippingProviders
     /// </summary>
     public class USPSProvider : USPSBaseProvider
     {
-        private const string PRODUCTION_URL = "http://production.shippingapis.com/ShippingAPI.dll";
-
         /// <summary>
         /// If set to ALL, special service types will not be returned. This is a limitation of the USPS API.
         /// </summary>
@@ -88,10 +86,9 @@ namespace ShippingRates.ShippingProviders
         /// <summary>
         /// </summary>
         /// <param name="userId"></param>
-        public USPSProvider(string userId, string service = Services.All)
+        public USPSProvider(string userId, string service = Services.All) :
+            this(new USPSProviderConfiguration(userId) { Service = service })
         {
-            _userId = userId;
-            _service = service;
         }
 
         public USPSProvider(USPSProviderConfiguration configuration)
@@ -245,7 +242,7 @@ namespace ShippingRates.ShippingProviders
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var rateUri = new Uri($"{PRODUCTION_URL}?API=RateV4&XML={sb}");
+                    var rateUri = new Uri($"{ProductionUrl}?API=RateV4&XML={sb}");
                     var response = await httpClient.GetStringAsync(rateUri).ConfigureAwait(false);
 
                     ParseResult(response, specialServices);
