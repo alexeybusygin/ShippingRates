@@ -1,22 +1,24 @@
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
+using ShippingRates.ShippingProviders.USPS;
 
 namespace ShippingRates.Tests.ShippingProviders
 {
     [TestFixture]
     public class USPSProviderTests
     {
-        private Package Package2;
         private readonly Address DomesticAddress1;
         private readonly Address DomesticAddress2;
         private readonly Address InternationalAddress1;
         private readonly Package Package1;
         private readonly Package Package1SignatureRequired;
+        private readonly Package Package1WithInsurance;
         private readonly string _uspsUserId;
 
         public USPSProviderTests()
@@ -27,7 +29,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Package1 = new Package(4, 4, 4, 5, 0);
             Package1SignatureRequired = new Package(4, 4, 4, 5, 0, null, true);
-            Package2 = new Package(6, 6, 6, 5, 100);
+            Package1WithInsurance = new Package(4, 4, 4, 5, 50);
 
             _uspsUserId = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory)
                 .USPSUserId;
@@ -99,7 +101,7 @@ namespace ShippingRates.Tests.ShippingProviders
         public void USPS_Domestic_Returns_No_Rates_When_Using_Invalid_Addresses_For_Single_Service()
         {
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId, "Priority Mail"));
+            rateManager.AddProvider(new USPSProvider(_uspsUserId, Services.Priority));
 
             var response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
 
@@ -114,7 +116,7 @@ namespace ShippingRates.Tests.ShippingProviders
         public void USPS_Domestic_Returns_Single_Rate_When_Using_Valid_Addresses_For_Single_Service()
         {
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId, "Priority Mail"));
+            rateManager.AddProvider(new USPSProvider(_uspsUserId, Services.Priority));
 
             var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
@@ -143,33 +145,75 @@ namespace ShippingRates.Tests.ShippingProviders
         public void Can_Get_Different_Rates_For_Signature_Required_Lookup()
         {
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId, "Priority Mail"));
+            rateManager.AddProvider(new USPSProvider(_uspsUserId, Services.Priority));
 
             var nonSignatureResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
             var signatureResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1SignatureRequired);
 
             // Assert that we have a non-signature response
-            Assert.NotNull(nonSignatureResponse);
-            Assert.IsNotEmpty(nonSignatureResponse.Rates);
-            Assert.IsEmpty(nonSignatureResponse.Errors);
-            Assert.True(nonSignatureResponse.Rates.First().TotalCharges > 0);
+            AssertIsValidNonEmptyResponse(nonSignatureResponse);
 
             // Assert that we have a signature response
-            Assert.NotNull(signatureResponse);
-            Assert.IsNotEmpty(signatureResponse.Rates);
-            Assert.IsEmpty(signatureResponse.Errors);
-            Assert.True(signatureResponse.Rates.First().TotalCharges > 0);
+            AssertIsValidNonEmptyResponse(signatureResponse);
 
             // Now compare prices
-            foreach (var signatureRate in signatureResponse.Rates)
-            {
-                var nonSignatureRate = nonSignatureResponse.Rates.FirstOrDefault(x => x.Name == signatureRate.Name);
+            AssertRatesAreDifferent(signatureResponse.Rates, nonSignatureResponse.Rates);
+        }
 
-                if (nonSignatureRate != null)
+        [Test]
+        public void Can_Get_Different_Rates_For_Insurance_Lookup()
+        {
+            var rateManager = new RateManager();
+            rateManager.AddProvider(new USPSProvider(_uspsUserId, Services.Library));
+
+            var nonInsuranceResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+            var insuranceResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1WithInsurance);
+
+            AssertIsValidNonEmptyResponse(nonInsuranceResponse);
+            AssertIsValidNonEmptyResponse(insuranceResponse);
+
+            AssertRatesAreDifferent(insuranceResponse.Rates, nonInsuranceResponse.Rates);
+        }
+
+        [Test]
+        public void Can_Get_Different_Rates_For_Special_Services_Lookup()
+        {
+            var rateManager1 = new RateManager();
+            rateManager1.AddProvider(new USPSProvider(_uspsUserId, Services.Library));
+
+            var rateManager2 = new RateManager();
+            rateManager2.AddProvider(new USPSProvider(new USPSProviderConfiguration()
+            {
+                UserId = _uspsUserId,
+                Service = Services.Library,
+                SpecialServices = new SpecialServices[] { SpecialServices.SpecialHandlingFragile }
+            }));
+
+            var noSpecialServicesResponse = rateManager1.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+            var specialServicesResponse = rateManager2.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+
+            AssertIsValidNonEmptyResponse(noSpecialServicesResponse);
+            AssertIsValidNonEmptyResponse(specialServicesResponse);
+
+            AssertRatesAreDifferent(specialServicesResponse.Rates, noSpecialServicesResponse.Rates);
+        }
+
+        private static void AssertIsValidNonEmptyResponse(Shipment shipment)
+        {
+            Assert.NotNull(shipment);
+            Assert.IsNotEmpty(shipment.Rates);
+            Assert.IsEmpty(shipment.Errors);
+            Assert.True(shipment.Rates.First().TotalCharges > 0);
+        }
+
+        private static void AssertRatesAreDifferent(List<Rate> ratesA, List<Rate> ratesB)
+        {
+            foreach (var rateA in ratesA)
+            {
+                var rateB = ratesB.FirstOrDefault(x => x.Name == rateA.Name);
+                if (rateB != null)
                 {
-                    var signatureTotalCharges = signatureRate.TotalCharges;
-                    var nonSignatureTotalCharges = nonSignatureRate.TotalCharges;
-                    Assert.AreNotEqual(signatureTotalCharges, nonSignatureTotalCharges);
+                    Assert.AreNotEqual(rateA.TotalCharges, rateB.TotalCharges);
                 }
             }
         }
