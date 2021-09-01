@@ -182,9 +182,8 @@ namespace ShippingRates.Tests.ShippingProviders
             rateManager1.AddProvider(new USPSProvider(_uspsUserId, Services.Library));
 
             var rateManager2 = new RateManager();
-            rateManager2.AddProvider(new USPSProvider(new USPSProviderConfiguration()
+            rateManager2.AddProvider(new USPSProvider(new USPSProviderConfiguration(_uspsUserId)
             {
-                UserId = _uspsUserId,
                 Service = Services.Library,
                 SpecialServices = new SpecialServices[] { SpecialServices.SpecialHandlingFragile }
             }));

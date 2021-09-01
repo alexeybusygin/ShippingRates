@@ -13,6 +13,7 @@ namespace ShippingRates.ShippingProviders
         public override string Name { get => "USPS"; }
 
         protected const string USPSCurrencyCode = "USD";
+        protected const string ProductionUrl = "https://secure.shippingapis.com/ShippingAPI.dll";
 
         protected void ParseErrors(XElement response)
         {
