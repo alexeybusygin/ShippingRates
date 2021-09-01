@@ -91,21 +91,45 @@ namespace ShippingRates.Tests.ShippingProviders
             var package = new Package(7, 7, 7, 6, 1);
 
             var r = _rateManager.GetRates(from, to, package);
-            var rates = r.Rates.ToList();
-
             var rN = _rateManagerNegotiated.GetRates(from, to, package);
-            var ratesNegotiated = rN.Rates.ToList();
 
-            Assert.NotNull(r);
-            Assert.NotNull(rN);
-            Assert.True(rates.Any());
-            Assert.True(ratesNegotiated.Any());
+            AssertRatesAreNotEqual(r, rN, "FEDEX_GROUND");
+        }
 
-            var groundRate = rates.FirstOrDefault(r => r.ProviderCode == "FEDEX_GROUND");
-            var groundNRate = ratesNegotiated.FirstOrDefault(r => r.ProviderCode == "FEDEX_GROUND");
-            Assert.NotNull(groundRate);
-            Assert.NotNull(groundNRate);
-            Assert.AreNotEqual(groundRate.TotalCharges, groundNRate.TotalCharges);
+        [Test]
+        public void FedExOneRate()
+        {
+            var from = new Address("Annapolis", "MD", "21401", "US");
+            var to = new Address("Fitchburg", "WI", "53711", "US");
+            var package = new Package(7, 7, 7, 6, 1);
+
+            var rates = _rateManager.GetRates(from, to, package);
+            var oneRates = _rateManagerNegotiated.GetRates(from, to, package, new ShipmentOptions()
+            {
+                FedExOneRate = true
+            });
+
+            AssertRatesAreNotEqual(rates, oneRates);
+        }
+
+        private void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string methodCode = null)
+        {
+            Assert.NotNull(r1?.Rates);
+            Assert.NotNull(r2?.Rates);
+            Assert.True(r1.Rates.Any());
+            Assert.True(r2.Rates.Any());
+
+            var commonCode = methodCode ?? r1.Rates
+                .Select(r => r.ProviderCode)
+                .Where(c => r2.Rates.Select(r => r.ProviderCode).Contains(c))
+                .FirstOrDefault();
+            Assert.NotNull(commonCode);
+
+            var rate1 = r1.Rates.FirstOrDefault(r => r.ProviderCode == commonCode);
+            var rate2 = r2.Rates.FirstOrDefault(r => r.ProviderCode == commonCode);
+            Assert.NotNull(rate1);
+            Assert.NotNull(rate2);
+            Assert.AreNotEqual(rate1.TotalCharges, rate2.TotalCharges);
         }
 
         [Test]
