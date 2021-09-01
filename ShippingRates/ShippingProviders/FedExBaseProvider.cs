@@ -11,6 +11,8 @@ namespace ShippingRates.ShippingProviders
 {
     public abstract class FedExBaseProvider : AbstractShippingProvider
     {
+        public bool UseNegotiatedRates { get; set; } = false;
+
         protected string AccountNumber { get; }
         protected string Key { get; }
         protected string MeterNumber { get; }
@@ -154,7 +156,8 @@ namespace ShippingRates.ShippingProviders
                 }
                 else
                 {
-                    var rates = rateReplyDetail.RatedShipmentDetails.Select(r => GetCurrencyConvertedRate(r.ShipmentRateDetail));
+                    var rateDetails = GetRateDetailsByRateType(rateReplyDetail);
+                    var rates = rateDetails.Select(r => GetCurrencyConvertedRate(r.ShipmentRateDetail));
                     rates = rates.Any(r => r.currencyCode == Shipment.Options.GetCurrencyCode())
                         ? rates.Where(r => r.currencyCode == Shipment.Options.GetCurrencyCode())
                         : rates;
@@ -169,6 +172,22 @@ namespace ShippingRates.ShippingProviders
                     netCharge.currencyCode);
                 }
             }
+        }
+
+        private RatedShipmentDetail[] GetRateDetailsByRateType(RateReplyDetail rateReplyDetail)
+        {
+            var negotiatedRateTypes = new ReturnedRateType[]
+            {
+                ReturnedRateType.PAYOR_ACCOUNT_PACKAGE,
+                ReturnedRateType.PAYOR_ACCOUNT_SHIPMENT,
+                ReturnedRateType.NEGOTIATED
+            };
+
+            return rateReplyDetail.RatedShipmentDetails
+                .Where(rsd =>
+                    (UseNegotiatedRates && negotiatedRateTypes.Contains(rsd.ShipmentRateDetail.RateType)) ||
+                    (!UseNegotiatedRates && !negotiatedRateTypes.Contains(rsd.ShipmentRateDetail.RateType)))
+                .ToArray();
         }
 
         private (decimal amount, string currencyCode) GetCurrencyConvertedRate(ShipmentRateDetail rateDetail)
