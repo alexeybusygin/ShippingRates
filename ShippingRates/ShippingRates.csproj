@@ -9,6 +9,7 @@
     <PackageProjectUrl>https://github.com/alexeybusygin/ShippingRates</PackageProjectUrl>
     <PackageTags>ups fedex usps shipping rates .net .net-standard .net-core dhl dhl-ecommerce</PackageTags>
     <Version>1.1.5</Version>
+    <Version>1.1.6</Version>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
   </PropertyGroup>
 
