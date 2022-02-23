@@ -51,7 +51,9 @@ namespace ShippingRates.ShippingProviders
             {"INTERNATIONAL_FIRST", "FedEx International First"},
             {"INTERNATIONAL_ECONOMY", "FedEx International Economy"},
             {"INTERNATIONAL_PRIORITY", "FedEx International Priority"},
-            {"EUROPE_FIRST_INTERNATIONAL_PRIORITY", "FedEx International Priority" }
+            {"EUROPE_FIRST_INTERNATIONAL_PRIORITY", "FedEx International Priority" },
+            {"FEDEX_INTERNATIONAL_PRIORITY", "FedEx International Priority" },
+            {"FEDEX_INTERNATIONAL_PRIORITY_EXPRESS", "FedEx International Priority Express" },
         };
 
         /// <summary>
