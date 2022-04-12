@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -44,6 +45,8 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void DHLReturnsRates()
         {
+            CultureInfo.CurrentCulture = new CultureInfo("tr-TR");      // Test for a decimal format
+
             var from = new Address("", "", "75003", "FR");
             var to = new Address("", "", "53711", "US");
             var package = new Package(7, 7, 7, 6, 0);
