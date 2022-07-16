@@ -37,6 +37,7 @@ namespace ShippingRates.ShippingProviders.USPS
         InsuranceRestrictDeliveryBulkOnly = 180,
         ScanRetention = 181,
         ScanSignatureRetention = 182,
+        [Obsolete("Effective July 10, 2022, USPS will eliminate Special Handling - Fragile")]
         SpecialHandlingFragile = 190
     }
 }
