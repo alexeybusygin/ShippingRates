@@ -185,7 +185,7 @@ namespace ShippingRates.Tests.ShippingProviders
             rateManager2.AddProvider(new USPSProvider(new USPSProviderConfiguration(_uspsUserId)
             {
                 Service = Services.Library,
-                SpecialServices = new SpecialServices[] { SpecialServices.SpecialHandlingFragile }
+                SpecialServices = new SpecialServices[] { SpecialServices.ScanRetention }
             }));
 
             var noSpecialServicesResponse = rateManager1.GetRates(DomesticAddress1, DomesticAddress2, Package1);
