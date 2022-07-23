@@ -112,6 +112,19 @@ namespace ShippingRates.Tests.ShippingProviders
             AssertRatesAreNotEqual(rates, oneRates);
         }
 
+        [Test]
+        public void FedExFreight()
+        {
+            var from = new Address("Annapolis", "MD", "21401", "US");
+            var to = new Address("Fitchburg", "WI", "53711", "US");
+            var package = new Package(48, 48, 48, 120, 100);
+
+            var rates = _rateManager.GetRates(from, to, package);
+
+            Assert.True(rates.Rates.Any());
+            Assert.True(!rates.Rates.Any(r => !r.Name.Contains("Freight")));
+        }
+
         private void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string methodCode = null)
         {
             Assert.NotNull(r1?.Rates);
