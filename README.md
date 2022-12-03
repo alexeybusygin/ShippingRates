@@ -134,3 +134,4 @@ Developer documentation is often hard to find. The links below are provided as r
 ## Credits
 
 Originally forked from [DotNetShipping](https://github.com/kylewest/DotNetShipping) by [@kylewest](https://github.com/kylewest).
+Package icon by [Fredy Sujono](https://www.iconfinder.com/freud).
