@@ -58,7 +58,7 @@ namespace ShippingRates.ShippingProviders
 
         private readonly DHLProviderConfiguration _configuration;
 
-        private const string TestServicesUrl = "http://xmlpitest-ea.dhl.com/XMLShippingServlet";
+        private const string TestServicesUrl = "https://xmlpitest-ea.dhl.com/XMLShippingServlet";
         private const string ProductionServicesUrl = "https://xmlpi-ea.dhl.com/XMLShippingServlet";
 
         public DHLProvider(string siteId, string password, bool useProduction) :

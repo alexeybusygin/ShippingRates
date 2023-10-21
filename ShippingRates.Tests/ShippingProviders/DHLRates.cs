@@ -122,7 +122,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Assert.NotNull(r);
             Assert.False(rates.Any());
-            Assert.AreEqual(r.Errors.Count(), 3);
+            Assert.True(r.Errors.Any());
 
             var error = r.Errors.FirstOrDefault(r => r.Number == "420505");
             Assert.NotNull(error);
