@@ -21,8 +21,23 @@ namespace ShippingRates
         /// </summary>
         public string PreferredCurrencyCode { get; set; }
         /// <summary>
-        /// Use FedEx One Rate pricing option. Ignored for non-FedEx prodivers
+        /// Use FedEx One Rate pricing option. Ignored for non-FedEx providers
         /// </summary>
         public bool FedExOneRate { get; set; }
+        /// <summary>
+        /// For FedEx One Rate pricing option, allows ability to specify FedEx-specific packages:
+        /// FEDEX_10KG_BOX
+        /// FEDEX_25KG_BOX
+        /// FEDEX_BOX
+        /// FEDEX_ENVELOPE
+        /// FEDEX_EXTRA_LARGE_BOX
+        /// FEDEX_LARGE_BOX
+        /// FEDEX_MEDIUM_BOX
+        /// FEDEX_PAK
+        /// FEDEX_SMALL_BOX
+        /// FEDEX_TUBE
+        /// Ignored for non-FedEx providers.  Not applied uness FedExOneRate is true.
+        /// </summary>
+        public string FedExOneRatePackageOverride { get; set; }
     }
 }

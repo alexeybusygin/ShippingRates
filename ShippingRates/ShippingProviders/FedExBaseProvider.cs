@@ -86,7 +86,14 @@ namespace ShippingRates.ShippingProviders
 
             if (Shipment.Options.FedExOneRate)
             {
-                request.RequestedShipment.PackagingType = "FEDEX_MEDIUM_BOX";
+                if (!string.IsNullOrEmpty(Shipment.Options.FedExOneRatePackageOverride))
+                {
+                    request.RequestedShipment.PackagingType = Shipment.Options.FedExOneRatePackageOverride;
+                }
+                else
+                {
+                    request.RequestedShipment.PackagingType = "FEDEX_MEDIUM_BOX";
+                }
                 request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested()
                 {
                     SpecialServiceTypes = new[] { "FEDEX_ONE_RATE" }

@@ -103,10 +103,32 @@ namespace ShippingRates.Tests.ShippingProviders
             var to = new Address("Fitchburg", "WI", "53711", "US");
             var package = new Package(7, 7, 7, 6, 1);
 
+
             var rates = _rateManager.GetRates(from, to, package);
             var oneRates = _rateManagerNegotiated.GetRates(from, to, package, new ShipmentOptions()
             {
                 FedExOneRate = true
+            });
+
+            AssertRatesAreNotEqual(rates, oneRates);
+        }
+
+        [Test]
+        public void FedExOneRatePackage()
+        {
+            var from = new Address("Annapolis", "MD", "21401", "US");
+            var to = new Address("Fitchburg", "WI", "53711", "US");
+            var package = new Package(7, 7, 7, 6, 1);
+
+            var rates = _rateManagerNegotiated.GetRates(from, to, package, new ShipmentOptions()
+            {
+                FedExOneRate = true,
+                //if not set, will default to FEDEX_MEDIUM_BOX
+            });
+            var oneRates = _rateManagerNegotiated.GetRates(from, to, package, new ShipmentOptions()
+            {
+                FedExOneRate = true,
+                FedExOneRatePackageOverride ="FEDEX_ENVELOPE" //one of the cheapest options
             });
 
             AssertRatesAreNotEqual(rates, oneRates);
