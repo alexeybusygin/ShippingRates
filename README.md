@@ -3,7 +3,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/gqq8i6nw932bn01v?svg=true)](https://ci.appveyor.com/project/alexeybusygin/shippingrates/)
 [![NuGet Version](https://img.shields.io/nuget/v/ShippingRates.svg?style=flat-square)](https://www.nuget.org/packages/ShippingRates)
 
-.NET wrapper to UPS, FedEx, USPS and DHL APIs. Use it to retrieve shipping rates from these carriers.
+.NET wrapper to UPS, FedEx, USPS, and DHL APIs. Use it to retrieve shipping rates from these carriers.
 
 ## How to Install
 
@@ -20,13 +20,13 @@ PM> Install-Package ShippingRates
 var rateManager = new RateManager();
 
 // Add desired shipping providers
-// You will need a license #, userid and password to utilize the UPS provider.
+// You will need a license #, userid, and password to utilize the UPS provider.
 rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword));
 // You will need an account # and meter # to utilize the FedEx provider.
 rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
 // You will need a userId to use the USPS provider. Your account will also need access to the production servers.
 rateManager.AddProvider(new USPSProvider(uspsUserId));
-// You will need a Site ID and Password to use DHL provider.
+// You will need a Site ID and Password to use the DHL provider.
 rateManager.AddProvider(new DHLProvider(dhlSiteId, dhlPassword, useProduction: false));
 
 // (Optional) Add RateAdjusters
@@ -63,21 +63,22 @@ See the sample app in this repository for a working example.
 More information can be found in [Wiki](https://github.com/alexeybusygin/ShippingRates/wiki).
 
 #### International Rates
-USPS requires a separate API call for retrieving rates international services.
+USPS requires a separate API call for retrieving rates for international services.
 
 The call works the same but use the USPSInternationalProvider instead. Your current USPS credentials will work with this and will return the available services between the origin and destination addresses.
 
 ## Shipping Options
 
-Shipping options can be passed to the `GetRates` function as `ShipmentOptions` object.
+Shipping options can be passed to the `GetRates` function as a `ShipmentOptions` object.
 
 ```CSHARP
 var shipment = await rateManager.GetRatesAsync(origin, destination, packages,
     new ShipmentOptions() {
         SaturdayDelivery = true,
         ShippingDate = new DateTime(2020, 7, 15),
-        PreferredCurrencyCode = "EUR",  // For FedEx only
-        FedExOneRate = true             // For FedEx only
+        PreferredCurrencyCode = "EUR",                  // For FedEx only
+        FedExOneRate = true,                            // For FedEx only
+        FedExOneRatePackageOverride = "FEDEX_ENVELOPE"  // For FedEx only
     });
 ```
 
@@ -85,14 +86,15 @@ The following options are available:
 
 | Name | Default Value | Meaning |
 | ---- | ------------- | ------- |
-| SaturdayDelivery | False | Enable Saturday Delivery option for shipping rates. |
-| ShippingDate | null | Pickup date. Current date and time is used if not specified. |
+| SaturdayDelivery | False | Enable the Saturday Delivery option for shipping rates. |
+| ShippingDate | null | Pickup date. The current date and time are used if not specified. |
 | PreferredCurrencyCode | USD | Preferred rates currency code in the ISO format. Applies to FedEx only. |
-| FedExOneRate | False | Use FedEx One Rate pricing option. Applies to FedEx only. |
+| FedExOneRate | False | Use the FedEx One Rate pricing option. Applies to FedEx only. |
+| FedExOneRatePackageOverride | FEDEX_MEDIUM_BOX | Packing option when using FedEx OneRate. |
 
 ### Saturday Delivery
 
-If `ShipmentOptions.SaturdayDelivery` is set, then you can expect to receive some Saturday Delivery methods. You can check it with `Rate.Options.SaturdayDelivery` property:
+If `ShipmentOptions.SaturdayDelivery` is set, then you can expect to receive some Saturday Delivery methods. You can check it with the `Rate.Options.SaturdayDelivery` property:
 
 ```CSHARP
 var anySaturdayDeliveryMethods = shipment.Rates.Any(r => r.Options.SaturdayDelivery);
@@ -100,7 +102,7 @@ var anySaturdayDeliveryMethods = shipment.Rates.Any(r => r.Options.SaturdayDeliv
 
 ## Error Handling
 
-Normally `RateManager.GetRates` wouldn't throw any exceptions. All errors are caught and reported in two properties: `Errors` and `InternalErrors`. `Errors` are for errors coming from APIs (incorrect address etc.) It should be quite safe to show them to the end-user. `InternalErrors` are errors happened during API calls processing (SOAP, HTTP requests) and errors from inside the ShippingRates. They can be used for debugging and internal reporting. Iterating through Errors and InternalErrors:
+Normally `RateManager.GetRates` wouldn't throw any exceptions. All errors are caught and reported in two properties: `Errors` and `InternalErrors`. `Errors` are for errors coming from APIs (incorrect address etc.) It should be quite safe to show them to the end user. `InternalErrors` are errors that occur during API calls processing (SOAP, HTTP requests) and errors from inside the ShippingRates. They can be used for debugging and internal reporting. Iterating through Errors and InternalErrors:
 
 ```CSHARP
 var shipment = rateManager.GetRates(origin, destination, packages);
@@ -120,7 +122,7 @@ foreach (var error in shipment.InternalErrors)
 
 #### FedEx and 556 There are no valid services available
 
-This one can be tricky to debug. Start with setting at least $1 insurance for your shipment. For some reason, FedEx would not report errors like wrong ZIP code for origin address if there is no insurance set.
+This one can be tricky to debug. Start with setting at least $1 insurance for your shipment. For some reason, FedEx would not report errors like the wrong ZIP code for the origin address if there is no insurance set.
 
 ## 3rd Party Docs
 
