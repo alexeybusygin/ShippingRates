@@ -86,7 +86,7 @@ namespace ShippingRates.ShippingProviders
         /// <summary>
         /// </summary>
         /// <param name="userId"></param>
-        public USPSProvider(string userId, string service = Services.All) :
+        public USPSProvider(string userId, string service = USPS.Services.All) :
             this(new USPSProviderConfiguration(userId) { Service = service })
         {
         }
@@ -100,7 +100,7 @@ namespace ShippingRates.ShippingProviders
 
             if (string.IsNullOrEmpty(_service))
             {
-                _service = Services.All;
+                _service = USPS.Services.All;
             }
         }
 
@@ -333,7 +333,7 @@ namespace ShippingRates.ShippingProviders
                     }
                 }
 
-                var isNegotiatedRate = _service == Services.Online && r.TotalCommercialCharges > 0;
+                var isNegotiatedRate = _service == USPS.Services.Online && r.TotalCommercialCharges > 0;
                 var totalCharges = isNegotiatedRate ? r.TotalCommercialCharges : r.TotalCharges;
 
                 if (r.DeliveryDate != null && DateTime.TryParse(r.DeliveryDate, out DateTime deliveryDate))
@@ -357,14 +357,14 @@ namespace ShippingRates.ShippingProviders
         public static bool RequiresMachinable(string service)
         {
             return
-                service == Services.FirstClass || // TODO: Check for (FirstClassMailType = 'LETTER' or FirstClassMailType = 'FLAT')]
-                service == Services.All ||
-                service == Services.Online;
+                service == USPS.Services.FirstClass || // TODO: Check for (FirstClassMailType = 'LETTER' or FirstClassMailType = 'FLAT')]
+                service == USPS.Services.All ||
+                service == USPS.Services.Online;
         }
 
         public static bool AllowsSpecialServices(string service)
         {
-            return service != Services.All && service != Services.Online && service != Services.Plus;
+            return service != USPS.Services.All && service != USPS.Services.Online && service != USPS.Services.Plus;
         }
     }
 }
