@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ShippingRates.ShippingProviders
+﻿namespace ShippingRates.ShippingProviders
 {
     public class UPSProviderConfiguration
     {
@@ -10,5 +6,8 @@ namespace ShippingRates.ShippingProviders
         public string ClientSecret { get; set; }
         public string AccountNumber { get; set; }
         public string ServiceDescription { get; set; }
+        public bool UseRetailRates { get; set; }
+        public bool UseDailyRates { get; set; }
+        public bool UseNegotiatedRates { get; set; }
     }
 }

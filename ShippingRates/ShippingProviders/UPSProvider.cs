@@ -28,7 +28,10 @@ namespace ShippingRates.ShippingProviders
             { "54", "UPS Worldwide Express Plus" },
             { "59", "UPS 2nd Day Air AM" },
             { "65", "UPS Express Saver" },
-            { "93", "UPS Sure Post" }
+            { "71", "UPS Worldwide Express Freight Midday" },
+            { "75", "UPS Heavy Goods" },
+            { "93", "UPS Sure Post" },
+            { "96", "UPS Worldwide Express Freight" }
         };
 
         bool IsExternalHttpClient => _httpClient != null;
@@ -59,7 +62,7 @@ namespace ShippingRates.ShippingProviders
 
             if (!string.IsNullOrEmpty(token))
             {
-                var request = UPSRatingRequest.FromShipment(_configuration, Shipment);
+                var request = ShipmentToRequestAdapter.FromShipment(_configuration, Shipment);
                 var ratingsResponse = await UPSRatingService.GetRatingAsync(httpClient, token, request, AddError);
                 ParseResponse(ratingsResponse);
             }
@@ -86,15 +89,11 @@ namespace ShippingRates.ShippingProviders
                 var totalCharges = Convert.ToDecimal(rate.TotalCharges.MonetaryValue);
                 var currencyCode = rate.TotalCharges.CurrencyCode;
 
-                /*if (UseNegotiatedRates)
+                if (_configuration.UseNegotiatedRates && rate.NegotiatedRateCharges != null)
                 {
-                    var negotiatedRate = rateNode.XPathSelectElement("NegotiatedRates/NetSummaryCharges/GrandTotal/MonetaryValue");
-                    if (negotiatedRate != null) // check for negotiated rate
-                    {
-                        totalCharges = Convert.ToDecimal(negotiatedRate.Value);
-                        currencyCode = rateNode.XPathSelectElement("NegotiatedRates/NetSummaryCharges/GrandTotal/CurrencyCode").Value;
-                    }
-                }*/
+                    totalCharges = Convert.ToDecimal(rate.NegotiatedRateCharges.TotalCharge.MonetaryValue);
+                    currencyCode = rate.NegotiatedRateCharges.TotalCharge.CurrencyCode;
+                }
 
                 // Use MaxDate as default to ensure correct sorting
                 var estDeliveryDate = DateTime.MaxValue.ToShortDateString();;

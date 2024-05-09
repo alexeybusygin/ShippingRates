@@ -1,14 +1,10 @@
 ﻿using ShippingRates.Models.UPS;
-using ShippingRates.ShippingProviders;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace ShippingRates.Services
 {
@@ -17,6 +13,11 @@ namespace ShippingRates.Services
         const string Version = "v2403";
 
         static string GetRequestUri(string requestOption) => $"https://wwwcie.ups.com/api/rating/{Version}/{requestOption}";
+
+        static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
+        {
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        };
 
         public static async Task<UPSRatingResponse> GetRatingAsync(HttpClient httpClient, string token, UPSRatingRequest request, Action<Error> reportError)
         {
@@ -29,7 +30,7 @@ namespace ShippingRates.Services
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, GetRequestUri(requestOption));
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var jsonRequest = JsonSerializer.Serialize(request);
+            var jsonRequest = JsonSerializer.Serialize(request, _jsonSerializerOptions);
             requestMessage.Content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             var responseMessage = await httpClient.SendAsync(requestMessage);
@@ -37,7 +38,15 @@ namespace ShippingRates.Services
 
             if (responseMessage.IsSuccessStatusCode)
             {
-                return JsonSerializer.Deserialize<UPSRatingResponse>(response);
+                if (!string.IsNullOrEmpty(request.RateRequest.Shipment.Service?.Code))
+                {
+                    var singleRateResponse = JsonSerializer.Deserialize<UPSSingleRatingResponse>(response);
+                    return singleRateResponse.GetRatesResponse();
+                }
+                else
+                {
+                    return JsonSerializer.Deserialize<UPSRatingResponse>(response);
+                }
             }
             else
             {

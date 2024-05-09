@@ -5,10 +5,32 @@
         public RateResponse RateResponse { get; set; }
     }
 
+    internal class UPSSingleRatingResponse
+    {
+        public SingleRateResponse RateResponse { get; set; }
+        public UPSRatingResponse GetRatesResponse()
+        {
+            return new UPSRatingResponse()
+            {
+                RateResponse = new RateResponse()
+                {
+                    Response = RateResponse?.Response,
+                    RatedShipment = new[] { RateResponse?.RatedShipment }
+                }
+            };
+        }
+    }
+
     internal class RateResponse
     {
         public Response Response { get; set; }
         public RatedShipment[] RatedShipment { get; set; }
+    }
+
+    internal class SingleRateResponse
+    {
+        public Response Response { get; set; }
+        public RatedShipment RatedShipment { get; set; }
     }
 
     internal class Response
@@ -25,7 +47,13 @@
     {
         public Service Service { get; set; }
         public Charge TotalCharges { get; set; }
+        public NegotiatedRateCharges NegotiatedRateCharges { get; set; }
         public GuaranteedDelivery GuaranteedDelivery { get; set; }
+    }
+
+    internal class NegotiatedRateCharges
+    {
+        public Charge TotalCharge { get; set; }
     }
 
     internal class Charge
