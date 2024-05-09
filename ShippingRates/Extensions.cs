@@ -6,6 +6,9 @@ namespace ShippingRates
     {
         public static string ToUpsShipCode(this string str)
         {
+            if (str.Length == 2)
+                return str;
+
             switch (str)
             {
                 case "UPS Next Day Air":
@@ -50,10 +53,10 @@ namespace ShippingRates
                 case "UPS Worldwide Saver":
                     return "65";
 
-				case "UPS Express Saver":
-					return "65";
+                case "UPS Express Saver":
+                    return "65";
 
-				case "UPS Sure Post":
+                case "UPS Sure Post":
                     return "93";
 
                 default:

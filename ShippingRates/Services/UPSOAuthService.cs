@@ -32,20 +32,21 @@ namespace ShippingRates.Services
             };
             requestMessage.Content = new FormUrlEncodedContent(postData);
 
-            var request = await httpClient.SendAsync(requestMessage);
-            var response = await request.Content.ReadAsStringAsync();
+            var responseMessage = await httpClient.SendAsync(requestMessage);
+            var response = await responseMessage.Content.ReadAsStringAsync();
 
-            if (request.IsSuccessStatusCode)
+            if (responseMessage.IsSuccessStatusCode)
             {
                 var result = JsonSerializer.Deserialize<UPSOAuthResponse>(response);
+                int expiresIn = int.TryParse(result.ExpiresIn, out expiresIn) ? expiresIn : 0;
 
-                TokenCacheService.AddToken(configuration.ClientId, result.AccessToken, result.ExpiresIn);
+                TokenCacheService.AddToken(configuration.ClientId, result.AccessToken, expiresIn);
 
                 return result.AccessToken;
             }
             else
             {
-                var errorResponse = JsonSerializer.Deserialize<UPSOAuthErrorResponse>(response);
+                var errorResponse = JsonSerializer.Deserialize<Models.UPS.UPSErrorResponse>(response);
                 if ((errorResponse?.Response?.Errors?.Length ?? 0) > 0)
                 {
                     foreach (var error in errorResponse.Response.Errors)
@@ -59,41 +60,21 @@ namespace ShippingRates.Services
                 }
                 else
                 {
-                    reportError(new Error() { Description = $"Unknown error while fetching UPS OAuth token: {request.StatusCode} {response}" });
+                    reportError(new Error() { Description = $"Unknown error while fetching UPS OAuth token: {responseMessage.StatusCode} {response}" });
                 }
 
                 return null;
             }
         }
 
-        public class UPSOAuthResponse
+        class UPSOAuthResponse
         {
             [JsonPropertyName("token_type")]
             public string TokenType { get; set; }
             [JsonPropertyName("access_token")]
             public string AccessToken { get; set; }
             [JsonPropertyName("expires_in")]
-            public int ExpiresIn { get; set; }
-        }
-
-        public class UPSOAuthErrorResponse
-        {
-            [JsonPropertyName("response")]
-            public UPSOAuthErrorResponseBody Response { get; set; }
-        }
-
-        public class UPSOAuthErrorResponseBody
-        {
-            [JsonPropertyName("errors")]
-            public UPSOAuthErrorItem[] Errors { get; set; }
-        }
-
-        public class UPSOAuthErrorItem
-        {
-            [JsonPropertyName("code")]
-            public string Code { get; set; }
-            [JsonPropertyName("message")]
-            public string Message { get; set; }
+            public string ExpiresIn { get; set; }
         }
     }
 }

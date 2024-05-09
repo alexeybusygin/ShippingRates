@@ -9,5 +9,6 @@ namespace ShippingRates.ShippingProviders
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string AccountNumber { get; set; }
+        public string ServiceDescription { get; set; }
     }
 }
