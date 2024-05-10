@@ -5,6 +5,12 @@
 
 .NET wrapper to UPS, FedEx, USPS, and DHL APIs. Use it to retrieve shipping rates from these carriers.
 
+## UPS Breaking Changes
+
+UPS has deprecated access key authentication in favor of an OAuth 2.0 security model for all APIs. Beginning June 3, 2024, access keys will no longer be supported. More details at the UPS site: https://developer.ups.com/oauth-developer-guide?loc=en_US
+
+The new authentication model is implemented in the package version 2.0, right now in Beta: https://www.nuget.org/packages/ShippingRates/2.0.215-beta
+
 ## How to Install
 
 Available in the [NuGet Gallery](http://nuget.org/packages/ShippingRates):
@@ -20,8 +26,13 @@ PM> Install-Package ShippingRates
 var rateManager = new RateManager();
 
 // Add desired shipping providers
-// You will need a license #, userid, and password to utilize the UPS provider.
-rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword));
+// You will need an OAuth Client ID, Client Secret, and Account Number to use the UPS provider.
+rateManager.AddProvider(new UPSProvider(new UPSProviderConfiguration()
+{
+    ClientId = upsClientId,
+    ClientSecret = upsClientSecret,
+    AccountNumber = upsAccountNumber
+}));
 // You will need an account # and meter # to utilize the FedEx provider.
 rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
 // You will need a userId to use the USPS provider. Your account will also need access to the production servers.
@@ -63,7 +74,7 @@ See the sample app in this repository for a working example.
 More information can be found in [Wiki](https://github.com/alexeybusygin/ShippingRates/wiki).
 
 #### International Rates
-USPS requires a separate API call for retrieving rates for international services.
+USPS requires a separate API call to retrieve rates for international services.
 
 The call works the same but use the USPSInternationalProvider instead. Your current USPS credentials will work with this and will return the available services between the origin and destination addresses.
 
@@ -94,7 +105,7 @@ The following options are available:
 
 ### Saturday Delivery
 
-If `ShipmentOptions.SaturdayDelivery` is set, then you can expect to receive some Saturday Delivery methods. You can check it with the `Rate.Options.SaturdayDelivery` property:
+If `ShipmentOptions.SaturdayDelivery` is set, you can expect to receive some Saturday Delivery methods. You can check it with the `Rate.Options.SaturdayDelivery` property:
 
 ```CSHARP
 var anySaturdayDeliveryMethods = shipment.Rates.Any(r => r.Options.SaturdayDelivery);
@@ -122,7 +133,7 @@ foreach (var error in shipment.InternalErrors)
 
 #### FedEx and 556 There are no valid services available
 
-This one can be tricky to debug. Start with setting at least $1 insurance for your shipment. For some reason, FedEx would not report errors like the wrong ZIP code for the origin address if there is no insurance set.
+This one can be tricky to debug. Start by setting at least $1 insurance for your shipment. For some reason, FedEx will not report errors like the wrong ZIP code for the origin address if no insurance is set.
 
 ## 3rd Party Docs
 
@@ -130,7 +141,7 @@ Developer documentation is often hard to find. The links below are provided as r
 
 * [FedEx](http://www.fedex.com/us/developer/)
 * [USPS](https://www.usps.com/business/web-tools-apis/welcome.htm)
-* [UPS](https://www.ups.com/upsdeveloperkit)
+* [UPS](https://developer.ups.com/api/reference?loc=en_US#operation/Rate)
 * [DHL](https://xmlportal.dhl.com/capability_and_qoute#cap_quote)
 
 ## Credits
