@@ -13,10 +13,11 @@ namespace ShippingRates.SampleApp
         {
             var appSettings = ConfigurationManager.AppSettings;
 
-            // You will need a license #, userid and password to utilize the UPS provider.
-            var upsLicenseNumber = appSettings["UPSLicenseNumber"];
-            var upsUserId = appSettings["UPSUserId"];
-            var upsPassword = appSettings["UPSPassword"];
+            // You will need OAuth Client Id, Client Secret, and Account Number to use the UPS provider
+            // More details: https://developer.ups.com/oauth-developer-guide?loc=en_US
+            var upsClientId = appSettings["UPSClientId"];
+            var upsClientSecret = appSettings["UPSClientSecret"];
+            var upsAccountNumber = appSettings["UPSAccountNumber"];
 
             // You will need an account # and meter # to utilize the FedEx provider.
             var fedexKey = appSettings["FedExKey"];
@@ -55,7 +56,13 @@ namespace ShippingRates.SampleApp
             var rateManager = new RateManager();
 
             // Add desired DotNetShippingProviders
-            rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword) { UseProduction = false });
+            var upsConfiguration = new UPSProviderConfiguration()
+            {
+                ClientId = upsClientId,
+                ClientSecret = upsClientSecret,
+                AccountNumber = upsAccountNumber
+            };
+            rateManager.AddProvider(new UPSProvider(upsConfiguration));
             rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction));
             rateManager.AddProvider(new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction));
             rateManager.AddProvider(new USPSProvider(uspsUserId));

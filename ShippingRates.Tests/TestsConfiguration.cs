@@ -8,9 +8,9 @@ namespace ShippingRates.Tests
     {
         public string USPSUserId { get; set; }
 
-        public string UPSLicenseNumber { get; set; }
-        public string UPSUserId { get; set; }
-        public string UPSPassword { get; set; }
+        public string UPSAccountNumber { get; set; }
+        public string UPSClientId { get; set; }
+        public string UPSClientSecret { get; set; }
 
         public string FedExKey { get; set; }
         public string FedExPassword { get; set; }
