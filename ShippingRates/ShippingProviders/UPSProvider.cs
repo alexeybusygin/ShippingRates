@@ -14,7 +14,9 @@ namespace ShippingRates.ShippingProviders
         readonly UPSProviderConfiguration _configuration;
         readonly HttpClient _httpClient;
 
-        Dictionary<string, string> _serviceCodes = new Dictionary<string, string>()
+        bool IsExternalHttpClient => _httpClient != null;
+
+        readonly static Dictionary<string, string> _serviceCodes = new Dictionary<string, string>()
         {
             { "01", "UPS Next Day Air" },
             { "02", "UPS Second Day Air" },
@@ -33,8 +35,6 @@ namespace ShippingRates.ShippingProviders
             { "93", "UPS Sure Post" },
             { "96", "UPS Worldwide Express Freight" }
         };
-
-        bool IsExternalHttpClient => _httpClient != null;
 
         public UPSProvider(UPSProviderConfiguration configuration)
         {
@@ -120,5 +120,7 @@ namespace ShippingRates.ShippingProviders
                 }, currencyCode);
             }
         }
+
+        public static IDictionary<string, string> GetServiceCodes() => _serviceCodes;
     }
 }

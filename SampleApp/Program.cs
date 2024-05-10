@@ -13,7 +13,7 @@ namespace ShippingRates.SampleApp
         {
             var appSettings = ConfigurationManager.AppSettings;
 
-            // You will need OAuth Client Id, Client Secret, and Account Number utilize the UPS provider.
+            // You will need OAuth Client Id, Client Secret, and Account Number to use the UPS provider
             // More details: https://developer.ups.com/oauth-developer-guide?loc=en_US
             var upsClientId = appSettings["UPSClientId"];
             var upsClientSecret = appSettings["UPSClientSecret"];

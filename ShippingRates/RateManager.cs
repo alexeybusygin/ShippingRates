@@ -12,7 +12,7 @@ namespace ShippingRates
     /// </summary>
     public class RateManager
     {
-        private readonly IList<IRateAdjuster> _adjusters;
+        private readonly List<IRateAdjuster> _adjusters;
         private readonly ArrayList _providers;
 
         /// <summary>

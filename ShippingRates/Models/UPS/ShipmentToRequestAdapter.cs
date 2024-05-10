@@ -1,4 +1,5 @@
 ﻿using ShippingRates.ShippingProviders;
+using System;
 using System.Linq;
 
 namespace ShippingRates.Models.UPS
@@ -50,7 +51,7 @@ namespace ShippingRates.Models.UPS
             {
                 request.RateRequest.Shipment.Service = new Service()
                 {
-                    Code = configuration.ServiceDescription.ToUpsShipCode()
+                    Code = GetServiceCode(configuration.ServiceDescription)
                 };
             }
             if (shipment.DestinationAddress.IsResidential)
@@ -95,6 +96,20 @@ namespace ShippingRates.Models.UPS
             }
 
             return request;
+        }
+
+        static string GetServiceCode(string serviceDescription)
+        {
+            if (serviceDescription.Length == 2)
+                return serviceDescription;
+
+            var serviceCode = UPSProvider.GetServiceCodes()
+                .FirstOrDefault(c => c.Value == serviceDescription).Key;
+
+            if (string.IsNullOrEmpty(serviceCode))
+                throw new ArgumentException($"Invalid UPS service description {serviceCode}");
+
+            return serviceCode;
         }
 
         static Package FromPackage(ShippingRates.Package package)

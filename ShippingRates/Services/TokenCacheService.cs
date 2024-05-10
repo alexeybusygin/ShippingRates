@@ -3,10 +3,17 @@ using System.Collections.Concurrent;
 
 namespace ShippingRates.Services
 {
+    /// <summary>
+    /// Token caching for UPS
+    /// </summary>
     internal class TokenCacheService
     {
         static readonly ConcurrentDictionary<string, CacheItem> _cache = new ConcurrentDictionary<string, CacheItem>();
-
+        /// <summary>
+        /// Get token for a given client ID
+        /// </summary>
+        /// <param name="clientId">UPS Client ID</param>
+        /// <returns>Token string or null</returns>
         public static string GetToken(string clientId)
         {
             if (_cache.TryGetValue(clientId, out var item))
@@ -19,6 +26,12 @@ namespace ShippingRates.Services
             return null;
         }
 
+        /// <summary>
+        /// Add token
+        /// </summary>
+        /// <param name="clientId">UPS Client ID</param>
+        /// <param name="token">Token</param>
+        /// <param name="expiresIn">Expiration interval in seconds</param>
         public static void AddToken(string clientId, string token, int expiresIn)
         {
             var item = new CacheItem()

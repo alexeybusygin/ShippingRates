@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ShippingRates
 {
@@ -36,7 +34,7 @@ namespace ShippingRates
         /// FEDEX_PAK
         /// FEDEX_SMALL_BOX
         /// FEDEX_TUBE
-        /// Ignored for non-FedEx providers.  Not applied uness FedExOneRate is true.
+        /// Ignored for non-FedEx providers. Not applied unless FedExOneRate is true.
         /// </summary>
         public string FedExOneRatePackageOverride { get; set; }
     }

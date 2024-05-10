@@ -75,7 +75,7 @@ namespace ShippingRates.ShippingProviders
             request.RequestedShipment.ServiceType = "SMART_POST";
             request.RequestedShipment.SmartPostDetail = new SmartPostShipmentDetail { HubId = _hubId, Indicia = SmartPostIndiciaType.PARCEL_SELECT, IndiciaSpecified = true };
 
-            // Handle the various SmartPost Incidia scenarios
+            // Handle the various SmartPost Indicia scenarios
             // The ones we should mainly care about are as follows:
             // PRESORTED_STANDARD (less than 1 LB)
             // PARCEL_SELECT (1 LB through 70 LB)

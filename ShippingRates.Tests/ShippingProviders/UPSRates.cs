@@ -86,7 +86,7 @@ namespace ShippingRates.Tests.ShippingProviders
         }
 
         [Test]
-        public void UPS_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services_And_Multple_Packages()
+        public void UPS_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services_And_Multiple_Packages()
         {
             var rateManager = new RateManager();
             rateManager.AddProvider(GetProvider());
@@ -201,15 +201,14 @@ namespace ShippingRates.Tests.ShippingProviders
             Debug.WriteLine(response.Rates.First().Name + ": " + response.Rates.First().TotalCharges);
         }
 
-        //[Test]
-        //public void CanGetUpsServiceCodes()
-        //{
-        //    var provider = GetProvider();
-        //    var serviceCodes = provider.GetServiceCodes();
+        [Test]
+        public void CanGetUpsServiceCodes()
+        {
+            var serviceCodes = UPSProvider.GetServiceCodes();
 
-        //    Assert.NotNull(serviceCodes);
-        //    Assert.IsNotEmpty(serviceCodes);
-        //}
+            Assert.NotNull(serviceCodes);
+            Assert.IsNotEmpty(serviceCodes);
+        }
 
         [Test]
         public void Can_Get_Different_Rates_For_Signature_Required_Lookup()

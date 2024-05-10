@@ -12,7 +12,8 @@ namespace ShippingRates.Services
     {
         const string Version = "v2403";
 
-        static string GetRequestUri(string requestOption) => $"https://wwwcie.ups.com/api/rating/{Version}/{requestOption}";
+        static string GetRequestUri(bool isRateRequest)
+            => $"https://wwwcie.ups.com/api/rating/{Version}/{(isRateRequest ? "Rate" : "Shop")}";
 
         static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
         {
@@ -23,11 +24,9 @@ namespace ShippingRates.Services
         {
             request = request ?? throw new ArgumentNullException(nameof(request));
 
-            var requestOption = !string.IsNullOrEmpty(request.RateRequest?.Shipment?.Service?.Code)
-                ? "Rate"
-                : "Shop";
+            var isRateRequest = !string.IsNullOrEmpty(request.RateRequest?.Shipment?.Service?.Code);
 
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, GetRequestUri(requestOption));
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, GetRequestUri(isRateRequest));
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var jsonRequest = JsonSerializer.Serialize(request, _jsonSerializerOptions);
@@ -38,7 +37,7 @@ namespace ShippingRates.Services
 
             if (responseMessage.IsSuccessStatusCode)
             {
-                if (!string.IsNullOrEmpty(request.RateRequest.Shipment.Service?.Code))
+                if (isRateRequest)
                 {
                     var singleRateResponse = JsonSerializer.Deserialize<UPSSingleRatingResponse>(response);
                     return singleRateResponse.GetRatesResponse();
