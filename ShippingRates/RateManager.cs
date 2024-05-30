@@ -94,7 +94,7 @@ namespace ShippingRates
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
         public Shipment GetRates(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions options = null)
         {
-            return GetRatesAsync(originAddress, destinationAddress, packages, options).Result;
+            return GetRatesAsync(originAddress, destinationAddress, packages, options).GetAwaiter().GetResult();
         }
 
         /// <summary>

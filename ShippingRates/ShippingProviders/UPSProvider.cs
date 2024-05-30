@@ -58,17 +58,26 @@ namespace ShippingRates.ShippingProviders
         {
             var httpClient = IsExternalHttpClient ? _httpClient : new HttpClient();
 
-            var token = await UPSOAuthService.GetTokenAsync(_configuration, httpClient, AddError);
-
-            if (!string.IsNullOrEmpty(token))
+            try
             {
-                var request = ShipmentToRequestAdapter.FromShipment(_configuration, Shipment);
-                var ratingsResponse = await UPSRatingService.GetRatingAsync(httpClient, token, request, AddError);
-                ParseResponse(ratingsResponse);
-            }
+                var token = await UPSOAuthService.GetTokenAsync(_configuration, httpClient, AddError);
 
-            if (!IsExternalHttpClient && httpClient != null)
-                httpClient.Dispose();
+                if (!string.IsNullOrEmpty(token))
+                {
+                    var request = ShipmentToRequestAdapter.FromShipment(_configuration, Shipment);
+                    var ratingsResponse = await UPSRatingService.GetRatingAsync(httpClient, token, request, AddError);
+                    ParseResponse(ratingsResponse);
+                }
+            }
+            catch (Exception e)
+            {
+                AddInternalError($"UPS Provider Exception: {e.Message}");
+            }
+            finally
+            {
+                if (!IsExternalHttpClient && httpClient != null)
+                    httpClient.Dispose();
+            }
         }
 
         private void ParseResponse(UPSRatingResponse response)
