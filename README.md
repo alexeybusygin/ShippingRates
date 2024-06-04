@@ -31,7 +31,8 @@ rateManager.AddProvider(new UPSProvider(new UPSProviderConfiguration()
 {
     ClientId = upsClientId,
     ClientSecret = upsClientSecret,
-    AccountNumber = upsAccountNumber
+    AccountNumber = upsAccountNumber,
+    UseProduction = false
 }));
 // You will need an account # and meter # to utilize the FedEx provider.
 rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
