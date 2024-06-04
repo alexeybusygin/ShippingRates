@@ -65,7 +65,7 @@ namespace ShippingRates.ShippingProviders
                 if (!string.IsNullOrEmpty(token))
                 {
                     var request = ShipmentToRequestAdapter.FromShipment(_configuration, Shipment);
-                    var ratingsResponse = await UPSRatingService.GetRatingAsync(httpClient, token, request, AddError);
+                    var ratingsResponse = await UPSRatingService.GetRatingAsync(httpClient, token, _configuration.UseProduction, request, AddError);
                     ParseResponse(ratingsResponse);
                 }
             }

@@ -12,21 +12,21 @@ namespace ShippingRates.Services
     {
         const string Version = "v2403";
 
-        static string GetRequestUri(bool isRateRequest)
-            => $"https://wwwcie.ups.com/api/rating/{Version}/{(isRateRequest ? "Rate" : "Shop")}";
+        static string GetRequestUri(bool isRateRequest, bool isProduction)
+            => $"https://{(isProduction ? "onlinetools" : "wwwcie")}.ups.com/api/rating/{Version}/{(isRateRequest ? "Rate" : "Shop")}";
 
         static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
         {
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
-        public static async Task<UPSRatingResponse> GetRatingAsync(HttpClient httpClient, string token, UPSRatingRequest request, Action<Error> reportError)
+        public static async Task<UPSRatingResponse> GetRatingAsync(HttpClient httpClient, string token, bool isProduction, UPSRatingRequest request, Action<Error> reportError)
         {
             request = request ?? throw new ArgumentNullException(nameof(request));
 
             var isRateRequest = !string.IsNullOrEmpty(request.RateRequest?.Shipment?.Service?.Code);
 
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, GetRequestUri(isRateRequest));
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, GetRequestUri(isRateRequest, isProduction));
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var jsonRequest = JsonSerializer.Serialize(request, _jsonSerializerOptions);

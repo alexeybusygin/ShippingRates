@@ -12,7 +12,8 @@ namespace ShippingRates.Services
 {
     internal class UPSOAuthService
     {
-        const string OAuthRequestUri = "https://wwwcie.ups.com/security/v1/oauth/token";
+        static string GetOAuthRequestUri(bool isProduction)
+            => $"https://{(isProduction ? "onlinetools" : "wwwcie")}.ups.com/security/v1/oauth/token";
 
         public static async Task<string> GetTokenAsync(UPSProviderConfiguration configuration, HttpClient httpClient, Action<Error> reportError)
         {
@@ -20,7 +21,7 @@ namespace ShippingRates.Services
             if (!string.IsNullOrEmpty(token))
                 return token;
 
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, OAuthRequestUri);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, GetOAuthRequestUri(configuration.UseProduction));
             requestMessage.Headers.Add("x-merchant-id", configuration.AccountNumber);
 
             var base64clientString = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{configuration.ClientId}:{configuration.ClientSecret}"));
