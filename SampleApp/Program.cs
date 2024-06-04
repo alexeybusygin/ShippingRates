@@ -60,7 +60,8 @@ namespace ShippingRates.SampleApp
             {
                 ClientId = upsClientId,
                 ClientSecret = upsClientSecret,
-                AccountNumber = upsAccountNumber
+                AccountNumber = upsAccountNumber,
+                UseProduction = false
             };
             rateManager.AddProvider(new UPSProvider(upsConfiguration));
             rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction));
