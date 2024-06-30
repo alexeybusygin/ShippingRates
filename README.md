@@ -9,7 +9,7 @@
 
 UPS has deprecated access key authentication in favor of an OAuth 2.0 security model for all APIs. Beginning August 5, 2024, access keys will no longer be supported. More details at the UPS site: https://developer.ups.com/oauth-developer-guide?loc=en_US
 
-The new authentication model is implemented in the package version 2.0, right now in Beta: https://www.nuget.org/packages/ShippingRates/2.0.218-beta
+The new authentication model is implemented in the package version 2.1.0.
 
 ## How to Install
 
