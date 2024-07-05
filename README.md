@@ -3,13 +3,13 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/gqq8i6nw932bn01v?svg=true)](https://ci.appveyor.com/project/alexeybusygin/shippingrates/)
 [![NuGet Version](https://img.shields.io/nuget/v/ShippingRates.svg?style=flat-square)](https://www.nuget.org/packages/ShippingRates)
 
-.NET wrapper to UPS, FedEx, USPS, and DHL APIs. Use it to retrieve shipping rates from these carriers.
+.NET wrapper for UPS, FedEx, USPS, and DHL APIs. Use it to retrieve shipping rates from these carriers.
 
 ## UPS Breaking Changes
 
 UPS has deprecated access key authentication in favor of an OAuth 2.0 security model for all APIs. Beginning August 5, 2024, access keys will no longer be supported. More details at the UPS site: https://developer.ups.com/oauth-developer-guide?loc=en_US
 
-The new authentication model is implemented in the package version 2.1.0.
+The new authentication model has been implemented in the package since version 2.1.0.
 
 ## How to Install
 
