@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
     <Authors>Alexey Busygin, Kyle West</Authors>
-    <Description>.NET Standard 2.0 wrapper for UPS, FedEx, USPS, and DHL shipping rates APIs. Works with .NET 6+, .NET Core 2.0+ and .NET Framework 4.6.1+</Description>
+    <Description>Wrapper for UPS, FedEx, USPS, and DHL shipping rates APIs. Works with .NET 6+, .NET Core 2.0+ and .NET Framework 4.6.1+</Description>
     <Copyright>Copyright © 2024 Alexey Busygin, Kyle West</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/alexeybusygin/ShippingRates</PackageProjectUrl>
