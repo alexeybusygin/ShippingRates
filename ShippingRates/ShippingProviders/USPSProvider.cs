@@ -104,13 +104,6 @@ namespace ShippingRates.ShippingProviders
             }
         }
 
-        [Obsolete("Please use ShipmentOptions instead for the shipDate, this constructor will be removed in the future")]
-        public USPSProvider(string userId, string service, string shipDate)
-            : this(userId, service)
-        {
-            Shipment.Options.ShippingDate = DateTime.Parse(shipDate);
-        }
-
         /// <summary>
         /// Returns the supported service codes
         /// </summary>
@@ -143,11 +136,6 @@ namespace ShippingRates.ShippingProviders
 
         public override async Task GetRates()
         {
-            await GetRates(false).ConfigureAwait(false);
-        }
-
-        public async Task GetRates(bool baseRatesOnly)
-        {
             // USPS only available for domestic addresses. International is a different API.
             if (!IsDomesticUSPSAvailable())
             {
@@ -168,33 +156,10 @@ namespace ShippingRates.ShippingProviders
             {
                 writer.WriteStartElement("RateV4Request");
                 writer.WriteAttributeString("USERID", _userId);
-                if (!baseRatesOnly)
-                {
-                    writer.WriteElementString("Revision", "2");
-                }
+                writer.WriteElementString("Revision", "2");
                 var i = 0;
                 foreach (var package in Shipment.Packages)
                 {
-                    string size;
-                    var container = package.Container;
-                    if (IsPackageLarge(package))
-                    {
-                        size = "LARGE";
-                        // Container must be RECTANGULAR or NONRECTANGULAR when SIZE is LARGE
-                        if (container == null || container.ToUpperInvariant() != "NONRECTANGULAR")
-                        {
-                            container = "RECTANGULAR";
-                        }
-                    }
-                    else
-                    {
-                        size = "REGULAR";
-                        if (container == null)
-                        {
-                            container = string.Empty;
-                        }
-                    }
-
                     writer.WriteStartElement("Package");
                     writer.WriteAttributeString("ID", i.ToString());
                     writer.WriteElementString("Service", _service);
@@ -203,8 +168,7 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("Pounds", package.PoundsAndOunces.Pounds.ToString());
                     writer.WriteElementString("Ounces", package.PoundsAndOunces.Ounces.ToString());
 
-                    writer.WriteElementString("Container", container);
-                    writer.WriteElementString("Size", size);
+                    writer.WriteElementString("Container", string.IsNullOrEmpty(package.Container) ? string.Empty : package.Container);
                     writer.WriteElementString("Width", package.RoundedWidth.ToString());
                     writer.WriteElementString("Length", package.RoundedLength.ToString());
                     writer.WriteElementString("Height", package.RoundedHeight.ToString());

@@ -116,7 +116,6 @@ namespace ShippingRates.ShippingProviders
                     //  <ValueOfContents>750</ValueOfContents>
                     //  <Country>Algeria</Country>
                     //  <Container></Container>
-                    //  <Size>REGULAR</Size>
                     //  <Width></Width>
                     //  <Length></Length>
                     //  <Height></Height>
@@ -131,8 +130,7 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("MailType", "All");
                     writer.WriteElementString("ValueOfContents", package.InsuredValue.ToString());
                     writer.WriteElementString("Country", Shipment.DestinationAddress.GetCountryName());
-                    writer.WriteElementString("Container", "RECTANGULAR");
-                    writer.WriteElementString("Size", "REGULAR");
+                    writer.WriteElementString("Container", string.IsNullOrEmpty(package.Container) ? "RECTANGULAR": package.Container);
                     writer.WriteElementString("Width", package.RoundedWidth.ToString());
                     writer.WriteElementString("Length", package.RoundedLength.ToString());
                     writer.WriteElementString("Height", package.RoundedHeight.ToString());
