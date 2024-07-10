@@ -56,7 +56,7 @@ namespace ShippingRates.Models.UPS
             }
             if (shipment.DestinationAddress.IsResidential)
             {
-                request.RateRequest.Shipment.ShipTo.Address.ResidentialAddressIndicator = "True";
+                request.RateRequest.Shipment.ShipTo.Address.ResidentialAddressIndicator = "Y";
             }
             if (shipment.HasDocumentsOnly)
             {
@@ -66,14 +66,14 @@ namespace ShippingRates.Models.UPS
             {
                 request.RateRequest.Shipment.ShipmentServiceOptions = new ShipmentServiceOptions()
                 {
-                    SaturdayDeliveryIndicator = "True"
+                    SaturdayDeliveryIndicator = "Y"
                 };
             }
             if (configuration.UseNegotiatedRates)
             {
                 request.RateRequest.Shipment.ShipmentRatingOptions = new ShipmentRatingOptions()
                 {
-                    NegotiatedRatesIndicator = "True"
+                    NegotiatedRatesIndicator = "Y"
                 };
             }
             if (shipment.OriginAddress.CountryCode == "US")         // Valid if ship from US
