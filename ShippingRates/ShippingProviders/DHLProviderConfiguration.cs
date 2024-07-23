@@ -15,6 +15,7 @@ namespace ShippingRates.ShippingProviders
         public string Password { get; }
         public bool UseProduction { get; }
         public string PaymentAccountNumber { get; set; }
+        [Obsolete("Timeout property will be ignored in the future versions, pass HttpClient with a necessary timeout instead")]
         public int TimeOut { get; set; } = DHLProvider.DefaultTimeout;
 
         public IReadOnlyCollection<char> ServicesIncluded { get => new ReadOnlyCollection<char>(_includedServices); }
