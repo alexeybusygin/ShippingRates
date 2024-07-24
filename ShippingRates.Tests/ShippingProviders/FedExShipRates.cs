@@ -18,21 +18,27 @@ namespace ShippingRates.Tests.ShippingProviders
         {
             var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
 
-            var fedexKey = config.FedExKey;
-            var fedexPassword = config.FedExPassword;
-            var fedexAccountNumber = config.FedExAccountNumber;
-            var fedexMeterNumber = config.FedExMeterNumber;
-            var fedexUseProduction = config.FedExUseProduction;
-
-            _provider = new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction);
+            _provider = new FedExProvider(new FedExProviderConfiguration()
+            {
+                Key = config.FedExKey,
+                Password = config.FedExPassword,
+                AccountNumber = config.FedExAccountNumber,
+                MeterNumber = config.FedExMeterNumber,
+                UseProduction = config.FedExUseProduction
+            });
 
             _rateManager = new RateManager();
             _rateManager.AddProvider(_provider);
 
-            _providerNegotiated = new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction)
+            _providerNegotiated = new FedExProvider(new FedExProviderConfiguration()
             {
+                Key = config.FedExKey,
+                Password = config.FedExPassword,
+                AccountNumber = config.FedExAccountNumber,
+                MeterNumber = config.FedExMeterNumber,
+                UseProduction = config.FedExUseProduction,
                 UseNegotiatedRates = true
-            };
+            });
 
             _rateManagerNegotiated = new RateManager();
             _rateManagerNegotiated.AddProvider(_providerNegotiated);
@@ -73,13 +79,13 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Assert.NotNull(r);
             Assert.False(fedExRates.Any());
-            Assert.AreEqual(r.Errors.Count(), 1);
+            Assert.AreEqual(r.Errors.Count, 1);
 
             var error = r.Errors.FirstOrDefault();
             Assert.NotNull(error);
             Assert.AreEqual(error.Number, "521");
             Assert.NotNull(error.Description);
-            Assert.AreEqual(error.Description.Substring(0, 42), "Destination postal code missing or invalid");
+            Assert.AreEqual(error.Description[..42], "Destination postal code missing or invalid");
         }
 
 
@@ -147,7 +153,7 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.True(!rates.Rates.Any(r => !r.Name.Contains("Freight")));
         }
 
-        private void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string methodCode = null)
+        private static void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string methodCode = null)
         {
             Assert.NotNull(r1?.Rates);
             Assert.NotNull(r2?.Rates);

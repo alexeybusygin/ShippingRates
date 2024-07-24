@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
 using ShippingRates.ShippingProviders.USPS;
+using System.Net.Http;
 
 namespace ShippingRates.Tests.ShippingProviders
 {
@@ -19,7 +20,6 @@ namespace ShippingRates.Tests.ShippingProviders
         private readonly Package Package1;
         private readonly Package Package1SignatureRequired;
         private readonly Package Package1WithInsurance;
-        private readonly string _uspsUserId;
 
         public USPSProviderTests()
         {
@@ -30,16 +30,22 @@ namespace ShippingRates.Tests.ShippingProviders
             Package1 = new Package(4, 4, 4, 5, 0);
             Package1SignatureRequired = new Package(4, 4, 4, 5, 0, null, true);
             Package1WithInsurance = new Package(4, 4, 4, 5, 50);
+        }
 
-            _uspsUserId = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory)
-                .USPSUserId;
+        private static USPSProviderConfiguration GetConfiguration(string service = null)
+        {
+            return new USPSProviderConfiguration(ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory).USPSUserId)
+            {
+                Service = service
+            };
         }
 
         [Test]
         public void USPS_Domestic_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSProvider(GetConfiguration(), httpClient));
 
             var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
@@ -62,8 +68,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPS_Domestic_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services_And_Multiple_Packages()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSProvider(GetConfiguration(), httpClient));
 
             var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
@@ -85,8 +92,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPS_Domestic_Returns_No_Rates_When_Using_Invalid_Addresses_For_All_Services()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSProvider(GetConfiguration(), httpClient));
 
             var response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
 
@@ -100,8 +108,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPS_Domestic_Returns_No_Rates_When_Using_Invalid_Addresses_For_Single_Service()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId, ShippingRates.ShippingProviders.USPS.Services.Priority));
+            rateManager.AddProvider(new USPSProvider(GetConfiguration(ShippingRates.ShippingProviders.USPS.Services.Priority), httpClient));
 
             var response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
 
@@ -115,8 +124,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPS_Domestic_Returns_Single_Rate_When_Using_Valid_Addresses_For_Single_Service()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId, ShippingRates.ShippingProviders.USPS.Services.Priority));
+            rateManager.AddProvider(new USPSProvider(GetConfiguration(ShippingRates.ShippingProviders.USPS.Services.Priority), httpClient));
 
             var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
@@ -134,7 +144,7 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void CanGetUspsServiceCodes()
         {
-            var provider = new USPSProvider(_uspsUserId);
+            var provider = new USPSProvider(GetConfiguration());
             var serviceCodes = provider.GetServiceCodes();
 
             Assert.NotNull(serviceCodes);
@@ -144,8 +154,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void Can_Get_Different_Rates_For_Signature_Required_Lookup()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId, ShippingRates.ShippingProviders.USPS.Services.Priority));
+            rateManager.AddProvider(new USPSProvider(GetConfiguration(ShippingRates.ShippingProviders.USPS.Services.Priority), httpClient));
 
             var nonSignatureResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
             var signatureResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1SignatureRequired);
@@ -163,8 +174,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void Can_Get_Different_Rates_For_Insurance_Lookup()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId, ShippingRates.ShippingProviders.USPS.Services.Library));
+            rateManager.AddProvider(new USPSProvider(GetConfiguration(ShippingRates.ShippingProviders.USPS.Services.Library), httpClient));
 
             var nonInsuranceResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
             var insuranceResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1WithInsurance);
@@ -178,15 +190,14 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void Can_Get_Different_Rates_For_Special_Services_Lookup()
         {
+            using var httpClient = new HttpClient();
             var rateManager1 = new RateManager();
-            rateManager1.AddProvider(new USPSProvider(_uspsUserId, ShippingRates.ShippingProviders.USPS.Services.Library));
+            rateManager1.AddProvider(new USPSProvider(GetConfiguration(ShippingRates.ShippingProviders.USPS.Services.Library), httpClient));
 
             var rateManager2 = new RateManager();
-            rateManager2.AddProvider(new USPSProvider(new USPSProviderConfiguration(_uspsUserId)
-            {
-                Service = ShippingRates.ShippingProviders.USPS.Services.Library,
-                SpecialServices = new SpecialServices[] { SpecialServices.ScanRetention }
-            }));
+            var configuration = GetConfiguration(ShippingRates.ShippingProviders.USPS.Services.Library);
+            configuration.SpecialServices = new SpecialServices[] { SpecialServices.ScanRetention };
+            rateManager2.AddProvider(new USPSProvider(configuration));
 
             var noSpecialServicesResponse = rateManager1.GetRates(DomesticAddress1, DomesticAddress2, Package1);
             var specialServicesResponse = rateManager2.GetRates(DomesticAddress1, DomesticAddress2, Package1);
@@ -200,11 +211,12 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPSDiscountedRates()
         {
+            using var httpClient = new HttpClient();
             var rateManager1 = new RateManager();
-            rateManager1.AddProvider(new USPSProvider(_uspsUserId, ShippingRates.ShippingProviders.USPS.Services.All));
+            rateManager1.AddProvider(new USPSProvider(GetConfiguration(ShippingRates.ShippingProviders.USPS.Services.All), httpClient));
 
             var rateManager2 = new RateManager();
-            rateManager2.AddProvider(new USPSProvider(_uspsUserId, ShippingRates.ShippingProviders.USPS.Services.Online));
+            rateManager2.AddProvider(new USPSProvider(GetConfiguration(ShippingRates.ShippingProviders.USPS.Services.Online), httpClient));
 
             var rates = rateManager1.GetRates(DomesticAddress1, DomesticAddress2, Package1);
             var discountedRates = rateManager2.GetRates(DomesticAddress1, DomesticAddress2, Package1);
@@ -243,8 +255,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public async Task USPS_Domestic_Saturday_Delivery()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSProvider(GetConfiguration(), httpClient));
 
             var today = DateTime.Now;
             var nextFriday = today.AddDays(12 - (int)today.DayOfWeek).Date + new TimeSpan(10, 0, 0);
@@ -292,8 +305,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public async Task USPS_ThreeAndAHalfOunceLetter_Qualifies_For_First_Class_Mail_Letter()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSProvider(GetConfiguration(), httpClient));
 
             const decimal firstClassLetterMaxWeight = 0.21875m; // 3.5 ounces
             var firstClassLetter = new DocumentsPackage(firstClassLetterMaxWeight, 0);

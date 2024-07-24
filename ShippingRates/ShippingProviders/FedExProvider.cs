@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-
-using ShippingRates.Helpers.Extensions;
 using ShippingRates.RateServiceWebReference;
+using System.Collections.Generic;
 
 namespace ShippingRates.ShippingProviders
 {
@@ -32,7 +27,19 @@ namespace ShippingRates.ShippingProviders
         /// <param name="meterNumber"></param>
         /// <param name="useProduction"></param>
         public FedExProvider(string key, string password, string accountNumber, string meterNumber, bool useProduction)
-            : base(key, password, accountNumber, meterNumber, useProduction) { }
+            : this(new FedExProviderConfiguration()
+            {
+                Key = key,
+                Password = password,
+                AccountNumber = accountNumber,
+                MeterNumber = meterNumber,
+                UseProduction = useProduction
+            })
+        {
+        }
+
+        public FedExProvider(FedExProviderConfiguration configuration)
+            : base(configuration) { }
 
         /// <summary>
         /// Sets service codes.

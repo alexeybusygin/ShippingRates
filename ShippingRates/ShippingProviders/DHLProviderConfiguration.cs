@@ -1,8 +1,7 @@
-﻿using System;
+﻿using ShippingRates.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
-using ShippingRates.Helpers;
 
 namespace ShippingRates.ShippingProviders
 {
@@ -11,10 +10,11 @@ namespace ShippingRates.ShippingProviders
     /// </summary>
     public class DHLProviderConfiguration
     {
-        public string SiteId { get; }
-        public string Password { get; }
-        public bool UseProduction { get; }
+        public string SiteId { get; set; }
+        public string Password { get; set; }
+        public bool UseProduction { get; set; }
         public string PaymentAccountNumber { get; set; }
+        [Obsolete("Timeout property will be ignored in the future versions, pass HttpClient with a necessary timeout instead")]
         public int TimeOut { get; set; } = DHLProvider.DefaultTimeout;
 
         public IReadOnlyCollection<char> ServicesIncluded { get => new ReadOnlyCollection<char>(_includedServices); }

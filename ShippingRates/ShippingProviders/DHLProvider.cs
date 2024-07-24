@@ -61,16 +61,19 @@ namespace ShippingRates.ShippingProviders
         private const string TestServicesUrl = "https://xmlpitest-ea.dhl.com/XMLShippingServlet";
         private const string ProductionServicesUrl = "https://xmlpi-ea.dhl.com/XMLShippingServlet";
 
+        [Obsolete("Please use DHLProvider(DHLProviderConfiguration configuration, HttpClient httpClient) constructor instead")]
         public DHLProvider(string siteId, string password, bool useProduction) :
             this(siteId, password, useProduction, null)
         {
         }
 
+        [Obsolete("Please use DHLProvider(DHLProviderConfiguration configuration, HttpClient httpClient) constructor instead")]
         public DHLProvider(string siteId, string password, bool useProduction, char[] services) :
             this(siteId, password, useProduction, services, DefaultTimeout)
         {
         }
 
+        [Obsolete("Please use DHLProvider(DHLProviderConfiguration configuration, HttpClient httpClient) constructor instead")]
         public DHLProvider(string siteId, string password, bool useProduction, char[] services, int timeout) :
             this(new DHLProviderConfiguration(siteId, password, useProduction)
             {
@@ -83,6 +86,12 @@ namespace ShippingRates.ShippingProviders
         public DHLProvider(DHLProviderConfiguration configuration)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        }
+
+        public DHLProvider(DHLProviderConfiguration configuration, HttpClient httpClient)
+            : this(configuration)
+        {
+            HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
         private Uri RatesUri => new Uri(_configuration.UseProduction ? ProductionServicesUrl : TestServicesUrl);
@@ -210,9 +219,16 @@ namespace ShippingRates.ShippingProviders
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            using (var httpClient = new HttpClient())
+            var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+
+            try
             {
-                httpClient.Timeout = TimeSpan.FromSeconds(_configuration.TimeOut);
+#pragma warning disable CS0618 // Type or member is obsolete
+                if (_configuration.TimeOut != DefaultTimeout)
+                {
+                    httpClient.Timeout = TimeSpan.FromSeconds(_configuration.TimeOut);
+                }
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 var request = BuildRatesRequestMessage(
                     DateTime.Now,
@@ -233,6 +249,15 @@ namespace ShippingRates.ShippingProviders
                         }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                AddInternalError($"DHL Provider Exception: {e.Message}");
+            }
+            finally
+            {
+                if (!IsExternalHttpClient && httpClient != null)
+                    httpClient.Dispose();
             }
         }
 

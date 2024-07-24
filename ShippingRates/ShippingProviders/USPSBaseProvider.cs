@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+using System.Net.Http;
 using System.Xml.Linq;
 
 namespace ShippingRates.ShippingProviders
@@ -14,6 +11,24 @@ namespace ShippingRates.ShippingProviders
 
         protected const string USPSCurrencyCode = "USD";
         protected const string ProductionUrl = "https://secure.shippingapis.com/ShippingAPI.dll";
+
+        protected readonly USPSProviderConfiguration _configuration;
+
+        public USPSBaseProvider(USPSProviderConfiguration configuration)
+        {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+
+            if (string.IsNullOrEmpty(_configuration.Service))
+            {
+                _configuration.Service = USPS.Services.All;
+            }
+        }
+
+        public USPSBaseProvider(USPSProviderConfiguration configuration, HttpClient httpClient)
+            : this(configuration)
+        {
+            HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        }
 
         protected void ParseErrors(XElement response)
         {

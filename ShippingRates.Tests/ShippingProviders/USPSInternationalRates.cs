@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
+using System.Net.Http;
 
 namespace ShippingRates.Tests.ShippingProviders
 {
@@ -21,33 +22,40 @@ namespace ShippingRates.Tests.ShippingProviders
         private readonly DocumentsPackage _firstClassLetterWithValue;
         private readonly Package _package1;
         private readonly Package _package2;
-        private readonly string _uspsUserId;
 
         public USPSInternationalRates()
         {
             _domesticAddress1 = new Address("278 Buckley Jones Road", "", "", "Cleveland", "MS", "38732", "US");
             _domesticAddress2 = new Address("One Microsoft Way", "", "", "Redmond", "WA", "98052", "US");
-            _internationalAddress1 = new Address("Jubail", "Jubail", "31951", "SA"); //has limited intl services available
+            _internationalAddress1 = new Address("Jubail", "Jubail", "31951", "SA"); //has limited international services available
             _internationalAddress2 = new Address("80-100 Victoria St", "", "", "London", "", "SW1E 5JL", "GB");
 
             _firstClassLetterWithNoValue = new DocumentsPackage(FirstClassLetterMaxWeight, 0);
             _firstClassLetterWithValue = new DocumentsPackage(FirstClassLetterMaxWeight, 1);
             _package1 = new Package(14, 14, 14, 15, 0);
             _package2 = new Package(6, 6, 6, 5, 100);
+        }
 
-            _uspsUserId = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory)
-                .USPSUserId;
+        private static USPSProviderConfiguration GetConfiguration(string service = null)
+        {
+            return new USPSProviderConfiguration(ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory).USPSUserId)
+            {
+                Service = service
+            };
         }
 
         [Test]
         public void USPS_Intl_Returns_Multiple_Rates_When_Using_Multiple_Packages_For_All_Services_And_Multiple_Packages()
         {
-            var packages = new List<Package>();
-            packages.Add(_package1);
-            packages.Add(_package2);
+            var packages = new List<Package>
+            {
+                _package1,
+                _package2
+            };
 
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSInternationalProvider(GetConfiguration(), httpClient));
 
             var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, packages);
 
@@ -69,8 +77,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPS_Intl_Returns_Multiple_Rates_When_Using_Valid_Addresses_For_All_Services()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSInternationalProvider(GetConfiguration(), httpClient));
 
             var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, _package1);
 
@@ -92,8 +101,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPS_Intl_Returns_No_Rates_When_Using_Invalid_Addresses_For_All_Services()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSInternationalProvider(GetConfiguration(), httpClient));
 
             var response = rateManager.GetRates(_domesticAddress1, _domesticAddress2, _package1);
 
@@ -106,10 +116,11 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPS_Intl_Returns_No_Rates_When_Using_Invalid_Addresses_For_Single_Service()
         {
-            //can't rate intl with a domestic address
+            //can't rate international with a domestic address
 
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId, "Priority Mail International"));
+            rateManager.AddProvider(new USPSInternationalProvider(GetConfiguration("Priority Mail International"), httpClient));
 
             var response = rateManager.GetRates(_domesticAddress1, _domesticAddress2, _package1);
 
@@ -122,8 +133,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPS_Intl_Returns_Single_Rate_When_Using_Valid_Addresses_For_Single_Service()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId, "Priority Mail International"));
+            rateManager.AddProvider(new USPSInternationalProvider(GetConfiguration("Priority Mail International"), httpClient));
 
             var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, _package1);
 
@@ -141,8 +153,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPS_Intl_Returns_First_Class_Mail_Rates_For_FirstClassLetterWithNoValue()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSInternationalProvider(GetConfiguration(), httpClient));
 
             var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, _firstClassLetterWithNoValue);
             Assert.True(response.Rates.Any(IsFirstClassMailRate));
@@ -151,8 +164,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPS_Intl_Returns_No_First_Class_Mail_Rates_For_FirstClassLetterWithValue()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSInternationalProvider(GetConfiguration(), httpClient));
 
             var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, _firstClassLetterWithValue);
             Assert.False(response.Rates.Any(IsFirstClassMailRate));
@@ -161,8 +175,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void USPS_Intl_Returns_No_First_Class_Mail_Rates_For_Package()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSInternationalProvider(GetConfiguration(), httpClient));
 
             var package = new Package(7m, 5m, 0.1m, FirstClassLetterMaxWeight, 0);
 
@@ -173,7 +188,7 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void CanGetUspsInternationalServiceCodes()
         {
-            var provider = new USPSInternationalProvider(_uspsUserId);
+            var provider = new USPSInternationalProvider(GetConfiguration());
             var serviceCodes = provider.GetServiceCodes();
 
             Assert.NotNull(serviceCodes);
@@ -183,8 +198,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public async Task USPSCurrency()
         {
+            using var httpClient = new HttpClient();
             var rateManager = new RateManager();
-            rateManager.AddProvider(new USPSInternationalProvider(_uspsUserId));
+            rateManager.AddProvider(new USPSInternationalProvider(GetConfiguration(), httpClient));
 
             var response = await rateManager.GetRatesAsync(_domesticAddress1, _internationalAddress2, _package1);
             var rates = response.Rates;

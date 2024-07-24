@@ -12,9 +12,6 @@ namespace ShippingRates.ShippingProviders
         public override string Name => "UPS";
 
         readonly UPSProviderConfiguration _configuration;
-        readonly HttpClient _httpClient;
-
-        bool IsExternalHttpClient => _httpClient != null;
 
         readonly static Dictionary<string, string> _serviceCodes = new Dictionary<string, string>()
         {
@@ -51,12 +48,12 @@ namespace ShippingRates.ShippingProviders
         public UPSProvider(UPSProviderConfiguration configuration, HttpClient httpClient)
             : this(configuration)
         {
-            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
         public override async Task GetRates()
         {
-            var httpClient = IsExternalHttpClient ? _httpClient : new HttpClient();
+            var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
 
             try
             {

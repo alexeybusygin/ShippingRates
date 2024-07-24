@@ -1,10 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
 
@@ -19,21 +13,18 @@ namespace ShippingRates.Tests.ShippingProviders
         {
             var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
 
-            var fedexKey = config.FedExKey;
-            var fedexPassword = config.FedExPassword;
-            var fedexAccountNumber = config.FedExAccountNumber;
-            var fedexMeterNumber = config.FedExMeterNumber;
-            var fedexHubId = config.FedExHubId;
-            var fedexUseProduction = config.FedExUseProduction;
+            _provider = new FedExSmartPostProvider(new FedExProviderConfiguration()
+            {
+                Key = config.FedExKey,
+                Password = config.FedExPassword,
+                AccountNumber = config.FedExAccountNumber,
+                MeterNumber = config.FedExMeterNumber,
+                HubId = config.FedExHubId,
+                UseProduction = config.FedExUseProduction
+            });
 
-            _provider = new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction);
             _rateManager = new RateManager();
             _rateManager.AddProvider(_provider);
-        }
-
-        public void Dispose()
-        {
-
         }
     }
 
