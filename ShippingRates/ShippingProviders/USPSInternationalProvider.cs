@@ -55,14 +55,10 @@ namespace ShippingRates.ShippingProviders
         }
 
         public USPSInternationalProvider(USPSProviderConfiguration configuration)
-            : base(configuration)
-        {
-        }
+            : base(configuration) { }
 
         public USPSInternationalProvider(USPSProviderConfiguration configuration, HttpClient httpClient)
-            : base(configuration, httpClient)
-        {
-        }
+            : base(configuration, httpClient) { }
 
         public bool Commercial { get; set; }
 

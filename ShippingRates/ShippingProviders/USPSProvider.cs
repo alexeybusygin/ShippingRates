@@ -84,14 +84,10 @@ namespace ShippingRates.ShippingProviders
         }
 
         public USPSProvider(USPSProviderConfiguration configuration)
-            :base(configuration)
-        {
-        }
+            : base(configuration) { }
 
         public USPSProvider(USPSProviderConfiguration configuration, HttpClient httpClient)
-            : base(configuration, httpClient)
-        {
-        }
+            : base(configuration, httpClient) { }
 
         /// <summary>
         /// Returns the supported service codes
