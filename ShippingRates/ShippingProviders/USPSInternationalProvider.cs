@@ -12,11 +12,10 @@ using System.Xml.Linq;
 namespace ShippingRates.ShippingProviders
 {
     /// <summary>
+    /// USPS International Rates Provider
     /// </summary>
     public class USPSInternationalProvider : USPSBaseProvider
     {
-        private readonly string _service;
-        private readonly string _userId;
         private readonly Dictionary<string, string> _serviceCodes = new Dictionary<string, string>
         {
             {"Priority Mail Express International","Priority Mail Express International"},
@@ -50,19 +49,19 @@ namespace ShippingRates.ShippingProviders
         /// <summary>
         /// </summary>
         /// <param name="userId"></param>
-        public USPSInternationalProvider(string userId)
+        public USPSInternationalProvider(string userId, string service = USPS.Services.All) :
+            this(new USPSProviderConfiguration(userId) { Service = service })
         {
-            _userId = userId;
-            _service = "ALL";
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="userId"></param>
-        public USPSInternationalProvider(string userId, string service)
+        public USPSInternationalProvider(USPSProviderConfiguration configuration)
+            : base(configuration)
         {
-            _userId = userId;
-            _service = service;
+        }
+
+        public USPSInternationalProvider(USPSProviderConfiguration configuration, HttpClient httpClient)
+            : base(configuration, httpClient)
+        {
         }
 
         public bool Commercial { get; set; }
@@ -91,6 +90,29 @@ namespace ShippingRates.ShippingProviders
 
         public override async Task GetRates()
         {
+            var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+
+            try
+            {
+                var requestXmlString = GetRequestXmlString();
+                var rateUri = new Uri($"{ProductionUrl}?API=IntlRateV2&XML={requestXmlString}");
+                var response = await httpClient.GetStringAsync(rateUri).ConfigureAwait(false);
+
+                ParseResult(response);
+            }
+            catch (Exception e)
+            {
+                AddInternalError($"USPS International Provider Exception: {e.Message}");
+            }
+            finally
+            {
+                if (!IsExternalHttpClient && httpClient != null)
+                    httpClient.Dispose();
+            }
+        }
+
+        private string GetRequestXmlString()
+        {
             var sb = new StringBuilder();
 
             var settings = new XmlWriterSettings
@@ -103,7 +125,7 @@ namespace ShippingRates.ShippingProviders
             using (var writer = XmlWriter.Create(sb, settings))
             {
                 writer.WriteStartElement("IntlRateV2Request");
-                writer.WriteAttributeString("USERID", _userId);
+                writer.WriteAttributeString("USERID", _configuration.UserId);
 
                 writer.WriteElementString("Revision", "2");
                 var i = 0;
@@ -130,7 +152,7 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("MailType", "All");
                     writer.WriteElementString("ValueOfContents", package.InsuredValue.ToString());
                     writer.WriteElementString("Country", Shipment.DestinationAddress.GetCountryName());
-                    writer.WriteElementString("Container", string.IsNullOrEmpty(package.Container) ? "RECTANGULAR": package.Container);
+                    writer.WriteElementString("Container", string.IsNullOrEmpty(package.Container) ? "RECTANGULAR" : package.Container);
                     writer.WriteElementString("Width", package.RoundedWidth.ToString());
                     writer.WriteElementString("Length", package.RoundedLength.ToString());
                     writer.WriteElementString("Height", package.RoundedHeight.ToString());
@@ -159,20 +181,7 @@ namespace ShippingRates.ShippingProviders
                 writer.Flush();
             }
 
-            try
-            {
-                using (var httpClient = new HttpClient())
-                {
-                    var rateUri = new Uri($"{ProductionUrl}?API=IntlRateV2&XML={sb}");
-                    var response = await httpClient.GetStringAsync(rateUri).ConfigureAwait(false);
-
-                    ParseResult(response);
-                }
-            }
-            catch (Exception ex)
-            {
-                AddInternalError($"USPS International provider exception: {ex.Message}");
-            }
+            return sb.ToString();
         }
 
         public bool IsDomesticUSPSAvailable()
@@ -190,7 +199,7 @@ namespace ShippingRates.ShippingProviders
             {
                 var name = Regex.Replace(r.Name, "&lt.*gt;", "");
 
-                if (_service == name || _service == "ALL")
+                if (_configuration.Service == name || _configuration.Service == "ALL")
                 {
                     AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30), null, USPSCurrencyCode);
                 }

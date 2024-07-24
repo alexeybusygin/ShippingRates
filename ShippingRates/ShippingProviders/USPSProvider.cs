@@ -13,18 +13,10 @@ using System.Xml.XPath;
 namespace ShippingRates.ShippingProviders
 {
     /// <summary>
+    /// USPS Domestic Rates Provider
     /// </summary>
     public class USPSProvider : USPSBaseProvider
     {
-        /// <summary>
-        /// If set to ALL, special service types will not be returned. This is a limitation of the USPS API.
-        /// </summary>
-        private readonly string _service;
-
-        private readonly string _userId;
-
-        private readonly SpecialServices[] _specialServices;
-
         /// <summary>
         /// Service codes. {0} is a placeholder for 1-Day, 2-Day, 3-Day, Military, DPO or a space
         /// </summary>
@@ -92,16 +84,13 @@ namespace ShippingRates.ShippingProviders
         }
 
         public USPSProvider(USPSProviderConfiguration configuration)
+            :base(configuration)
         {
-            configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _userId = configuration.UserId;
-            _service = configuration.Service;
-            _specialServices = configuration.SpecialServices;
+        }
 
-            if (string.IsNullOrEmpty(_service))
-            {
-                _service = USPS.Services.All;
-            }
+        public USPSProvider(USPSProviderConfiguration configuration, HttpClient httpClient)
+            : base(configuration, httpClient)
+        {
         }
 
         /// <summary>
@@ -142,8 +131,31 @@ namespace ShippingRates.ShippingProviders
                 return;
             }
 
+            var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+
+            try
+            {
+                var specialServices = GetSpecialServicesForShipment(Shipment);
+                var requestXmlString = GetRequestXmlString(specialServices);
+                var rateUri = new Uri($"{ProductionUrl}?API=RateV4&XML={requestXmlString}");
+                var response = await httpClient.GetStringAsync(rateUri).ConfigureAwait(false);
+
+                ParseResult(response, specialServices);
+            }
+            catch (Exception e)
+            {
+                AddInternalError($"USPS Provider Exception: {e.Message}");
+            }
+            finally
+            {
+                if (!IsExternalHttpClient && httpClient != null)
+                    httpClient.Dispose();
+            }
+        }
+
+        private string GetRequestXmlString(List<SpecialServices> specialServices)
+        {
             var sb = new StringBuilder();
-            var specialServices = GetSpecialServicesForShipment(Shipment);
 
             var settings = new XmlWriterSettings
             {
@@ -155,15 +167,15 @@ namespace ShippingRates.ShippingProviders
             using (var writer = XmlWriter.Create(sb, settings))
             {
                 writer.WriteStartElement("RateV4Request");
-                writer.WriteAttributeString("USERID", _userId);
+                writer.WriteAttributeString("USERID", _configuration.UserId);
                 writer.WriteElementString("Revision", "2");
                 var i = 0;
                 foreach (var package in Shipment.Packages)
                 {
                     writer.WriteStartElement("Package");
                     writer.WriteAttributeString("ID", i.ToString());
-                    writer.WriteElementString("Service", _service);
-                    writer.WriteElementString("ZipOrigination", Shipment.OriginAddress.CountryCode == "US" && Shipment.OriginAddress.PostalCode.Length > 5? Shipment.OriginAddress.PostalCode.Substring(0, 5) : Shipment.OriginAddress.PostalCode);
+                    writer.WriteElementString("Service", _configuration.Service);
+                    writer.WriteElementString("ZipOrigination", Shipment.OriginAddress.CountryCode == "US" && Shipment.OriginAddress.PostalCode.Length > 5 ? Shipment.OriginAddress.PostalCode.Substring(0, 5) : Shipment.OriginAddress.PostalCode);
                     writer.WriteElementString("ZipDestination", Shipment.DestinationAddress.CountryCode == "US" && Shipment.DestinationAddress.PostalCode.Length > 5 ? Shipment.DestinationAddress.PostalCode.Substring(0, 5) : Shipment.DestinationAddress.PostalCode);
                     writer.WriteElementString("Pounds", package.PoundsAndOunces.Pounds.ToString());
                     writer.WriteElementString("Ounces", package.PoundsAndOunces.Ounces.ToString());
@@ -174,7 +186,7 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("Height", package.RoundedHeight.ToString());
                     writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
                     writer.WriteElementString("Value", package.InsuredValue.ToString());
-                    if (RequiresMachinable(_service))
+                    if (RequiresMachinable(_configuration.Service))
                     {
                         writer.WriteElementString("Machinable", IsPackageMachinable(package).ToString());
                     }
@@ -184,7 +196,7 @@ namespace ShippingRates.ShippingProviders
                             Shipment.Options.ShippingDate.Value.ToString("yyyy-MM-dd"));
                     }
 
-                    if (AllowsSpecialServices(_service) && specialServices.Any())
+                    if (AllowsSpecialServices(_configuration.Service) && specialServices.Any())
                     {
                         writer.WriteStartElement("SpecialServices");
                         foreach (var service in specialServices)
@@ -202,26 +214,13 @@ namespace ShippingRates.ShippingProviders
                 writer.Flush();
             }
 
-            try
-            {
-                using (var httpClient = new HttpClient())
-                {
-                    var rateUri = new Uri($"{ProductionUrl}?API=RateV4&XML={sb}");
-                    var response = await httpClient.GetStringAsync(rateUri).ConfigureAwait(false);
-
-                    ParseResult(response, specialServices);
-                }
-            }
-            catch (Exception ex)
-            {
-                AddInternalError($"USPS provider exception: {ex.Message}");
-            }
+            return sb.ToString();
         }
 
         public List<SpecialServices> GetSpecialServicesForShipment(Shipment shipment)
         {
             shipment = shipment ?? throw new ArgumentNullException(nameof(shipment));
-            var shipmentSpecialServices = new List<SpecialServices>(_specialServices ?? Array.Empty<SpecialServices>());
+            var shipmentSpecialServices = new List<SpecialServices>(_configuration.SpecialServices ?? Array.Empty<SpecialServices>());
 
             if (shipment.Packages.Any(p => p.SignatureRequiredOnDelivery))
             {
@@ -297,7 +296,7 @@ namespace ShippingRates.ShippingProviders
                     }
                 }
 
-                var isNegotiatedRate = _service == USPS.Services.Online && r.TotalCommercialCharges > 0;
+                var isNegotiatedRate = _configuration.Service == USPS.Services.Online && r.TotalCommercialCharges > 0;
                 var totalCharges = isNegotiatedRate ? r.TotalCommercialCharges : r.TotalCharges;
 
                 if (r.DeliveryDate != null && DateTime.TryParse(r.DeliveryDate, out DateTime deliveryDate))
