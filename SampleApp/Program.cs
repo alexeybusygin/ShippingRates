@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
@@ -41,7 +42,7 @@ namespace ShippingRates.SampleApp
                 new Package(4, 4, 6, 15, 250)
             };
 
-            var origin = new Address("", "", "06405", "US");
+            var origin = new Address("", "CT", "06405", "US");
             var destination = new Address("", "", "20852", "US"); // US Address
             //var origin = new Address("Amsterdam", "", "1043 AG", "NL"); // Netherlands Address
             //var destination  = new Address("London", "", "SW1A 2AA", "GB"); // Great Britain Address
@@ -55,58 +56,66 @@ namespace ShippingRates.SampleApp
             // Create RateManager
             var rateManager = new RateManager();
 
-            // Add desired DotNetShippingProviders
-            var upsConfiguration = new UPSProviderConfiguration()
+            using (var httpClient = new HttpClient())
             {
-                ClientId = upsClientId,
-                ClientSecret = upsClientSecret,
-                AccountNumber = upsAccountNumber,
-                UseProduction = false
-            };
-            rateManager.AddProvider(new UPSProvider(upsConfiguration));
-            rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction));
-            rateManager.AddProvider(new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction));
-            rateManager.AddProvider(new USPSProvider(uspsUserId));
-            rateManager.AddProvider(new USPSInternationalProvider(uspsUserId));
-
-            var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: false)
-                .ExcludeServices(new char[] { 'C' });
-            rateManager.AddProvider(new DHLProvider(dhlConfiguration));
-
-            // (Optional) Add RateAdjusters
-            rateManager.AddRateAdjuster(new PercentageRateAdjuster(.9M));
-
-            // Call GetRates()
-            var shipment = await rateManager.GetRatesAsync(origin, destination, packages,
-                new ShipmentOptions() {
-                    SaturdayDelivery = true
-                });
-
-            // Iterate through the rates returned
-            foreach (var rate in shipment.Rates)
-            {
-                Console.WriteLine(rate);
-            }
-
-            // Iterate through the errors returned
-            if (shipment.Errors.Count > 0)
-            {
-                Console.WriteLine("Errors:");
-                foreach (var error in shipment.Errors)
+                // Add desired providers
+                // UPS
+                var upsConfiguration = new UPSProviderConfiguration()
                 {
-                    Console.WriteLine(error.Number);
-                    Console.WriteLine(error.Source);
-                    Console.WriteLine(error.Description);
+                    ClientId = upsClientId,
+                    ClientSecret = upsClientSecret,
+                    AccountNumber = upsAccountNumber,
+                    UseProduction = false
+                };
+                rateManager.AddProvider(new UPSProvider(upsConfiguration, httpClient));
+
+                // FedEx
+                rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction));
+                rateManager.AddProvider(new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction));
+
+                // USPS Domestic
+                rateManager.AddProvider(new USPSProvider(new USPSProviderConfiguration(uspsUserId), httpClient));
+                // USPS International
+                rateManager.AddProvider(new USPSInternationalProvider(new USPSProviderConfiguration(uspsUserId), httpClient));
+
+                // DHL
+                var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: false)
+                    .ExcludeServices(new char[] { 'C' });
+                rateManager.AddProvider(new DHLProvider(dhlConfiguration, httpClient));
+
+                // Call GetRates()
+                var shipment = await rateManager.GetRatesAsync(origin, destination, packages,
+                    new ShipmentOptions()
+                    {
+                        SaturdayDelivery = true
+                    });
+
+                // Iterate through the rates returned
+                foreach (var rate in shipment.Rates)
+                {
+                    Console.WriteLine(rate);
                 }
-            }
 
-            // Iterate through the internal errors
-            if (shipment.InternalErrors.Count > 0)
-            {
-                Console.WriteLine("Internal Errors:");
-                foreach (var error in shipment.InternalErrors)
+                // Iterate through the errors returned
+                if (shipment.Errors.Count > 0)
                 {
-                    Console.WriteLine(error);
+                    Console.WriteLine("Errors:");
+                    foreach (var error in shipment.Errors)
+                    {
+                        Console.WriteLine(error.Number);
+                        Console.WriteLine(error.Source);
+                        Console.WriteLine(error.Description);
+                    }
+                }
+
+                // Iterate through the internal errors
+                if (shipment.InternalErrors.Count > 0)
+                {
+                    Console.WriteLine("Internal Errors:");
+                    foreach (var error in shipment.InternalErrors)
+                    {
+                        Console.WriteLine(error);
+                    }
                 }
             }
 

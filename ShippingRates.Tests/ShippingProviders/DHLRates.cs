@@ -18,17 +18,17 @@ namespace ShippingRates.Tests.ShippingProviders
             _rateManager = GetRateManager(GetConfiguration());
         }
 
-        protected DHLProviderConfiguration GetConfiguration()
+        protected static DHLProviderConfiguration GetConfiguration()
         {
             var config = GetApplicationConfiguration();
 
             return new DHLProviderConfiguration(config.DHLSiteId, config.DHLPassword, false);
         }
 
-        protected TestsConfiguration GetApplicationConfiguration() =>
+        protected static TestsConfiguration GetApplicationConfiguration() =>
             ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
 
-        protected RateManager GetRateManager(DHLProviderConfiguration configuration)
+        protected static RateManager GetRateManager(DHLProviderConfiguration configuration)
         {
             var provider = new DHLProvider(configuration);
 
@@ -75,7 +75,7 @@ namespace ShippingRates.Tests.ShippingProviders
             var r1 = GetRateManager(configuration1).GetRates(from, to, package);
             var rates1 = r1.Rates.ToList();
 
-            Assert.True((rates1?.Count() ?? 0) == 1);
+            Assert.True((rates1?.Count ?? 0) == 1);
             Assert.True(rates1.Any(r => r.Name.Contains("DOMESTIC 9:00")));
 
             var configuration2 = GetConfiguration().ExcludeServices(new char[] { 'C' });
@@ -106,7 +106,7 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.True(rates1?.Any() ?? false);
             Assert.True(rates2?.Any() ?? false);
             Assert.True(
-                rates1.Count() != rates2.Count() ||
+                rates1.Count != rates2.Count ||
                 rates1.Sum(r => r.TotalCharges) != rates2.Sum(r => r.TotalCharges));
         }
 
@@ -127,7 +127,7 @@ namespace ShippingRates.Tests.ShippingProviders
             var error = r.Errors.FirstOrDefault(r => r.Number == "420505");
             Assert.NotNull(error);
             Assert.NotNull(error.Description);
-            Assert.AreEqual(error.Description.Substring(0, 35), "The destination location is invalid");
+            Assert.AreEqual(error.Description[..35], "The destination location is invalid");
         }
 
         /*

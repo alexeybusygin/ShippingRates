@@ -1,10 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
 
@@ -31,11 +25,6 @@ namespace ShippingRates.Tests.ShippingProviders
 
             _rateManager = new RateManager();
             _rateManager.AddProvider(_provider);
-        }
-
-        public void Dispose()
-        {
-
         }
     }
 

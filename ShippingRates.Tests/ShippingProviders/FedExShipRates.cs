@@ -79,13 +79,13 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Assert.NotNull(r);
             Assert.False(fedExRates.Any());
-            Assert.AreEqual(r.Errors.Count(), 1);
+            Assert.AreEqual(r.Errors.Count, 1);
 
             var error = r.Errors.FirstOrDefault();
             Assert.NotNull(error);
             Assert.AreEqual(error.Number, "521");
             Assert.NotNull(error.Description);
-            Assert.AreEqual(error.Description.Substring(0, 42), "Destination postal code missing or invalid");
+            Assert.AreEqual(error.Description[..42], "Destination postal code missing or invalid");
         }
 
 
@@ -153,7 +153,7 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.True(!rates.Rates.Any(r => !r.Name.Contains("Freight")));
         }
 
-        private void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string methodCode = null)
+        private static void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string methodCode = null)
         {
             Assert.NotNull(r1?.Rates);
             Assert.NotNull(r2?.Rates);
