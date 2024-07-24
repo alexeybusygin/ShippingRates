@@ -1,44 +1,35 @@
-﻿using System;
+﻿using ShippingRates.Helpers.Extensions;
+using ShippingRates.RateServiceWebReference;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
-using ShippingRates.Helpers.Extensions;
-using ShippingRates.RateServiceWebReference;
 
 namespace ShippingRates.ShippingProviders
 {
     public abstract class FedExBaseProvider : AbstractShippingProvider
     {
-        public bool UseNegotiatedRates { get; set; } = false;
+        [Obsolete("Please use FedExProviderConfiguration.UseNegotiatedRates instead")]
+        public bool UseNegotiatedRates
+        {
+            get => _configuration.UseNegotiatedRates;
+            set => _configuration.UseNegotiatedRates = value;
+        }
 
-        protected string AccountNumber { get; }
-        protected string Key { get; }
-        protected string MeterNumber { get; }
-        protected string Password { get; }
-        protected bool UseProduction { get; }
         protected abstract Dictionary<string, string> ServiceCodes { get; }
+
+        protected readonly FedExProviderConfiguration _configuration;
+
+        public FedExBaseProvider(FedExProviderConfiguration configuration)
+        {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        }
 
         /// <summary>
         ///     FedEx allows insured values for items being shipped except when utilizing SmartPost.
         ///     This setting will this value to be overwritten.
         /// </summary>
         protected bool _allowInsuredValues = true;
-
-        public FedExBaseProvider(
-            string key,
-            string password,
-            string accountNumber,
-            string meterNumber,
-            bool useProduction)
-        {
-            Key = key;
-            Password = password;
-            AccountNumber = accountNumber;
-            MeterNumber = meterNumber;
-            UseProduction = useProduction;
-        }
 
         /// <summary>
         /// Gets service codes.
@@ -59,14 +50,14 @@ namespace ShippingRates.ShippingProviders
                 {
                     UserCredential = new WebAuthenticationCredential
                     {
-                        Key = Key,
-                        Password = Password
+                        Key = _configuration.Key,
+                        Password = _configuration.Password
                     }
                 },
                 ClientDetail = new ClientDetail
                 {
-                    AccountNumber = AccountNumber,
-                    MeterNumber = MeterNumber
+                    AccountNumber = _configuration.AccountNumber,
+                    MeterNumber = _configuration.MeterNumber
                 },
                 Version = new VersionId(),
                 ReturnTransitAndCommit = true,
@@ -131,7 +122,7 @@ namespace ShippingRates.ShippingProviders
         public override async Task GetRates()
         {
             var request = CreateRateRequest();
-            var service = new RatePortTypeClient(UseProduction);
+            var service = new RatePortTypeClient(_configuration.UseProduction);
             try
             {
                 // Call the web service passing in a RateRequest and returning a RateReply
@@ -201,8 +192,8 @@ namespace ShippingRates.ShippingProviders
 
             return rateReplyDetail.RatedShipmentDetails
                 .Where(rsd =>
-                    (UseNegotiatedRates && negotiatedRateTypes.Contains(rsd.ShipmentRateDetail.RateType)) ||
-                    (!UseNegotiatedRates && !negotiatedRateTypes.Contains(rsd.ShipmentRateDetail.RateType)))
+                    (_configuration.UseNegotiatedRates && negotiatedRateTypes.Contains(rsd.ShipmentRateDetail.RateType)) ||
+                    (!_configuration.UseNegotiatedRates && !negotiatedRateTypes.Contains(rsd.ShipmentRateDetail.RateType)))
                 .ToArray();
         }
 

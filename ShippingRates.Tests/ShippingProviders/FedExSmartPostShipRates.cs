@@ -19,14 +19,16 @@ namespace ShippingRates.Tests.ShippingProviders
         {
             var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
 
-            var fedexKey = config.FedExKey;
-            var fedexPassword = config.FedExPassword;
-            var fedexAccountNumber = config.FedExAccountNumber;
-            var fedexMeterNumber = config.FedExMeterNumber;
-            var fedexHubId = config.FedExHubId;
-            var fedexUseProduction = config.FedExUseProduction;
+            _provider = new FedExSmartPostProvider(new FedExProviderConfiguration()
+            {
+                Key = config.FedExKey,
+                Password = config.FedExPassword,
+                AccountNumber = config.FedExAccountNumber,
+                MeterNumber = config.FedExMeterNumber,
+                HubId = config.FedExHubId,
+                UseProduction = config.FedExUseProduction
+            });
 
-            _provider = new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction);
             _rateManager = new RateManager();
             _rateManager.AddProvider(_provider);
         }

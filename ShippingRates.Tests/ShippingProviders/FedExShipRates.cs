@@ -18,21 +18,27 @@ namespace ShippingRates.Tests.ShippingProviders
         {
             var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
 
-            var fedexKey = config.FedExKey;
-            var fedexPassword = config.FedExPassword;
-            var fedexAccountNumber = config.FedExAccountNumber;
-            var fedexMeterNumber = config.FedExMeterNumber;
-            var fedexUseProduction = config.FedExUseProduction;
-
-            _provider = new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction);
+            _provider = new FedExProvider(new FedExProviderConfiguration()
+            {
+                Key = config.FedExKey,
+                Password = config.FedExPassword,
+                AccountNumber = config.FedExAccountNumber,
+                MeterNumber = config.FedExMeterNumber,
+                UseProduction = config.FedExUseProduction
+            });
 
             _rateManager = new RateManager();
             _rateManager.AddProvider(_provider);
 
-            _providerNegotiated = new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction)
+            _providerNegotiated = new FedExProvider(new FedExProviderConfiguration()
             {
+                Key = config.FedExKey,
+                Password = config.FedExPassword,
+                AccountNumber = config.FedExAccountNumber,
+                MeterNumber = config.FedExMeterNumber,
+                UseProduction = config.FedExUseProduction,
                 UseNegotiatedRates = true
-            };
+            });
 
             _rateManagerNegotiated = new RateManager();
             _rateManagerNegotiated.AddProvider(_providerNegotiated);

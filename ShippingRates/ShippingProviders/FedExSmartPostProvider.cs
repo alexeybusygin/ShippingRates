@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using ShippingRates.Helpers.Extensions;
+﻿using ShippingRates.Helpers.Extensions;
 using ShippingRates.RateServiceWebReference;
+using System.Collections.Generic;
 
 namespace ShippingRates.ShippingProviders
 {
@@ -14,11 +10,6 @@ namespace ShippingRates.ShippingProviders
     public class FedExSmartPostProvider : FedExBaseProvider
     {
         public override string Name { get => "FedExSmartPost"; }
-
-        /// <summary>
-        /// If not using the production Rate API, you can use 5531 as the HubID per FedEx documentation.
-        /// </summary>
-        private readonly string _hubId;
 
         /// <summary>
         /// </summary>
@@ -39,11 +30,23 @@ namespace ShippingRates.ShippingProviders
         /// <param name="hubId">If specified, the FedEx Rate API will only return SmartPost service type rates. Leave empty to get all service types.</param>
         /// <param name="useProduction"></param>
         public FedExSmartPostProvider(string key, string password, string accountNumber, string meterNumber, string hubId, bool useProduction)
-            : base(key, password, accountNumber, meterNumber, useProduction)
+            : this(new FedExProviderConfiguration()
+            {
+                Key = key,
+                Password = password,
+                AccountNumber = accountNumber,
+                MeterNumber = meterNumber,
+                UseProduction = useProduction,
+                HubId = hubId
+            })
+        {
+        }
+
+        public FedExSmartPostProvider(FedExProviderConfiguration configuration)
+            : base(configuration)
         {
             // SmartPost does not allow insured values
             _allowInsuredValues = false;
-            _hubId = hubId;
         }
 
         /// <summary>
@@ -73,7 +76,7 @@ namespace ShippingRates.ShippingProviders
         private void SetSmartPostDetails(RateRequest request)
         {
             request.RequestedShipment.ServiceType = "SMART_POST";
-            request.RequestedShipment.SmartPostDetail = new SmartPostShipmentDetail { HubId = _hubId, Indicia = SmartPostIndiciaType.PARCEL_SELECT, IndiciaSpecified = true };
+            request.RequestedShipment.SmartPostDetail = new SmartPostShipmentDetail { HubId = _configuration.HubId, Indicia = SmartPostIndiciaType.PARCEL_SELECT, IndiciaSpecified = true };
 
             // Handle the various SmartPost Indicia scenarios
             // The ones we should mainly care about are as follows:
