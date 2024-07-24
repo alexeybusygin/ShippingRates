@@ -23,26 +23,29 @@ PM> Install-Package ShippingRates
 
 ```CSharp
 // Create RateManager
+using var httpClient = new HttpClient();
 var rateManager = new RateManager();
 
 // Add desired shipping providers
 // You will need an OAuth Client ID, Client Secret, and Account Number to use the UPS provider.
-rateManager.AddProvider(new UPSProvider(new UPSProviderConfiguration()
+var upsConfiguration = new UPSProviderConfiguration()
 {
     ClientId = upsClientId,
     ClientSecret = upsClientSecret,
     AccountNumber = upsAccountNumber,
     UseProduction = false
-}));
+};
+rateManager.AddProvider(new UPSProvider(upsConfiguration, httpClient));
+
 // You will need an account # and meter # to utilize the FedEx provider.
 rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
-// You will need a userId to use the USPS provider. Your account will also need access to the production servers.
-rateManager.AddProvider(new USPSProvider(uspsUserId));
-// You will need a Site ID and Password to use the DHL provider.
-rateManager.AddProvider(new DHLProvider(dhlSiteId, dhlPassword, useProduction: false));
 
-// (Optional) Add RateAdjusters
-rateManager.AddRateAdjuster(new PercentageRateAdjuster(.9M));
+// You will need a userId to use the USPS provider. Your account will also need access to the production servers.
+rateManager.AddProvider(new USPSProvider(new USPSProviderConfiguration(uspsUserId), httpClient));
+
+// You will need a Site ID and Password to use the DHL provider.
+var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: false));
+rateManager.AddProvider(new DHLProvider(dhlConfiguration, httpClient));
 
 // Setup package and destination/origin addresses
 var packages = new List<Package>();
@@ -62,22 +65,16 @@ foreach (Rate rate in shipment.Rates)
 }
 ```
 
-ShippingRates supports requesting a single rate from UPS and USPS.
-To do so, include the rate description as a parameter of the provider constructor.
-```CSHARP
-rateManager.AddProvider(new USPSProvider(uspsUserId, "Priority Mail"));
-rateManager.AddProvider(new UPSProvider(upsLicenseNumber, upsUserId, upsPassword, "UPS Ground"));
-````
-A list of valid shipping methods can be found in the documentation links below.
-
 See the sample app in this repository for a working example.
 
-More information can be found in [Wiki](https://github.com/alexeybusygin/ShippingRates/wiki).
+## Documentation in [Wiki](https://github.com/alexeybusygin/ShippingRates/wiki)
 
-#### International Rates
-USPS requires a separate API call to retrieve rates for international services.
-
-The call works the same but use the USPSInternationalProvider instead. Your current USPS credentials will work with this and will return the available services between the origin and destination addresses.
+* [HttpClient lifecycle](https://github.com/alexeybusygin/ShippingRates/wiki/HttpClient-lifecycle)
+* [Negotiated Rates](https://github.com/alexeybusygin/ShippingRates/wiki/Negotiated-Rates)
+* [USPS: International Rates](https://github.com/alexeybusygin/ShippingRates/wiki/USPS-International-Rates)
+* [USPS: Special Services](https://github.com/alexeybusygin/ShippingRates/wiki/USPS-Special-Services)
+* [Single Rate for UPS and USPS](https://github.com/alexeybusygin/ShippingRates/wiki/Single-Rate-for-UPS-and-USPS)
+* [Rate Adjusters](https://github.com/alexeybusygin/ShippingRates/wiki/Rate-Adjusters)
 
 ## Shipping Options
 
