@@ -1,16 +1,16 @@
 ﻿namespace ShippingRates.Models.UPS
 {
-    internal class UPSRatingResponse
+    internal class UpsRatingResponse
     {
         public RateResponse RateResponse { get; set; }
     }
 
-    internal class UPSSingleRatingResponse
+    internal class UpsSingleRatingResponse
     {
         public SingleRateResponse RateResponse { get; set; }
-        public UPSRatingResponse GetRatesResponse()
+        public UpsRatingResponse GetRatesResponse()
         {
-            return new UPSRatingResponse()
+            return new UpsRatingResponse()
             {
                 RateResponse = new RateResponse()
                 {

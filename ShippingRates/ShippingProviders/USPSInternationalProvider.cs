@@ -149,10 +149,10 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("ValueOfContents", package.InsuredValue.ToString());
                     writer.WriteElementString("Country", Shipment.DestinationAddress.GetCountryName());
                     writer.WriteElementString("Container", string.IsNullOrEmpty(package.Container) ? "RECTANGULAR" : package.Container);
-                    writer.WriteElementString("Width", package.RoundedWidth.ToString());
-                    writer.WriteElementString("Length", package.RoundedLength.ToString());
-                    writer.WriteElementString("Height", package.RoundedHeight.ToString());
-                    writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
+                    writer.WriteElementString("Width", package.GetRoundedWidth(Models.UnitsSystem.USCustomary).ToString());
+                    writer.WriteElementString("Length", package.GetRoundedLength(Models.UnitsSystem.USCustomary).ToString());
+                    writer.WriteElementString("Height", package.GetRoundedHeight(Models.UnitsSystem.USCustomary).ToString());
+                    writer.WriteElementString("Girth", package.GetCalculatedGirth(Models.UnitsSystem.USCustomary).ToString());
                     writer.WriteElementString("OriginZip", Shipment.OriginAddress.PostalCode);
                     writer.WriteElementString("CommercialFlag", Commercial ? "Y" : "N");
 

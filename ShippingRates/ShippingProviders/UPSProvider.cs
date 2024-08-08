@@ -1,7 +1,9 @@
-﻿using ShippingRates.Models.UPS;
+﻿using ShippingRates.Models;
+using ShippingRates.Models.UPS;
 using ShippingRates.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -61,8 +63,8 @@ namespace ShippingRates.ShippingProviders
 
                 if (!string.IsNullOrEmpty(token))
                 {
-                    var request = ShipmentToRequestAdapter.FromShipment(_configuration, Shipment);
-                    var ratingsResponse = await UPSRatingService.GetRatingAsync(httpClient, token, _configuration.UseProduction, request, AddError);
+                    var request = GetRequest();
+                    var ratingsResponse = await UpsRatingService.GetRatingAsync(httpClient, token, _configuration.UseProduction, request, AddError);
                     ParseResponse(ratingsResponse);
                 }
             }
@@ -77,7 +79,96 @@ namespace ShippingRates.ShippingProviders
             }
         }
 
-        private void ParseResponse(UPSRatingResponse response)
+        private UpsRatingRequest GetRequest()
+        {
+            var shipFromUS = Shipment.OriginAddress.CountryCode == "US";
+            var unitsSystem = shipFromUS ? UnitsSystem.USCustomary : UnitsSystem.Metric;
+
+            var request = new UpsRatingRequest()
+            {
+                RateRequest = new RateRequest()
+                {
+                    PickupType = new PickupType()
+                    {
+                        Code = "03"
+                    },
+                    Shipment = new UpsShipment()
+                    {
+                        PaymentDetails = new PaymentDetails()
+                        {
+                            ShipmentCharge = new ShipmentCharge()
+                            {
+                                BillShipper = new BillShipper()
+                                {
+                                    AccountNumber = _configuration.AccountNumber
+                                },
+                                Type = "01"
+                            }
+                        },
+                        Shipper = new Shipper()
+                        {
+                            ShipperNumber = _configuration.AccountNumber,
+                            Address = new UpsAddress(Shipment.OriginAddress)
+                        },
+                        ShipFrom = new ShipAddress(new UpsAddress(Shipment.OriginAddress)),
+                        ShipTo = new ShipAddress(new UpsAddress(Shipment.DestinationAddress)),
+                        NumOfPieces = Shipment.Packages.Count,
+                        Package = Shipment.Packages.Select(p => new UpsPackage(p, unitsSystem)).ToArray()
+                    }
+                }
+            };
+            if (!string.IsNullOrEmpty(_configuration.ServiceDescription))
+            {
+                request.RateRequest.Shipment.Service = new Service()
+                {
+                    Code = GetServiceCode(_configuration.ServiceDescription)
+                };
+            }
+            if (Shipment.DestinationAddress.IsResidential)
+            {
+                request.RateRequest.Shipment.ShipTo.Address.ResidentialAddressIndicator = "Y";
+            }
+            if (Shipment.HasDocumentsOnly)
+            {
+                request.RateRequest.Shipment.DocumentsOnlyIndicator = "Document";
+            }
+            if (Shipment.Options.SaturdayDelivery)
+            {
+                request.RateRequest.Shipment.ShipmentServiceOptions = new ShipmentServiceOptions()
+                {
+                    SaturdayDeliveryIndicator = "Y"
+                };
+            }
+            if (_configuration.UseNegotiatedRates)
+            {
+                request.RateRequest.Shipment.ShipmentRatingOptions = new ShipmentRatingOptions()
+                {
+                    NegotiatedRatesIndicator = "Y"
+                };
+            }
+            if (shipFromUS)         // Valid if ship from US
+            {
+                var code = _configuration.UseRetailRates
+                    ? "04"
+                    : (_configuration.UseDailyRates ? "01" : "00");
+            }
+            if (Shipment.Options.ShippingDate != null)
+            {
+                request.RateRequest.Shipment.DeliveryTimeInformation = new DeliveryTimeInformation()
+                {
+                    PackageBillType = Shipment.HasDocumentsOnly ? "02" : "03",
+                    Pickup = new Pickup()
+                    {
+                        Date = Shipment.Options.ShippingDate.Value.ToString("yyyyMMdd"),
+                        Time = "1000"
+                    }
+                };
+            }
+
+            return request;
+        }
+
+        private void ParseResponse(UpsRatingResponse response)
         {
             if (response?.RateResponse?.RatedShipment == null)
                 return;
@@ -125,6 +216,19 @@ namespace ShippingRates.ShippingProviders
                     SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
                 }, currencyCode);
             }
+        }
+
+        static string GetServiceCode(string serviceDescription)
+        {
+            if (serviceDescription.Length == 2)
+                return serviceDescription;
+
+            var serviceCode = _serviceCodes.FirstOrDefault(c => c.Value == serviceDescription).Key;
+
+            if (string.IsNullOrEmpty(serviceCode))
+                throw new ArgumentException($"Invalid UPS service description {serviceCode}");
+
+            return serviceCode;
         }
 
         public static IDictionary<string, string> GetServiceCodes() => _serviceCodes;

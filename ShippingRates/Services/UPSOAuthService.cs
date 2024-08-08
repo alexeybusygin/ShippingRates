@@ -47,7 +47,7 @@ namespace ShippingRates.Services
             }
             else
             {
-                var errorResponse = JsonSerializer.Deserialize<Models.UPS.UPSErrorResponse>(response);
+                var errorResponse = JsonSerializer.Deserialize<Models.UPS.UpsErrorResponse>(response);
                 if ((errorResponse?.Response?.Errors?.Length ?? 0) > 0)
                 {
                     foreach (var error in errorResponse.Response.Errors)

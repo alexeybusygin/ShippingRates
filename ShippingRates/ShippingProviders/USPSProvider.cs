@@ -1,3 +1,4 @@
+using ShippingRates.Models;
 using ShippingRates.ShippingProviders.USPS;
 using System;
 using System.Collections.Generic;
@@ -177,10 +178,10 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("Ounces", package.PoundsAndOunces.Ounces.ToString());
 
                     writer.WriteElementString("Container", string.IsNullOrEmpty(package.Container) ? string.Empty : package.Container);
-                    writer.WriteElementString("Width", package.RoundedWidth.ToString());
-                    writer.WriteElementString("Length", package.RoundedLength.ToString());
-                    writer.WriteElementString("Height", package.RoundedHeight.ToString());
-                    writer.WriteElementString("Girth", package.CalculatedGirth.ToString());
+                    writer.WriteElementString("Width", package.GetRoundedWidth(Models.UnitsSystem.USCustomary).ToString());
+                    writer.WriteElementString("Length", package.GetRoundedLength(Models.UnitsSystem.USCustomary).ToString());
+                    writer.WriteElementString("Height", package.GetRoundedHeight(Models.UnitsSystem.USCustomary).ToString());
+                    writer.WriteElementString("Girth", package.GetCalculatedGirth(Models.UnitsSystem.USCustomary).ToString());
                     writer.WriteElementString("Value", package.InsuredValue.ToString());
                     if (RequiresMachinable(_configuration.Service))
                     {
@@ -242,19 +243,26 @@ namespace ShippingRates.ShippingProviders
         public static bool IsPackageLarge(Package package)
         {
             package = package ?? throw new ArgumentNullException(nameof(package));
-            return package.IsOversize || package.Width > 12 || package.Length > 12 || package.Height > 12;
+            return package.IsOversize
+                || package.GetWidth(UnitsSystem.USCustomary) > 12
+                || package.GetLength(UnitsSystem.USCustomary) > 12
+                || package.GetHeight(UnitsSystem.USCustomary) > 12;
         }
 
         public static bool IsPackageMachinable(Package package)
         {
             package = package ?? throw new ArgumentNullException(nameof(package));
             // Machinable parcels cannot be larger than 27 x 17 x 17 and cannot weight more than 25 lbs.
-            if (package.Weight > 25)
+            if (package.GetWeight(UnitsSystem.USCustomary) > 25)
             {
                 return false;
             }
 
-            return (package.Width <= 27 && package.Height <= 17 && package.Length <= 17) || (package.Width <= 17 && package.Height <= 27 && package.Length <= 17) || (package.Width <= 17 && package.Height <= 17 && package.Length <= 27);
+            var width = package.GetWidth(UnitsSystem.USCustomary);
+            var height = package.GetHeight(UnitsSystem.USCustomary);
+            var length = package.GetLength(UnitsSystem.USCustomary);
+
+            return (width <= 27 && height <= 17 && length <= 17) || (width <= 17 && height <= 27 && length <= 17) || (width <= 17 && height <= 17 && length <= 27);
         }
 
         private void ParseResult(string response, IList<SpecialServices> includeSpecialServiceCodes = null)
