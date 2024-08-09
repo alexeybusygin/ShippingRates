@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ShippingRates.ShippingProviders
 {
-    public class UPSProvider : AbstractShippingProvider
+    public class UPSProvider : AbstractShippingProvider, IAddressValidator
     {
         public override string Name => "UPS";
 
@@ -232,5 +232,43 @@ namespace ShippingRates.ShippingProviders
         }
 
         public static IDictionary<string, string> GetServiceCodes() => _serviceCodes;
+
+        public async Task<AddressValidationResult> ValidateAddressAsync(Address address)
+        {
+            var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+            var result = new AddressValidationResult()
+            {
+                IsValid = false
+            };
+
+            try
+            {
+                var token = await UPSOAuthService.GetTokenAsync(_configuration, httpClient, AddAddressError);
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    var request = new UpsAddressValidationRequest(address);
+                    var ratingsResponse = await UpsAddressValidationService.ValidateAsync(httpClient, token, _configuration.UseProduction, request, AddAddressError);
+                    ParseResponse(ratingsResponse);
+                    return new AddressValidationResult();
+                }
+            }
+            catch (Exception e)
+            {
+                result.InternalErrors.Add($"UPS Provider Exception: {e.Message}");
+            }
+            finally
+            {
+                if (!IsExternalHttpClient && httpClient != null)
+                    httpClient.Dispose();
+            }
+
+            void AddAddressError(Error error)
+            {
+                result.Errors.Add(error);
+            }
+
+            return result;
+        }
     }
 }
