@@ -2,19 +2,19 @@
 
 namespace ShippingRates.Models.UPS
 {
-    internal class UPSErrorResponse
+    internal class UpsErrorResponse
     {
         [JsonPropertyName("response")]
-        public UPSErrorResponseBody Response { get; set; }
+        public UpsErrorResponseBody Response { get; set; }
     }
 
-    class UPSErrorResponseBody
+    class UpsErrorResponseBody
     {
         [JsonPropertyName("errors")]
-        public UPSErrorItem[] Errors { get; set; }
+        public UpsErrorItem[] Errors { get; set; }
     }
 
-    class UPSErrorItem
+    class UpsErrorItem
     {
         [JsonPropertyName("code")]
         public string Code { get; set; }

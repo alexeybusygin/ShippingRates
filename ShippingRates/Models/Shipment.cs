@@ -1,3 +1,4 @@
+using ShippingRates.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,7 +32,7 @@ namespace ShippingRates
         /// <summary>
         ///     Total shipment weight
         /// </summary>
-        public decimal TotalPackageWeight => Packages.Sum(x => x.Weight);
+        public decimal GetTotalPackageWeight(UnitsSystem unitsSystem = UnitsSystem.USCustomary) => Packages.Sum(x => x.GetWeight(unitsSystem));
         /// <summary>
         ///     Documents only in the shipment
         /// </summary>
@@ -46,7 +47,7 @@ namespace ShippingRates
         public List<Error> Errors { get; } = new List<Error>();
         /// <summary>
         ///     Internal library errors during interaction with service provider
-        ///     (e.g. SoapException was trown)
+        ///     (e.g. SoapException was thrown)
         /// </summary>
         public List<string> InternalErrors { get; } = new List<string>();
     }

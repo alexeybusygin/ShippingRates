@@ -135,7 +135,7 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("Date", pickupDateTime.ToString("yyyy-MM-dd", requestCulture));
                     writer.WriteElementString("ReadyTime", $"PT{pickupDateTime:HH}H{pickupDateTime:mm}M");
                     writer.WriteElementString("ReadyTimeGMTOffset", pickupDateTime.ToString("zzz", requestCulture));
-                    writer.WriteElementString("DimensionUnit", "IN");
+                    writer.WriteElementString("DimensionUnit", "IN");           // TODO: Add support for CM and KG
                     writer.WriteElementString("WeightUnit", "LB");
 
                     writer.WriteStartElement("Pieces");
@@ -143,10 +143,10 @@ namespace ShippingRates.ShippingProviders
                     {
                         writer.WriteStartElement("Piece");
                         writer.WriteElementString("PieceID", $"{i + 1}");
-                        writer.WriteElementString("Height", Shipment.Packages[i].RoundedHeight.ToString(requestCulture));
-                        writer.WriteElementString("Depth", Shipment.Packages[i].RoundedLength.ToString(requestCulture));
-                        writer.WriteElementString("Width", Shipment.Packages[i].RoundedWidth.ToString(requestCulture));
-                        writer.WriteElementString("Weight", Shipment.Packages[i].RoundedWeight.ToString(requestCulture));
+                        writer.WriteElementString("Height", Shipment.Packages[i].GetRoundedHeight(Models.UnitsSystem.USCustomary).ToString(requestCulture));
+                        writer.WriteElementString("Depth", Shipment.Packages[i].GetRoundedLength(Models.UnitsSystem.USCustomary).ToString(requestCulture));
+                        writer.WriteElementString("Width", Shipment.Packages[i].GetRoundedWidth(Models.UnitsSystem.USCustomary).ToString(requestCulture));
+                        writer.WriteElementString("Weight", Shipment.Packages[i].GetRoundedWeight(Models.UnitsSystem.USCustomary).ToString(requestCulture));
                         writer.WriteEndElement(); // </Piece>
                     }
                     writer.WriteEndElement(); // </Pieces>
