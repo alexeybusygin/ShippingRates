@@ -49,8 +49,8 @@ rateManager.AddProvider(new DHLProvider(dhlConfiguration, httpClient));
 
 // Setup package and destination/origin addresses
 var packages = new List<Package>();
-packages.Add(new Package(12, 12, 12, 35, 150));
-packages.Add(new Package(4, 4, 6, 15, 250));
+packages.Add(new Package(12, 12, 12, 35, 150));    // Package in lbs and inches
+packages.Add(new PackageKgCm(4, 4, 6, 15, 250));   // Package in kg and cm
 
 var origin = new Address("", "", "06405", "US");
 var destination = new Address("", "", "20852", "US"); // US Address
