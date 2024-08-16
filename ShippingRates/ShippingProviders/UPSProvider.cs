@@ -3,6 +3,7 @@ using ShippingRates.Models.UPS;
 using ShippingRates.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -173,6 +174,8 @@ namespace ShippingRates.ShippingProviders
             if (response?.RateResponse?.RatedShipment == null)
                 return;
 
+            var cultureInfo = new CultureInfo("en-US");     // Response is always in en-US
+
             foreach (var rate in response.RateResponse.RatedShipment)
             {
                 var serviceCode = rate.Service.Code;
@@ -183,12 +186,12 @@ namespace ShippingRates.ShippingProviders
                 }
                 var serviceDescription = _serviceCodes[serviceCode];
 
-                var totalCharges = Convert.ToDecimal(rate.TotalCharges.MonetaryValue);
+                var totalCharges = Convert.ToDecimal(rate.TotalCharges.MonetaryValue, cultureInfo);
                 var currencyCode = rate.TotalCharges.CurrencyCode;
 
                 if (_configuration.UseNegotiatedRates && rate.NegotiatedRateCharges != null)
                 {
-                    totalCharges = Convert.ToDecimal(rate.NegotiatedRateCharges.TotalCharge.MonetaryValue);
+                    totalCharges = Convert.ToDecimal(rate.NegotiatedRateCharges.TotalCharge.MonetaryValue, cultureInfo);
                     currencyCode = rate.NegotiatedRateCharges.TotalCharge.CurrencyCode;
                 }
 
@@ -198,7 +201,7 @@ namespace ShippingRates.ShippingProviders
                 if (!string.IsNullOrEmpty(businessDaysInTransit))
                 {
                     estDeliveryDate = (Shipment.Options.ShippingDate ?? DateTime.Now)
-                        .AddDays(Convert.ToDouble(businessDaysInTransit)).ToShortDateString();
+                        .AddDays(Convert.ToDouble(businessDaysInTransit, cultureInfo)).ToShortDateString();
                 }
                 var deliveryTime = rate.GuaranteedDelivery?.DeliveryByTime;
                 if (string.IsNullOrEmpty(deliveryTime)) // No scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
