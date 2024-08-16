@@ -2,6 +2,7 @@ using NUnit.Framework;
 using ShippingRates.ShippingProviders;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -185,6 +186,9 @@ namespace ShippingRates.Tests.ShippingProviders
         [Test]
         public void UPS_Returns_Single_Rate_When_Using_Domestic_Addresses_For_Single_Service()
         {
+            // Use non-US locale to verify decimals conversion
+            CultureInfo.CurrentCulture = new CultureInfo("de-DE", false);
+
             var rateManager = new RateManager();
             rateManager.AddProvider(GetProvider("UPS Ground"));
 
@@ -196,7 +200,9 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.IsNotEmpty(response.Rates);
             Assert.IsEmpty(response.Errors);
             Assert.AreEqual(response.Rates.Count, 1);
-            Assert.True(response.Rates.First().TotalCharges > 0);
+            Assert.Greater(response.Rates.First().TotalCharges, 0);
+            // Expect something around $25, not $2500
+            Assert.Less(response.Rates.First().TotalCharges, 100);
 
             Debug.WriteLine(response.Rates.First().Name + ": " + response.Rates.First().TotalCharges);
         }
