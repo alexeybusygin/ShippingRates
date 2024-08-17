@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
-
-namespace ShippingRates.Helpers.Extensions
+﻿namespace ShippingRates.Helpers.Extensions
 {
-    public static class ShipmentOptionsExtensions
+    internal static class ShipmentOptionsExtensions
     {
         public static string GetCurrencyCode(this ShipmentOptions options)
         {

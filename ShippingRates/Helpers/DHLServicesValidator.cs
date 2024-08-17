@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ShippingRates.ShippingProviders;
+using System;
 using System.Linq;
-using System.Text;
-using ShippingRates.ShippingProviders;
 
 namespace ShippingRates.Helpers
 {
-    public static class DHLServicesValidator
+    internal static class DHLServicesValidator
     {
         public static bool IsServiceValid(char c) =>
             DHLProvider.AvailableServices.ContainsKey(char.ToUpperInvariant(c));

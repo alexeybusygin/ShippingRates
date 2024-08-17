@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-using ShippingRates.RateServiceWebReference;
 
 namespace ShippingRates.Helpers.Extensions
 {
-    public static class AddressExtensions
+    internal static class AddressExtensions
     {
         /// <summary>
         /// Get FedEx API address from ShippingRates.Address

@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using ShippingRates.RateServiceWebReference;
+﻿using ShippingRates.RateServiceWebReference;
 
 namespace ShippingRates.Helpers.Extensions
 {
     /// <summary>
     /// Extension methods for RequestedShipment
     /// </summary>
-    public static class RequestedShipmentExtensions
+    internal static class RequestedShipmentExtensions
     {
         /// <summary>
         /// Calculates the total weight for all packages in the requested shipment
