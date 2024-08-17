@@ -178,10 +178,10 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("Ounces", package.PoundsAndOunces.Ounces.ToString());
 
                     writer.WriteElementString("Container", string.IsNullOrEmpty(package.Container) ? string.Empty : package.Container);
-                    writer.WriteElementString("Width", package.GetRoundedWidth(Models.UnitsSystem.USCustomary).ToString());
-                    writer.WriteElementString("Length", package.GetRoundedLength(Models.UnitsSystem.USCustomary).ToString());
-                    writer.WriteElementString("Height", package.GetRoundedHeight(Models.UnitsSystem.USCustomary).ToString());
-                    writer.WriteElementString("Girth", package.GetCalculatedGirth(Models.UnitsSystem.USCustomary).ToString());
+                    writer.WriteElementString("Width", package.GetRoundedWidth(UnitsSystem.USCustomary).ToString());
+                    writer.WriteElementString("Length", package.GetRoundedLength(UnitsSystem.USCustomary).ToString());
+                    writer.WriteElementString("Height", package.GetRoundedHeight(UnitsSystem.USCustomary).ToString());
+                    writer.WriteElementString("Girth", package.GetCalculatedGirth(UnitsSystem.USCustomary).ToString());
                     writer.WriteElementString("Value", package.InsuredValue.ToString());
                     if (RequiresMachinable(_configuration.Service))
                     {

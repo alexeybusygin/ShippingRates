@@ -265,16 +265,16 @@ namespace ShippingRates.ShippingProviders
                     {
                         Units = WeightUnits.LB,                         // TODO: Add support for CM and KG
                         UnitsSpecified = true,
-                        Value = Shipment.Packages[i].GetRoundedWeight(Models.UnitsSystem.USCustomary),
+                        Value = Shipment.Packages[i].GetRoundedWeight(UnitsSystem.USCustomary),
                         ValueSpecified = true
                     },
 
                     // Package dimensions
                     Dimensions = new Dimensions()
                     {
-                        Length = Shipment.Packages[i].GetRoundedLength(Models.UnitsSystem.USCustomary).ToString(),
-                        Width = Shipment.Packages[i].GetRoundedWidth(Models.UnitsSystem.USCustomary).ToString(),
-                        Height = Shipment.Packages[i].GetRoundedHeight(Models.UnitsSystem.USCustomary).ToString(),
+                        Length = Shipment.Packages[i].GetRoundedLength(UnitsSystem.USCustomary).ToString(),
+                        Width = Shipment.Packages[i].GetRoundedWidth(UnitsSystem.USCustomary).ToString(),
+                        Height = Shipment.Packages[i].GetRoundedHeight(UnitsSystem.USCustomary).ToString(),
                         Units = LinearUnits.IN,                         // TODO: Add support for CM and KG
                         UnitsSpecified = true
                     }

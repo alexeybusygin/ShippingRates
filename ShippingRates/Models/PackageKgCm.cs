@@ -1,4 +1,4 @@
-﻿namespace ShippingRates.Models
+﻿namespace ShippingRates
 {
     /// <summary>
     ///     Package object with dimensions in kgs and cm

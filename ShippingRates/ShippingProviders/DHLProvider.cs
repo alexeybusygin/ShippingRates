@@ -143,10 +143,10 @@ namespace ShippingRates.ShippingProviders
                     {
                         writer.WriteStartElement("Piece");
                         writer.WriteElementString("PieceID", $"{i + 1}");
-                        writer.WriteElementString("Height", Shipment.Packages[i].GetRoundedHeight(Models.UnitsSystem.USCustomary).ToString(requestCulture));
-                        writer.WriteElementString("Depth", Shipment.Packages[i].GetRoundedLength(Models.UnitsSystem.USCustomary).ToString(requestCulture));
-                        writer.WriteElementString("Width", Shipment.Packages[i].GetRoundedWidth(Models.UnitsSystem.USCustomary).ToString(requestCulture));
-                        writer.WriteElementString("Weight", Shipment.Packages[i].GetRoundedWeight(Models.UnitsSystem.USCustomary).ToString(requestCulture));
+                        writer.WriteElementString("Height", Shipment.Packages[i].GetRoundedHeight(UnitsSystem.USCustomary).ToString(requestCulture));
+                        writer.WriteElementString("Depth", Shipment.Packages[i].GetRoundedLength(UnitsSystem.USCustomary).ToString(requestCulture));
+                        writer.WriteElementString("Width", Shipment.Packages[i].GetRoundedWidth(UnitsSystem.USCustomary).ToString(requestCulture));
+                        writer.WriteElementString("Weight", Shipment.Packages[i].GetRoundedWeight(UnitsSystem.USCustomary).ToString(requestCulture));
                         writer.WriteEndElement(); // </Piece>
                     }
                     writer.WriteEndElement(); // </Pieces>
