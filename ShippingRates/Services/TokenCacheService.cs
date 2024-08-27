@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 namespace ShippingRates.Services
 {
     /// <summary>
-    /// Token caching for UPS
+    /// Token caching for UPS, FedEx
     /// </summary>
     internal class TokenCacheService
     {
@@ -12,7 +12,7 @@ namespace ShippingRates.Services
         /// <summary>
         /// Get token for a given client ID
         /// </summary>
-        /// <param name="clientId">UPS Client ID</param>
+        /// <param name="clientId">Client ID</param>
         /// <returns>Token string or null</returns>
         public static string GetToken(string clientId)
         {
@@ -29,7 +29,7 @@ namespace ShippingRates.Services
         /// <summary>
         /// Add token
         /// </summary>
-        /// <param name="clientId">UPS Client ID</param>
+        /// <param name="clientId">Client ID</param>
         /// <param name="token">Token</param>
         /// <param name="expiresIn">Expiration interval in seconds</param>
         public static void AddToken(string clientId, string token, int expiresIn)

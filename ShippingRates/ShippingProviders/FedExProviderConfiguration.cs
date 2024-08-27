@@ -8,6 +8,9 @@ namespace ShippingRates.ShippingProviders
 {
     public class FedExProviderConfiguration
     {
+        /// <summary>
+        /// FedEx Account Number
+        /// </summary>
         public string AccountNumber { get; set; }
         public string Key { get; set; }
         public string MeterNumber { get; set; }
@@ -19,5 +22,13 @@ namespace ShippingRates.ShippingProviders
         /// If not using the production Rate API, you can use 5531 as the HubID per FedEx documentation.
         /// </summary>
         public string HubId { get; set; }
+        /// <summary>
+        /// FedEx Client Id (required for REST API)
+        /// </summary>
+        public string ClientId { get; set; }
+        /// <summary>
+        /// FedEx Client Secret (required for REST API)
+        /// </summary>
+        public string ClientSecret { get; set; }
     }
 }
