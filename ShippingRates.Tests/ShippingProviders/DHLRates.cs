@@ -1,10 +1,8 @@
 ﻿using NUnit.Framework;
-using System;
+using ShippingRates.ShippingProviders;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-
-using ShippingRates.ShippingProviders;
 
 namespace ShippingRates.Tests.ShippingProviders
 {
@@ -52,14 +50,12 @@ namespace ShippingRates.Tests.ShippingProviders
             var package = new Package(7, 7, 7, 6, 0);
 
             var r = _rateManager.GetRates(from, to, package);
-            var rates = r.Rates.ToList();
+            Assert.That(r, Is.Not.Null);
+            Assert.That(r.Rates, Is.Not.Empty);
 
-            Assert.NotNull(r);
-            Assert.True(rates.Any());
-
-            foreach (var rate in rates)
+            foreach (var rate in r.Rates)
             {
-                Assert.True(rate.TotalCharges > 0);
+                Assert.That(rate.TotalCharges, Is.GreaterThan(0));
             }
         }
 
@@ -73,18 +69,16 @@ namespace ShippingRates.Tests.ShippingProviders
             var configuration1 = GetConfiguration().IncludeServices(new char[] { 'I' });
 
             var r1 = GetRateManager(configuration1).GetRates(from, to, package);
-            var rates1 = r1.Rates.ToList();
-
-            Assert.True((rates1?.Count ?? 0) == 1);
-            Assert.True(rates1.Any(r => r.Name.Contains("DOMESTIC 9:00")));
+            Assert.That(r1, Is.Not.Null);
+            Assert.That(r1.Rates, Is.Not.Empty);
+            Assert.That(r1.Rates, Has.Some.Matches<Rate>(r => r.Name.Contains("DOMESTIC 9:00")));
 
             var configuration2 = GetConfiguration().ExcludeServices(new char[] { 'C' });
 
             var r2 = GetRateManager(configuration2).GetRates(from, to, package);
-            var rates2 = r2.Rates.ToList();
-
-            Assert.True(rates2?.Any() ?? false);
-            Assert.False(rates2.Any(r => r.Name.Contains("MEDICAL")));
+            Assert.That(r2, Is.Not.Null);
+            Assert.That(r2.Rates, Is.Not.Empty);
+            Assert.That(r2.Rates, Has.None.Matches<Rate>(r => r.Name.Contains("MEDICAL")));
         }
 
         [Test]
@@ -95,19 +89,22 @@ namespace ShippingRates.Tests.ShippingProviders
             var package = new Package(7, 7, 7, 6, 0);
 
             var r1 = _rateManager.GetRates(from, to, package);
-            var rates1 = r1.Rates.ToList();
 
             var configuration2 = GetConfiguration();
             configuration2.PaymentAccountNumber = GetApplicationConfiguration().DHLAccountNumber;
 
             var r2 = GetRateManager(configuration2).GetRates(from, to, package);
-            var rates2 = r2.Rates.ToList();
 
-            Assert.True(rates1?.Any() ?? false);
-            Assert.True(rates2?.Any() ?? false);
-            Assert.True(
-                rates1.Count != rates2.Count ||
-                rates1.Sum(r => r.TotalCharges) != rates2.Sum(r => r.TotalCharges));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r1.Rates, Is.Not.Empty);
+                Assert.That(r2.Rates, Is.Not.Empty);
+            });
+
+            Assert.That(
+                r1.Rates.Count != r2.Rates.Count ||
+                r1.Rates.Sum(r => r.TotalCharges) != r2.Rates.Sum(r => r.TotalCharges),
+                Is.True);
         }
 
         [Test]
@@ -118,16 +115,18 @@ namespace ShippingRates.Tests.ShippingProviders
             var package = new Package(7, 7, 7, 6, 1);
 
             var r = _rateManager.GetRates(from, to, package);
-            var rates = r.Rates.ToList();
+            Assert.That(r, Is.Not.Null);
 
-            Assert.NotNull(r);
-            Assert.False(rates.Any());
-            Assert.True(r.Errors.Any());
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Errors, Is.Not.Empty);
+                Assert.That(r.Rates, Is.Empty);
+            });
 
             var error = r.Errors.FirstOrDefault(r => r.Number == "420505");
-            Assert.NotNull(error);
-            Assert.NotNull(error.Description);
-            Assert.AreEqual(error.Description[..35], "The destination location is invalid");
+            Assert.That(error, Is.Not.Null);
+            Assert.That(error.Description, Is.Not.Null);
+            Assert.That(error.Description[..35], Is.EqualTo("The destination location is invalid"));
         }
 
         /*
@@ -163,11 +162,11 @@ namespace ShippingRates.Tests.ShippingProviders
             var package = new Package(1, 1, 1, 5, 1);
 
             var r = await _rateManager.GetRatesAsync(from, to, package);
-            var dhlRates = r.Rates.ToList();
+            Assert.That(r, Is.Not.Null);
 
-            Assert.NotNull(r);
-            Assert.True(dhlRates.Any());
-            Assert.False(dhlRates.Any(r => r.CurrencyCode != "EUR"));
+            var dhlRates = r.Rates.ToList();
+            Assert.That(dhlRates, Is.Not.Empty);
+            Assert.That(dhlRates, Has.All.Matches<Rate>(r => r.CurrencyCode == "EUR"));
         }
 
         [Test]
@@ -175,8 +174,8 @@ namespace ShippingRates.Tests.ShippingProviders
         {
             var serviceCodes = DHLProvider.AvailableServices;
 
-            Assert.NotNull(serviceCodes);
-            Assert.IsNotEmpty(serviceCodes);
+            Assert.That(serviceCodes, Is.Not.Null);
+            Assert.That(serviceCodes, Is.Not.Empty);
         }
     }
 }
