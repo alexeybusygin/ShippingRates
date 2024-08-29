@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using ShippingRates.Models;
 
 namespace ShippingRates.Tests.Units
 {
@@ -12,15 +11,18 @@ namespace ShippingRates.Tests.Units
             var packageLbsInches = new Package(10, 20, 30, 40, 50);
             var packageKgCm = new PackageKgCm(10, 20, 30, 40, 50);
 
-            Assert.AreNotEqual(packageKgCm.GetHeight(UnitsSystem.Metric), packageLbsInches.GetHeight(UnitsSystem.Metric));
-            Assert.AreNotEqual(packageKgCm.GetLength(UnitsSystem.Metric), packageLbsInches.GetLength(UnitsSystem.Metric));
-            Assert.AreNotEqual(packageKgCm.GetWidth(UnitsSystem.USCustomary), packageLbsInches.GetWidth(UnitsSystem.USCustomary));
-            Assert.AreNotEqual(packageKgCm.GetHeight(UnitsSystem.USCustomary), packageLbsInches.GetHeight(UnitsSystem.USCustomary));
+            Assert.Multiple(() =>
+            {
+                Assert.That(packageLbsInches.GetHeight(UnitsSystem.Metric), Is.Not.EqualTo(packageKgCm.GetHeight(UnitsSystem.Metric)));
+                Assert.That(packageLbsInches.GetLength(UnitsSystem.Metric), Is.Not.EqualTo(packageKgCm.GetLength(UnitsSystem.Metric)));
+                Assert.That(packageLbsInches.GetWidth(UnitsSystem.USCustomary), Is.Not.EqualTo(packageKgCm.GetWidth(UnitsSystem.USCustomary)));
+                Assert.That(packageLbsInches.GetHeight(UnitsSystem.USCustomary), Is.Not.EqualTo(packageKgCm.GetHeight(UnitsSystem.USCustomary)));
 
-            Assert.AreEqual(40, packageLbsInches.GetWeight(UnitsSystem.USCustomary));
-            Assert.AreEqual(18.1436948m, packageLbsInches.GetWeight(UnitsSystem.Metric));
-            Assert.AreEqual(88.1848m, packageKgCm.GetWeight(UnitsSystem.USCustomary));
-            Assert.AreEqual(40, packageKgCm.GetWeight(UnitsSystem.Metric));
+                Assert.That(packageLbsInches.GetWeight(UnitsSystem.USCustomary), Is.EqualTo(40));
+                Assert.That(packageLbsInches.GetWeight(UnitsSystem.Metric), Is.EqualTo(18.1436948m));
+                Assert.That(packageKgCm.GetWeight(UnitsSystem.USCustomary), Is.EqualTo(88.1848m));
+                Assert.That(packageKgCm.GetWeight(UnitsSystem.Metric), Is.EqualTo(40));
+            });
         }
     }
 }
