@@ -58,8 +58,8 @@ namespace ShippingRates.Tests.ShippingProviders
         {
             var serviceCodes = _provider.GetServiceCodes();
 
-            Assert.NotNull(serviceCodes);
-            Assert.IsNotEmpty(serviceCodes);
+            Assert.That(serviceCodes, Is.Not.Null);
+            Assert.That(serviceCodes, Is.Not.Empty);
         }
     }
 }

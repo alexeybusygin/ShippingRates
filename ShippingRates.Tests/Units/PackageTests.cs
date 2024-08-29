@@ -14,8 +14,11 @@ namespace ShippingRates.Tests.Units
         public void PoundsAndOuncesCalculatedCorrectly(decimal weight, int pounds, decimal ounces)
         {
             var package = new Package(1, 2, 3, weight, 100);
-            Assert.That(package.PoundsAndOunces.Pounds, Is.EqualTo(pounds));
-            Assert.That(package.PoundsAndOunces.Ounces, Is.EqualTo(ounces));
+            Assert.Multiple(() =>
+            {
+                Assert.That(package.PoundsAndOunces.Pounds, Is.EqualTo(pounds));
+                Assert.That(package.PoundsAndOunces.Ounces, Is.EqualTo(ounces));
+            });
         }
     }
 }
