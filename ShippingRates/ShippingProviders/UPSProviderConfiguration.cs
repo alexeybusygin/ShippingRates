@@ -38,5 +38,19 @@
         /// Use negotiated rates (only shippers approved to ship using negotiated rates can use negotiated rates)
         /// </summary>
         public bool UseNegotiatedRates { get; set; }
+        /// <summary>
+        /// Customer classification code, valid for shipments originating from a US address
+        /// </summary>
+        public UPSCustomerClassification CustomerClassification { get; set; }
+    }
+
+    public enum UPSCustomerClassification
+    {
+        ShipperNumberRates = 0,
+        DailyRates = 1,
+        RetailRates = 4,
+        RegionalRates = 5,
+        GeneralListRates = 6,
+        StandardListRates = 53
     }
 }
