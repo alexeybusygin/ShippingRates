@@ -82,9 +82,14 @@ namespace ShippingRates.Models.UPS
             }
             if (shipFromUS)         // Valid if ship from US
             {
-                var code = _configuration.UseRetailRates
-                    ? "04"
-                    : (_configuration.UseDailyRates ? "01" : "00");
+                var customerClassification = _configuration.CustomerClassification;
+
+                if (_configuration.UseRetailRates)
+                    customerClassification = UPSCustomerClassification.RetailRates;
+                if (_configuration.UseDailyRates)
+                    customerClassification = UPSCustomerClassification.DailyRates;
+
+                var code = ((int)customerClassification).ToString("D2");
 
                 request.RateRequest.CustomerClassification = new CustomerClassification()
                 {
