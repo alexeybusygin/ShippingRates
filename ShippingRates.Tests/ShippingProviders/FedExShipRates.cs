@@ -58,12 +58,15 @@ namespace ShippingRates.Tests.ShippingProviders
             var r = _rateManager.GetRates(from, to, package);
             var fedExRates = r.Rates.ToList();
 
-            Assert.NotNull(r);
-            Assert.True(fedExRates.Any());
+            Assert.Multiple(() =>
+            {
+                Assert.That(r, Is.Not.Null);
+                Assert.That(fedExRates, Is.Not.Empty);
+            });
 
             foreach (var rate in fedExRates)
             {
-                Assert.True(rate.TotalCharges > 0);
+                Assert.That(rate.TotalCharges, Is.GreaterThan(0));
             }
         }
 
@@ -74,18 +77,23 @@ namespace ShippingRates.Tests.ShippingProviders
             var to = new Address("", "", "30404", "US");
             var package = new Package(7, 7, 7, 6, 1);
 
-            var r = _rateManager.GetRates(from, to, package);
-            var fedExRates = r.Rates.ToList();
+            var rates = _rateManager.GetRates(from, to, package);
 
-            Assert.NotNull(r);
-            Assert.False(fedExRates.Any());
-            Assert.AreEqual(r.Errors.Count, 1);
+            Assert.Multiple(() =>
+            {
+                Assert.That(rates, Is.Not.Null);
+                Assert.That(rates.Rates, Is.Empty);
+            });
+            Assert.That(rates.Errors, Has.Count.EqualTo(1));
 
-            var error = r.Errors.FirstOrDefault();
-            Assert.NotNull(error);
-            Assert.AreEqual(error.Number, "521");
-            Assert.NotNull(error.Description);
-            Assert.AreEqual(error.Description[..42], "Destination postal code missing or invalid");
+            var error = rates.Errors.FirstOrDefault();
+            Assert.That(error, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(error.Number, Is.EqualTo("521"));
+                Assert.That(error.Description, Is.Not.Null);
+            });
+            Assert.That(error.Description[..42], Is.EqualTo("Destination postal code missing or invalid"));
         }
 
 
@@ -149,28 +157,40 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var rates = _rateManager.GetRates(from, to, package);
 
-            Assert.True(rates.Rates.Any());
-            Assert.True(!rates.Rates.Any(r => !r.Name.Contains("Freight")));
+            Assert.Multiple(() =>
+            {
+                Assert.That(rates.Rates, Is.Not.Empty);
+                Assert.That(rates.Rates.All(r => r.Name.Contains("Freight")), Is.True);
+            });
         }
 
         private static void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string methodCode = null)
         {
-            Assert.NotNull(r1?.Rates);
-            Assert.NotNull(r2?.Rates);
-            Assert.True(r1.Rates.Any());
-            Assert.True(r2.Rates.Any());
+            Assert.Multiple(() =>
+            {
+                Assert.That(r1?.Rates, Is.Not.Null);
+                Assert.That(r2?.Rates, Is.Not.Null);
+            });
+            Assert.Multiple(() =>
+            {
+                Assert.That(r1.Rates, Is.Not.Empty);
+                Assert.That(r2.Rates, Is.Not.Empty);
+            });
 
             var commonCode = methodCode ?? r1.Rates
                 .Select(r => r.ProviderCode)
                 .Where(c => r2.Rates.Select(r => r.ProviderCode).Contains(c))
                 .FirstOrDefault();
-            Assert.NotNull(commonCode);
+            Assert.That(commonCode, Is.Not.Null);
 
             var rate1 = r1.Rates.FirstOrDefault(r => r.ProviderCode == commonCode);
             var rate2 = r2.Rates.FirstOrDefault(r => r.ProviderCode == commonCode);
-            Assert.NotNull(rate1);
-            Assert.NotNull(rate2);
-            Assert.AreNotEqual(rate1.TotalCharges, rate2.TotalCharges);
+            Assert.Multiple(() =>
+            {
+                Assert.That(rate1, Is.Not.Null);
+                Assert.That(rate2, Is.Not.Null);
+            });
+            Assert.That(rate2.TotalCharges, Is.Not.EqualTo(rate1.TotalCharges));
         }
 
         [Test]
@@ -188,11 +208,10 @@ namespace ShippingRates.Tests.ShippingProviders
                 ShippingDate = nextFriday,
                 SaturdayDelivery = true
             });
-            var fedExRates = r.Rates.ToList();
 
-            Assert.NotNull(r);
-            Assert.True(fedExRates.Any());
-            Assert.True(fedExRates.Any(r => r.Options.SaturdayDelivery));
+            Assert.That(r, Is.Not.Null);
+            Assert.That(r.Rates, Is.Not.Empty);
+            Assert.That(r.Rates.Any(r => r.Options.SaturdayDelivery), Is.True);
         }
 
         [Test]
@@ -203,11 +222,10 @@ namespace ShippingRates.Tests.ShippingProviders
             var package = new Package(1, 1, 1, 5, 1);
 
             var r = await _rateManager.GetRatesAsync(from, to, package);
-            var fedExRates = r.Rates.ToList();
 
-            Assert.NotNull(r);
-            Assert.True(fedExRates.Any());
-            Assert.False(fedExRates.Any(r => r.TotalCharges > 1000));
+            Assert.That(r, Is.Not.Null);
+            Assert.That(r.Rates, Is.Not.Empty);
+            Assert.That(r.Rates.Any(r => r.TotalCharges > 1000), Is.False);
         }
 
         [Test]
@@ -221,11 +239,10 @@ namespace ShippingRates.Tests.ShippingProviders
             {
                 PreferredCurrencyCode = "USD"
             });
-            var fedExRates = r.Rates.ToList();
 
-            Assert.NotNull(r);
-            Assert.True(fedExRates.Any());
-            Assert.False(fedExRates.Any(r => r.CurrencyCode != "USD"));
+            Assert.That(r, Is.Not.Null);
+            Assert.That(r.Rates, Is.Not.Empty);
+            Assert.That(r.Rates.Any(r => r.CurrencyCode != "USD"), Is.False);
 
             var rEuro = await _rateManager.GetRatesAsync(from, to, package, new ShipmentOptions()
             {
@@ -233,9 +250,9 @@ namespace ShippingRates.Tests.ShippingProviders
             });
             var fedExEuroRates = rEuro.Rates.ToList();
 
-            Assert.NotNull(rEuro);
-            Assert.True(fedExEuroRates.Any());
-            Assert.False(fedExEuroRates.Any(r => r.CurrencyCode != "EUR"));
+            Assert.That(rEuro, Is.Not.Null);
+            Assert.That(rEuro.Rates, Is.Not.Empty);
+            Assert.That(rEuro.Rates.Any(r => r.CurrencyCode != "EUR"), Is.False);
         }
 
         /*
@@ -293,8 +310,8 @@ namespace ShippingRates.Tests.ShippingProviders
         {
             var serviceCodes = _provider.GetServiceCodes();
 
-            Assert.NotNull(serviceCodes);
-            Assert.IsNotEmpty(serviceCodes);
+            Assert.That(serviceCodes, Is.Not.Null);
+            Assert.That(serviceCodes, Is.Not.Empty);
         }
     }
 }

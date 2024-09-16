@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
+using ShippingRates.Helpers.Extensions;
 
-namespace ShippingRates.Helpers.Extensions.Tests
+namespace ShippingRates.Tests.Helpers.Extensions
 {
     [TestFixture()]
     public class AddressExtensionsTests

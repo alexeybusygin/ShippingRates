@@ -1,12 +1,7 @@
 ﻿using NUnit.Framework;
-using ShippingRates;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ShippingRates.Tests
+namespace ShippingRates.Tests.Models
 {
     [TestFixture()]
     public class ShipmentTests
@@ -26,9 +21,12 @@ namespace ShippingRates.Tests
             var shipmentWithSomeDocs = new Shipment(from, to, new List<Package>() { package1, docsPackage1, package2 });
             var shipmentAllDocs = new Shipment(from, to, new List<Package>() { docsPackage1, docsPackage2 });
 
-            Assert.IsFalse(shipmentNoDocs.HasDocumentsOnly);
-            Assert.IsFalse(shipmentWithSomeDocs.HasDocumentsOnly);
-            Assert.IsTrue(shipmentAllDocs.HasDocumentsOnly);
+            Assert.Multiple(() =>
+            {
+                Assert.That(shipmentNoDocs.HasDocumentsOnly, Is.False);
+                Assert.That(shipmentWithSomeDocs.HasDocumentsOnly, Is.False);
+                Assert.That(shipmentAllDocs.HasDocumentsOnly, Is.True);
+            });
         }
     }
 }

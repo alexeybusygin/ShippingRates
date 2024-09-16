@@ -61,14 +61,17 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
-            Assert.NotNull(response);
-            Assert.IsNotEmpty(response.Rates);
-            Assert.IsEmpty(response.Errors);
+            Assert.That(response, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.Rates, Is.Not.Empty);
+                Assert.That(response.Errors, Is.Empty);
+            });
 
             foreach (var rate in response.Rates)
             {
-                Assert.NotNull(rate);
-                Assert.True(rate.TotalCharges > 0);
+                Assert.That(rate, Is.Not.Null);
+                Assert.That(rate.TotalCharges, Is.GreaterThan(0));
 
                 Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
@@ -85,14 +88,17 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
-            Assert.NotNull(response);
-            Assert.IsNotEmpty(response.Rates);
-            Assert.IsEmpty(response.Errors);
+            Assert.That(response, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.Rates, Is.Not.Empty);
+                Assert.That(response.Errors, Is.Empty);
+            });
 
             foreach (var rate in response.Rates)
             {
-                Assert.NotNull(rate);
-                Assert.True(rate.TotalCharges > 0);
+                Assert.That(rate, Is.Not.Null);
+                Assert.That(rate.TotalCharges, Is.GreaterThan(0));
 
                 Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
@@ -109,8 +115,8 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
-            Assert.NotNull(response);
-            Assert.IsEmpty(response.Rates);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Rates, Is.Empty);
         }
 
         [Test]
@@ -126,8 +132,8 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
-            Assert.NotNull(response);
-            Assert.IsEmpty(response.Rates);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Rates, Is.Empty);
         }
 
         [Test]
@@ -141,11 +147,13 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
 
-            Assert.NotNull(response);
-            Assert.IsNotEmpty(response.Rates);
-            Assert.IsEmpty(response.Errors);
-            Assert.AreEqual(response.Rates.Count, 1);
-            Assert.True(response.Rates.First().TotalCharges > 0);
+            Assert.That(response, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.Errors, Is.Empty);
+                Assert.That(response.Rates, Has.Count.EqualTo(1));
+            });
+            Assert.That(response.Rates.First().TotalCharges, Is.GreaterThan(0));
 
             Debug.WriteLine(response.Rates.First().Name + ": " + response.Rates.First().TotalCharges);
         }
@@ -158,7 +166,7 @@ namespace ShippingRates.Tests.ShippingProviders
             rateManager.AddProvider(new USPSInternationalProvider(GetConfiguration(), httpClient));
 
             var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, _firstClassLetterWithNoValue);
-            Assert.True(response.Rates.Any(IsFirstClassMailRate));
+            Assert.That(response.Rates.Any(IsFirstClassMailRate), Is.True);
         }
 
         [Test]
@@ -169,7 +177,7 @@ namespace ShippingRates.Tests.ShippingProviders
             rateManager.AddProvider(new USPSInternationalProvider(GetConfiguration(), httpClient));
 
             var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, _firstClassLetterWithValue);
-            Assert.False(response.Rates.Any(IsFirstClassMailRate));
+            Assert.That(response.Rates.Any(IsFirstClassMailRate), Is.False);
         }
 
         [Test]
@@ -182,7 +190,7 @@ namespace ShippingRates.Tests.ShippingProviders
             var package = new Package(7m, 5m, 0.1m, FirstClassLetterMaxWeight, 0);
 
             var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, package);
-            Assert.False(response.Rates.Any(IsFirstClassMailRate));
+            Assert.That(response.Rates.Any(IsFirstClassMailRate), Is.False);
         }
 
         [Test]
@@ -191,8 +199,8 @@ namespace ShippingRates.Tests.ShippingProviders
             var provider = new USPSInternationalProvider(GetConfiguration());
             var serviceCodes = provider.GetServiceCodes();
 
-            Assert.NotNull(serviceCodes);
-            Assert.IsNotEmpty(serviceCodes);
+            Assert.That(serviceCodes, Is.Not.Null);
+            Assert.That(serviceCodes, Is.Not.Empty);
         }
 
         [Test]
@@ -205,9 +213,12 @@ namespace ShippingRates.Tests.ShippingProviders
             var response = await rateManager.GetRatesAsync(_domesticAddress1, _internationalAddress2, _package1);
             var rates = response.Rates;
 
-            Assert.NotNull(response);
-            Assert.True(rates.Any());
-            Assert.False(rates.Any(r => r.CurrencyCode != "USD"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(response, Is.Not.Null);
+                Assert.That(rates.Any(), Is.True);
+                Assert.That(rates.Any(r => r.CurrencyCode != "USD"), Is.False);
+            });
         }
 
         private bool IsFirstClassMailRate(Rate rate)

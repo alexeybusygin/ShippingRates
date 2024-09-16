@@ -11,12 +11,12 @@ namespace ShippingRates.Tests.ShippingProviders
     [TestFixture]
     public class UPSRates
     {
-        private Address InternationalAddress2;
-        private Package Package2;
         private readonly Address DomesticAddress1;
         private readonly Address DomesticAddress2;
         private readonly Address InternationalAddress1;
+        private readonly Address InternationalAddress2;
         private readonly Package Package1;
+        private readonly Package Package2;
         private readonly Package Package1SignatureRequired;
         private readonly string UPSAccountNumber;
         private readonly string UPSClientId;
@@ -50,14 +50,17 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
-            Assert.NotNull(response);
-            Assert.IsNotEmpty(response.Rates);
-            Assert.IsEmpty(response.Errors);
+            Assert.That(response, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.Rates, Is.Not.Empty);
+                Assert.That(response.Errors, Is.Empty);
+            });
 
             foreach (var rate in response.Rates)
             {
-                Assert.NotNull(rate);
-                Assert.True(rate.TotalCharges > 0);
+                Assert.That(rate, Is.Not.Null);
+                Assert.That(rate.TotalCharges, Is.GreaterThan(0));
 
                 Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
@@ -73,14 +76,17 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
-            Assert.NotNull(response);
-            Assert.IsNotEmpty(response.Rates);
-            Assert.IsEmpty(response.Errors);
+            Assert.That(response, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.Rates, Is.Not.Empty);
+                Assert.That(response.Errors, Is.Empty);
+            });
 
             foreach (var rate in response.Rates)
             {
-                Assert.NotNull(rate);
-                Assert.True(rate.TotalCharges > 0);
+                Assert.That(rate, Is.Not.Null);
+                Assert.That(rate.TotalCharges, Is.GreaterThan(0));
 
                 Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
@@ -96,14 +102,17 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
-            Assert.NotNull(response);
-            Assert.IsNotEmpty(response.Rates);
-            Assert.IsEmpty(response.Errors);
+            Assert.That(response, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.Rates, Is.Not.Empty);
+                Assert.That(response.Errors, Is.Empty);
+            });
 
             foreach (var rate in response.Rates)
             {
-                Assert.NotNull(rate);
-                Assert.True(rate.TotalCharges > 0);
+                Assert.That(rate, Is.Not.Null);
+                Assert.That(rate.TotalCharges, Is.GreaterThan(0));
 
                 Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
@@ -170,14 +179,17 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
-            Assert.NotNull(response);
-            Assert.IsNotEmpty(response.Rates);
-            Assert.IsEmpty(response.Errors);
+            Assert.That(response, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.Rates, Is.Not.Empty);
+                Assert.That(response.Errors, Is.Empty);
+            });
 
             foreach (var rate in response.Rates)
             {
-                Assert.NotNull(rate);
-                Assert.True(rate.TotalCharges > 0);
+                Assert.That(rate, Is.Not.Null);
+                Assert.That(rate.TotalCharges, Is.GreaterThan(0));
 
                 Debug.WriteLine(rate.Name + ": " + rate.TotalCharges);
             }
@@ -196,13 +208,16 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
 
-            Assert.NotNull(response);
-            Assert.IsNotEmpty(response.Rates);
-            Assert.IsEmpty(response.Errors);
-            Assert.AreEqual(response.Rates.Count, 1);
-            Assert.Greater(response.Rates.First().TotalCharges, 0);
+            Assert.That(response, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.Rates, Is.Not.Empty);
+                Assert.That(response.Errors, Is.Empty);
+            });
+            Assert.That(response.Rates, Has.Count.EqualTo(1));
+            Assert.That(response.Rates.First().TotalCharges, Is.GreaterThan(0));
             // Expect something around $25, not $2500
-            Assert.Less(response.Rates.First().TotalCharges, 100);
+            Assert.That(response.Rates.First().TotalCharges, Is.LessThan(100));
 
             Debug.WriteLine(response.Rates.First().Name + ": " + response.Rates.First().TotalCharges);
         }
@@ -212,8 +227,8 @@ namespace ShippingRates.Tests.ShippingProviders
         {
             var serviceCodes = UPSProvider.GetServiceCodes();
 
-            Assert.NotNull(serviceCodes);
-            Assert.IsNotEmpty(serviceCodes);
+            Assert.That(serviceCodes, Is.Not.Null);
+            Assert.That(serviceCodes, Is.Not.Empty);
         }
 
         [Test]
@@ -227,19 +242,25 @@ namespace ShippingRates.Tests.ShippingProviders
 
             Debug.WriteLine(string.Format("Rates returned: {0}", nonSignatureResponse.Rates.Any() ? nonSignatureResponse.Rates.Count.ToString() : "0"));
 
-            Assert.NotNull(nonSignatureResponse);
-            Assert.IsNotEmpty(nonSignatureResponse.Rates);
-            Assert.IsEmpty(nonSignatureResponse.Errors);
-            Assert.AreEqual(nonSignatureResponse.Rates.Count, 1);
-            Assert.True(nonSignatureResponse.Rates.First().TotalCharges > 0);
+            Assert.That(nonSignatureResponse, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(nonSignatureResponse.Rates, Is.Not.Empty);
+                Assert.That(nonSignatureResponse.Errors, Is.Empty);
+            });
+            Assert.That(nonSignatureResponse.Rates, Has.Count.EqualTo(1));
+            Assert.That(nonSignatureResponse.Rates.First().TotalCharges, Is.GreaterThan(0));
 
             Debug.WriteLine(string.Format("Rates returned: {0}", signatureResponse.Rates.Any() ? signatureResponse.Rates.Count.ToString() : "0"));
 
-            Assert.NotNull(signatureResponse);
-            Assert.IsNotEmpty(signatureResponse.Rates);
-            Assert.IsEmpty(signatureResponse.Errors);
-            Assert.AreEqual(signatureResponse.Rates.Count, 1);
-            Assert.True(signatureResponse.Rates.First().TotalCharges > 0);
+            Assert.That(signatureResponse, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(signatureResponse.Rates, Is.Not.Empty);
+                Assert.That(signatureResponse.Errors, Is.Empty);
+            });
+            Assert.That(signatureResponse.Rates, Has.Count.EqualTo(1));
+            Assert.That(signatureResponse.Rates.First().TotalCharges, Is.GreaterThan(0));
 
             // Now compare prices
             foreach (var signatureRate in signatureResponse.Rates)
@@ -250,7 +271,7 @@ namespace ShippingRates.Tests.ShippingProviders
                 {
                     var signatureTotalCharges = signatureRate.TotalCharges;
                     var nonSignatureTotalCharges = nonSignatureRate.TotalCharges;
-                    Assert.AreNotEqual(signatureTotalCharges, nonSignatureTotalCharges);
+                    Assert.That(nonSignatureTotalCharges, Is.Not.EqualTo(signatureTotalCharges));
                 }
             }
         }
@@ -275,9 +296,12 @@ namespace ShippingRates.Tests.ShippingProviders
             });
             var fedExRates = r.Rates.ToList();
 
-            Assert.NotNull(r);
-            Assert.True(fedExRates.Any());
-            Assert.True(fedExRates.Any(r => r.Options.SaturdayDelivery));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r, Is.Not.Null);
+                Assert.That(fedExRates.Any(), Is.True);
+                Assert.That(fedExRates.Any(r => r.Options.SaturdayDelivery), Is.True);
+            });
         }
 
         //// Euro rates for shipping in Europe

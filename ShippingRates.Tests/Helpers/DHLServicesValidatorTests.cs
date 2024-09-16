@@ -1,7 +1,8 @@
 ﻿using NUnit.Framework;
+using ShippingRates.Helpers;
 using System.Linq;
 
-namespace ShippingRates.Helpers.Tests
+namespace ShippingRates.Tests.Helpers
 {
     [TestFixture()]
     public class DHLServicesValidatorTests
