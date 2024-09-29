@@ -48,7 +48,8 @@ namespace ShippingRates.Models.UPS
                         ShipTo = new ShipAddress(new UpsAddress(shipment.DestinationAddress)),
                         NumOfPieces = shipment.Packages.Count,
                         Package = shipment.Packages.Select(p => new UpsPackage(p, unitsSystem)).ToArray()
-                    }
+                    },
+                    CustomerClassification = GetCustomerClassification()
                 }
             };
             if (!string.IsNullOrEmpty(_configuration.ServiceDescription))
@@ -80,22 +81,6 @@ namespace ShippingRates.Models.UPS
                     NegotiatedRatesIndicator = "Y"
                 };
             }
-            if (shipFromUS)         // Valid if ship from US
-            {
-                var customerClassification = _configuration.CustomerClassification;
-
-                if (_configuration.UseRetailRates)
-                    customerClassification = UPSCustomerClassification.RetailRates;
-                if (_configuration.UseDailyRates)
-                    customerClassification = UPSCustomerClassification.DailyRates;
-
-                var code = ((int)customerClassification).ToString("D2");
-
-                request.RateRequest.CustomerClassification = new CustomerClassification()
-                {
-                    Code = code,
-                };
-            }
             if (shipment.Options.ShippingDate != null)
             {
                 request.RateRequest.Shipment.DeliveryTimeInformation = new DeliveryTimeInformation()
@@ -110,6 +95,23 @@ namespace ShippingRates.Models.UPS
             }
 
             return request;
+        }
+
+        CustomerClassification GetCustomerClassification()
+        {
+            var customerClassification = _configuration.CustomerClassification;
+
+            if (_configuration.UseRetailRates)
+                customerClassification = UPSCustomerClassification.RetailRates;
+            if (_configuration.UseDailyRates)
+                customerClassification = UPSCustomerClassification.DailyRates;
+
+            var code = ((int)customerClassification).ToString("D2");
+
+            return new CustomerClassification()
+            {
+                Code = code,
+            };
         }
 
         static string GetServiceCode(string serviceDescription)

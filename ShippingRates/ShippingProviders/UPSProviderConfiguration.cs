@@ -27,11 +27,13 @@
         /// </summary>
         public string ServiceDescription { get; set; }
         /// <summary>
-        /// Use retails rates (for shipping from a UPS retail location)
+        /// Use retails rates (for shipping from a UPS retail location).
+        /// Overrides CustomerClassification.
         /// </summary>
         public bool UseRetailRates { get; set; }
         /// <summary>
-        /// Use daily rates (for customers who have a scheduled pickup and/or an account that provides you with daily rates)
+        /// Use daily rates (for customers who have a scheduled pickup and/or an account that provides you with daily rates).
+        /// Overrides CustomerClassification.
         /// </summary>
         public bool UseDailyRates { get; set; }
         /// <summary>
@@ -47,7 +49,13 @@
     public enum UPSCustomerClassification
     {
         ShipperNumberRates = 0,
+        /// <summary>
+        /// Daily rates, for customers who have a scheduled pickup and/or an account that provides you with daily rates
+        /// </summary>
         DailyRates = 1,
+        /// <summary>
+        /// Retails rates, for shipping from a UPS retail location
+        /// </summary>
         RetailRates = 4,
         RegionalRates = 5,
         GeneralListRates = 6,
