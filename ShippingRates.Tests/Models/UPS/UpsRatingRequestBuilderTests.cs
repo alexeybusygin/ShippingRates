@@ -57,7 +57,8 @@ namespace ShippingRates.Tests.Models.UPS
             var shipmentNL = new Shipment(fromNL, AddressTo, Packages);
 
             var internationalRequest = regularRatesBuilder.Build(shipmentNL);
-            Assert.That(internationalRequest?.RateRequest?.CustomerClassification, Is.Null);
+            Assert.That(regularRatesRequest?.RateRequest?.CustomerClassification, Is.Not.Null);
+            Assert.That(regularRatesRequest?.RateRequest?.CustomerClassification.Code, Is.EqualTo("00"));
         }
 
 
