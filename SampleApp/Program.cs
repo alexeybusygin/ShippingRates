@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -45,7 +46,7 @@ namespace ShippingRates.SampleApp
             var origin = new Address("", "CT", "06405", "US");
             var destination = new Address("", "", "20852", "US"); // US Address
             //var origin = new Address("Amsterdam", "", "1043 AG", "NL"); // Netherlands Address
-            //var destination  = new Address("London", "", "SW1A 2AA", "GB"); // Great Britain Address
+            //var destination = new Address("London", "", "SW1A 2AA", "GB"); // Great Britain Address
             //var destination = new Address("", "", "88888", "US"); // Wrong US Address
             //var destination = new Address("Domont", "", "95330", "FR"); // France Address
             //var destination = new Address("", "", "00907", "PR"); // Puerto Rico Address
@@ -53,73 +54,79 @@ namespace ShippingRates.SampleApp
             //var destination = new Address("", "", "SW1E 5JL", "GB"); // UK Address
             //var destination = new Address("", "", "1042 AG", "NL");   // Netherlands Address
 
-            // Create RateManager
-            var rateManager = new RateManager();
-
-            using (var httpClient = new HttpClient())
+            using (var loggerFactory = LoggerFactory.Create(builder =>
             {
-                // Add desired providers
-                // UPS
-                var upsConfiguration = new UPSProviderConfiguration()
+                builder.AddConsole();
+            }))
+            {
+                // Create RateManager
+                var rateManager = new RateManager();
+
+                using (var httpClient = new HttpClient())
                 {
-                    ClientId = upsClientId,
-                    ClientSecret = upsClientSecret,
-                    AccountNumber = upsAccountNumber,
-                    UseProduction = false
-                };
-                rateManager.AddProvider(new UPSProvider(upsConfiguration, httpClient));
-
-                // FedEx
-                rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction));
-                rateManager.AddProvider(new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction));
-
-                // USPS Domestic
-                rateManager.AddProvider(new USPSProvider(new USPSProviderConfiguration(uspsUserId), httpClient));
-                // USPS International
-                rateManager.AddProvider(new USPSInternationalProvider(new USPSProviderConfiguration(uspsUserId), httpClient));
-
-                // DHL
-                var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: false)
-                    .ExcludeServices(new char[] { 'C' });
-                rateManager.AddProvider(new DHLProvider(dhlConfiguration, httpClient));
-
-                // Call GetRates()
-                var shipment = await rateManager.GetRatesAsync(origin, destination, packages,
-                    new ShipmentOptions()
+                    // Add desired providers
+                    // UPS
+                    var upsConfiguration = new UPSProviderConfiguration()
                     {
-                        SaturdayDelivery = true
-                    });
+                        ClientId = upsClientId,
+                        ClientSecret = upsClientSecret,
+                        AccountNumber = upsAccountNumber,
+                        UseProduction = false
+                    };
+                    var upsProviderLogger = loggerFactory.CreateLogger<UPSProvider>();
+                    rateManager.AddProvider(new UPSProvider(upsConfiguration, httpClient, upsProviderLogger));
 
-                // Iterate through the rates returned
-                foreach (var rate in shipment.Rates)
-                {
-                    Console.WriteLine(rate);
-                }
+                    //// FedEx
+                    rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction));
+                    rateManager.AddProvider(new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction));
 
-                // Iterate through the errors returned
-                if (shipment.Errors.Count > 0)
-                {
-                    Console.WriteLine("Errors:");
-                    foreach (var error in shipment.Errors)
+                    //// USPS Domestic
+                    rateManager.AddProvider(new USPSProvider(new USPSProviderConfiguration(uspsUserId), httpClient));
+                    // USPS International
+                    rateManager.AddProvider(new USPSInternationalProvider(new USPSProviderConfiguration(uspsUserId), httpClient));
+
+                    //// DHL
+                    var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: true).ExcludeServices(new char[] { 'C' });
+                    rateManager.AddProvider(new DHLProvider(dhlConfiguration, httpClient));
+
+                    // Call GetRates()
+                    var shipment = await rateManager.GetRatesAsync(origin, destination, packages,
+                        new ShipmentOptions()
+                        {
+                            SaturdayDelivery = true
+                        });
+
+                    // Iterate through the rates returned
+                    foreach (var rate in shipment.Rates)
                     {
-                        Console.WriteLine(error.Number);
-                        Console.WriteLine(error.Source);
-                        Console.WriteLine(error.Description);
+                        Console.WriteLine(rate);
+                    }
+
+                    // Iterate through the errors returned
+                    if (shipment.Errors.Count > 0)
+                    {
+                        Console.WriteLine("Errors:");
+                        foreach (var error in shipment.Errors)
+                        {
+                            Console.WriteLine(error.Number);
+                            Console.WriteLine(error.Source);
+                            Console.WriteLine(error.Description);
+                        }
+                    }
+
+                    // Iterate through the internal errors
+                    if (shipment.InternalErrors.Count > 0)
+                    {
+                        Console.WriteLine("Internal Errors:");
+                        foreach (var error in shipment.InternalErrors)
+                        {
+                            Console.WriteLine(error);
+                        }
                     }
                 }
 
-                // Iterate through the internal errors
-                if (shipment.InternalErrors.Count > 0)
-                {
-                    Console.WriteLine("Internal Errors:");
-                    foreach (var error in shipment.InternalErrors)
-                    {
-                        Console.WriteLine(error);
-                    }
-                }
+                Console.WriteLine("Done!");
             }
-
-            Console.WriteLine("Done!");
         }
     }
 }
