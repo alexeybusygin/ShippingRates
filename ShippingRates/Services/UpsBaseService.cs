@@ -1,4 +1,7 @@
-﻿using ShippingRates.Models.UPS;
+﻿using Microsoft.Extensions.Logging;
+using ShippingRates.Models;
+using ShippingRates.Models.UPS;
+using ShippingRates.ShippingProviders;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -10,12 +13,24 @@ namespace ShippingRates.Services
 {
     internal class UpsBaseService
     {
+        private readonly ILogger<UPSProvider> _logger;
+
+        internal UpsBaseService(ILogger<UPSProvider> logger)
+        {
+            _logger = logger;
+        }
+
         static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
         {
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
-        protected static async Task<TResponse> PostAsync<TRequest, TResponse>(HttpClient httpClient, string token, Uri uri, TRequest request, Action<Error> reportError)
+        protected async Task<TResponse> PostAsync<TRequest, TResponse>(
+            HttpClient httpClient,
+            string token,
+            Uri uri,
+            TRequest request,
+            RateResultBuilder resultBuilder)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -26,8 +41,12 @@ namespace ShippingRates.Services
             var jsonRequest = JsonSerializer.Serialize(request, _jsonSerializerOptions);
             requestMessage.Content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
+            _logger?.LogInformation("Rates Request: {jsonRequest}", jsonRequest);
+
             var responseMessage = await httpClient.SendAsync(requestMessage);
             var response = await responseMessage.Content.ReadAsStringAsync();
+
+            _logger?.LogInformation("Rates Response: {response}", response);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -40,16 +59,18 @@ namespace ShippingRates.Services
                 {
                     foreach (var error in errorResponse.Response.Errors)
                     {
-                        reportError(new Error()
+                        resultBuilder.AddError(new Error()
                         {
                             Number = error.Code,
                             Description = error.Message
                         });
+                        _logger?.LogError("UPS Error: {code} {message}", error.Code, error.Message);
                     }
                 }
                 else
                 {
-                    reportError(new Error() { Description = $"Unknown error while fetching UPS ratings: {responseMessage.StatusCode} {response}" });
+                    resultBuilder.AddInternalError("Unknown error while fetching UPS ratings: {responseMessage.StatusCode} {response}");
+                    _logger?.LogError("Unknown error while fetching UPS ratings: {statusCode} {response}", responseMessage.StatusCode, response);
                 }
 
                 return default;

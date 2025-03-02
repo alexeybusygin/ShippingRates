@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using ShippingRates.Models;
 
 namespace ShippingRates.ShippingProviders
 {
@@ -84,30 +85,33 @@ namespace ShippingRates.ShippingProviders
             return null;
         }
 
-        public override async Task GetRates()
+        public override async Task<RateResult> GetRatesAsync(Shipment shipment)
         {
             var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+            var resultBuilder = new RateResultBuilder(Name);
 
             try
             {
-                var requestXmlString = GetRequestXmlString();
+                var requestXmlString = GetRequestXmlString(shipment);
                 var rateUri = new Uri($"{ProductionUrl}?API=IntlRateV2&XML={requestXmlString}");
                 var response = await httpClient.GetStringAsync(rateUri).ConfigureAwait(false);
 
-                ParseResult(response);
+                ParseResult(shipment, response, resultBuilder);
             }
             catch (Exception e)
             {
-                AddInternalError($"USPS International Provider Exception: {e.Message}");
+                resultBuilder.AddInternalError($"USPS International Provider Exception: {e.Message}");
             }
             finally
             {
                 if (!IsExternalHttpClient && httpClient != null)
                     httpClient.Dispose();
             }
+
+            return resultBuilder.GetRateResult();
         }
 
-        private string GetRequestXmlString()
+        private string GetRequestXmlString(Shipment shipment)
         {
             var sb = new StringBuilder();
 
@@ -125,7 +129,7 @@ namespace ShippingRates.ShippingProviders
 
                 writer.WriteElementString("Revision", "2");
                 var i = 0;
-                foreach (var package in Shipment.Packages)
+                foreach (var package in shipment.Packages)
                 {
                     //<Package ID="2ND">
                     //  <Pounds>0</Pounds>
@@ -147,13 +151,13 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("Ounces", package.PoundsAndOunces.Ounces.ToString());
                     writer.WriteElementString("MailType", "All");
                     writer.WriteElementString("ValueOfContents", package.InsuredValue.ToString());
-                    writer.WriteElementString("Country", Shipment.DestinationAddress.GetCountryName());
+                    writer.WriteElementString("Country", shipment.DestinationAddress.GetCountryName());
                     writer.WriteElementString("Container", string.IsNullOrEmpty(package.Container) ? "RECTANGULAR" : package.Container);
                     writer.WriteElementString("Width", package.GetRoundedWidth(UnitsSystem.USCustomary).ToString());
                     writer.WriteElementString("Length", package.GetRoundedLength(UnitsSystem.USCustomary).ToString());
                     writer.WriteElementString("Height", package.GetRoundedHeight(UnitsSystem.USCustomary).ToString());
                     writer.WriteElementString("Girth", package.GetCalculatedGirth(UnitsSystem.USCustomary).ToString());
-                    writer.WriteElementString("OriginZip", Shipment.OriginAddress.PostalCode);
+                    writer.WriteElementString("OriginZip", shipment.OriginAddress.PostalCode);
                     writer.WriteElementString("CommercialFlag", Commercial ? "Y" : "N");
 
                     // ContentType must be set to Documents to get First-Class International Mail rates
@@ -180,12 +184,12 @@ namespace ShippingRates.ShippingProviders
             return sb.ToString();
         }
 
-        public bool IsDomesticUSPSAvailable()
+        public static bool IsDomesticUSPSAvailable(Shipment shipment)
         {
-            return Shipment.OriginAddress.IsUnitedStatesAddress() && Shipment.DestinationAddress.IsUnitedStatesAddress();
+            return shipment.OriginAddress.IsUnitedStatesAddress() && shipment.DestinationAddress.IsUnitedStatesAddress();
         }
 
-        private void ParseResult(string response)
+        private void ParseResult(Shipment shipment, string response, RateResultBuilder resultBuilder)
         {
             var document = XDocument.Load(new StringReader(response));
 
@@ -197,12 +201,12 @@ namespace ShippingRates.ShippingProviders
 
                 if (_configuration.Service == name || _configuration.Service == "ALL")
                 {
-                    AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30), null, USPSCurrencyCode);
+                    resultBuilder.AddRate(name, string.Concat("USPS ", name), r.TotalCharges, DateTime.Now.AddDays(30), null, USPSCurrencyCode);
                 }
             }
 
             //check for errors
-            ParseErrors(document.Root);
+            ParseErrors(document.Root, resultBuilder);
         }
     }
 }

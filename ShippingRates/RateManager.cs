@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
@@ -13,14 +14,14 @@ namespace ShippingRates
     public class RateManager
     {
         private readonly List<IRateAdjuster> _adjusters;
-        private readonly ArrayList _providers;
+        private readonly List<IShippingProvider> _providers;
 
         /// <summary>
         ///     Creates a new RateManager instance.
         /// </summary>
         public RateManager()
         {
-            _providers = new ArrayList();
+            _providers = new List<IShippingProvider>();
             _adjusters = new List<IRateAdjuster>();
         }
 
@@ -36,26 +37,6 @@ namespace ShippingRates
         public void AddRateAdjuster(IRateAdjuster adjuster)
         {
             _adjusters.Add(adjuster);
-        }
-
-        private async Task<Shipment> GetRates(Shipment shipment)
-        {
-            // create an ArrayList of threads, pre-sized to the number of providers.
-            var threads = new List<Task>();
-
-            // iterate through the providers.
-            foreach (AbstractShippingProvider provider in _providers)
-            {
-                // assign the shipment to the provider.
-                provider.Shipment = shipment;
-                // 
-                threads.Add(provider.GetRates());
-            }
-
-            await Task.WhenAll(threads).ConfigureAwait(false);
-
-            // return our Shipment instance.
-            return shipment;
         }
 
         /// <summary>
@@ -107,8 +88,43 @@ namespace ShippingRates
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
         public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions options = null)
         {
-            var shipment = new Shipment(originAddress, destinationAddress, packages, options) { RateAdjusters = _adjusters };
-            return await GetRates(shipment).ConfigureAwait(false);
+            var shipment = new Shipment(originAddress, destinationAddress, packages, options);
+
+            // Create a list of tasks that return RateResult
+            var tasks = _providers.Select(provider => provider.GetRatesAsync(shipment)).ToList();
+
+            // Await all tasks and collect results
+            var results = await Task.WhenAll(tasks).ConfigureAwait(false);
+
+            // Aggregate results
+            var aggregatedRates = new List<Rate>();
+            var aggregatedErrors = new List<Error>();
+            var aggregatedInternalErrors = new List<string>();
+
+            foreach (var result in results)
+            {
+                if (result?.Rates != null)
+                {
+                    var rates = result.Rates;
+
+                    if (_adjusters?.Count > 0)
+                    {
+                        rates = rates.Select(rate => _adjusters.Aggregate(rate, (current, adjuster) => adjuster.AdjustRate(current))).ToList();
+                    }
+
+                    aggregatedRates.AddRange(rates);
+                }
+
+                aggregatedErrors.AddRange(result?.Errors ?? new List<Error>());
+                aggregatedInternalErrors.AddRange(result?.InternalErrors ?? new List<string>());
+            }
+
+            // Aggregate everything into the shipment object
+            shipment.Rates.AddRange(aggregatedRates);
+            shipment.Errors.AddRange(aggregatedErrors);
+            shipment.InternalErrors.AddRange(aggregatedInternalErrors);
+
+            return shipment;
         }
     }
 }

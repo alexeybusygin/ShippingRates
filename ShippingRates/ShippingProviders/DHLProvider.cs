@@ -1,5 +1,5 @@
+using ShippingRates.Models;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -97,6 +97,7 @@ namespace ShippingRates.ShippingProviders
         private Uri RatesUri => new Uri(_configuration.UseProduction ? ProductionServicesUrl : TestServicesUrl);
 
         private string BuildRatesRequestMessage(
+            Shipment shipment,
             DateTime requestDateTime,
             DateTime pickupDateTime,
             string messageReference)
@@ -108,8 +109,8 @@ namespace ShippingRates.ShippingProviders
                 Encoding = Encoding.UTF8
             };
 
-            var isDomestic = Shipment.OriginAddress.CountryCode == Shipment.DestinationAddress.CountryCode;
-            var isDutiable = !Shipment.HasDocumentsOnly && !isDomestic;
+            var isDomestic = shipment.OriginAddress.CountryCode == shipment.DestinationAddress.CountryCode;
+            var isDutiable = !shipment.HasDocumentsOnly && !isDomestic;
 
             using (var memoryStream = new MemoryStream())
             {
@@ -128,10 +129,10 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteEndElement(); // </ServiceHeader>
                     writer.WriteEndElement(); // </Request>
 
-                    WriteAddress(writer, "From", Shipment.OriginAddress);
+                    WriteAddress(writer, "From", shipment.OriginAddress);
 
                     writer.WriteStartElement("BkgDetails");
-                    writer.WriteElementString("PaymentCountryCode", Shipment.OriginAddress.CountryCode);
+                    writer.WriteElementString("PaymentCountryCode", shipment.OriginAddress.CountryCode);
                     writer.WriteElementString("Date", pickupDateTime.ToString("yyyy-MM-dd", requestCulture));
                     writer.WriteElementString("ReadyTime", $"PT{pickupDateTime:HH}H{pickupDateTime:mm}M");
                     writer.WriteElementString("ReadyTimeGMTOffset", pickupDateTime.ToString("zzz", requestCulture));
@@ -139,14 +140,14 @@ namespace ShippingRates.ShippingProviders
                     writer.WriteElementString("WeightUnit", "LB");
 
                     writer.WriteStartElement("Pieces");
-                    for (var i = 0; i < Shipment.Packages.Count; i++)
+                    for (var i = 0; i < shipment.Packages.Count; i++)
                     {
                         writer.WriteStartElement("Piece");
                         writer.WriteElementString("PieceID", $"{i + 1}");
-                        writer.WriteElementString("Height", Shipment.Packages[i].GetRoundedHeight(UnitsSystem.USCustomary).ToString(requestCulture));
-                        writer.WriteElementString("Depth", Shipment.Packages[i].GetRoundedLength(UnitsSystem.USCustomary).ToString(requestCulture));
-                        writer.WriteElementString("Width", Shipment.Packages[i].GetRoundedWidth(UnitsSystem.USCustomary).ToString(requestCulture));
-                        writer.WriteElementString("Weight", Shipment.Packages[i].GetRoundedWeight(UnitsSystem.USCustomary).ToString(requestCulture));
+                        writer.WriteElementString("Height", shipment.Packages[i].GetRoundedHeight(UnitsSystem.USCustomary).ToString(requestCulture));
+                        writer.WriteElementString("Depth", shipment.Packages[i].GetRoundedLength(UnitsSystem.USCustomary).ToString(requestCulture));
+                        writer.WriteElementString("Width", shipment.Packages[i].GetRoundedWidth(UnitsSystem.USCustomary).ToString(requestCulture));
+                        writer.WriteElementString("Weight", shipment.Packages[i].GetRoundedWeight(UnitsSystem.USCustomary).ToString(requestCulture));
                         writer.WriteEndElement(); // </Piece>
                     }
                     writer.WriteEndElement(); // </Pieces>
@@ -166,7 +167,7 @@ namespace ShippingRates.ShippingProviders
                             writer.WriteElementString("GlobalProductCode", serviceCode.ToString());
                         }
                     }
-                    if (Shipment.Options.SaturdayDelivery)
+                    if (shipment.Options.SaturdayDelivery)
                     {
                         writer.WriteStartElement("QtdShpExChrg");
                         writer.WriteElementString("SpecialServiceType", isDomestic ? "AG" : "AA");
@@ -174,7 +175,7 @@ namespace ShippingRates.ShippingProviders
                     }
                     writer.WriteEndElement(); // </QtdShp>
 
-                    var totalInsurance = Shipment.Packages.Sum(p => p.InsuredValue);
+                    var totalInsurance = shipment.Packages.Sum(p => p.InsuredValue);
                     if (totalInsurance > 0)
                     {
                         writer.WriteElementString("InsuredValue", $"{totalInsurance.ToString("N", requestCulture)}");
@@ -183,7 +184,7 @@ namespace ShippingRates.ShippingProviders
 
                     writer.WriteEndElement(); // </BkgDetails>
 
-                    WriteAddress(writer, "To", Shipment.DestinationAddress);
+                    WriteAddress(writer, "To", shipment.DestinationAddress);
 
                     if (isDutiable)
                     {
@@ -215,11 +216,12 @@ namespace ShippingRates.ShippingProviders
             writer.WriteEndElement(); // </From>
         }
 
-        public override async Task GetRates()
+        public override async Task<RateResult> GetRatesAsync(Shipment shipment)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+            var resultBuilder = new RateResultBuilder(Name);
 
             try
             {
@@ -231,8 +233,9 @@ namespace ShippingRates.ShippingProviders
 #pragma warning restore CS0618 // Type or member is obsolete
 
                 var request = BuildRatesRequestMessage(
+                    shipment,
                     DateTime.Now,
-                    Shipment.Options.ShippingDate ?? DateTime.Now,
+                    shipment.Options.ShippingDate ?? DateTime.Now,
                     GetMessageId());
 
                 using (var httpContent = new StringContent(request, Encoding.UTF8, "text/xml"))
@@ -245,38 +248,40 @@ namespace ShippingRates.ShippingProviders
                         using (var reader = XmlReader.Create(responseBody))
                         {
                             var responseXml = XElement.Load(reader);
-                            ParseRatesResponseMessage(responseXml);
+                            ParseRatesResponseMessage(shipment, responseXml, resultBuilder);
                         }
                     }
                 }
             }
             catch (Exception e)
             {
-                AddInternalError($"DHL Provider Exception: {e.Message}");
+                resultBuilder.AddInternalError($"DHL Provider Exception: {e.Message}");
             }
             finally
             {
                 if (!IsExternalHttpClient && httpClient != null)
                     httpClient.Dispose();
             }
+
+            return resultBuilder.GetRateResult();
         }
 
         private static string GetMessageId() => Guid.NewGuid().ToString().Replace("-", "");
 
-        private void ParseRatesResponseMessage(XElement xDoc)
+        private void ParseRatesResponseMessage(Shipment shipment, XElement xDoc, RateResultBuilder resultBuilder)
         {
             if (xDoc == null)
             {
-                AddInternalError("Invalid response from DHL");
+                resultBuilder.AddInternalError("Invalid response from DHL");
                 return;
             }
 
-            ParseRates(xDoc.XPathSelectElements("GetQuoteResponse/BkgDetails/QtdShp"));
-            ParseErrors(xDoc.XPathSelectElements("GetQuoteResponse/Note/Condition"));
-            ParseErrors(xDoc.XPathSelectElements("Response/Status/Condition"));
+            ParseRates(shipment, xDoc.XPathSelectElements("GetQuoteResponse/BkgDetails/QtdShp"), resultBuilder);
+            ParseErrors(xDoc.XPathSelectElements("GetQuoteResponse/Note/Condition"), resultBuilder);
+            ParseErrors(xDoc.XPathSelectElements("Response/Status/Condition"), resultBuilder);
         }
 
-        private void ParseRates(IEnumerable<XElement> rates)
+        private void ParseRates(Shipment shipment, IEnumerable<XElement> rates, RateResultBuilder resultBuilder)
         {
             var includedServices = _configuration.ServicesIncluded;
             var excludedServices = _configuration.ServicesExcluded;
@@ -286,7 +291,7 @@ namespace ShippingRates.ShippingProviders
                 var serviceCode = rateNode.Element("GlobalProductCode")?.Value;
                 if (string.IsNullOrEmpty(serviceCode) || !AvailableServices.ContainsKey(serviceCode[0]))
                 {
-                    AddInternalError($"Unknown DHL Global Product Code: {serviceCode}");
+                    resultBuilder.AddInternalError($"Unknown DHL Global Product Code: {serviceCode}");
                     continue;
                 }
                 if ((includedServices.Any() && !includedServices.Contains(serviceCode[0])) ||
@@ -326,19 +331,19 @@ namespace ShippingRates.ShippingProviders
                     }
                 }
 
-                AddRate(name, description, totalCharges, deliveryDate, new RateOptions()
+                resultBuilder.AddRate(name, description, totalCharges, deliveryDate, new RateOptions()
                 {
-                    SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
+                    SaturdayDelivery = shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
                 },
                 currencyCode);
             }
         }
 
-        private void ParseErrors(IEnumerable<XElement> errors)
+        private void ParseErrors(IEnumerable<XElement> errors, RateResultBuilder resultBuilder)
         {
             foreach (var errorNode in errors)
             {
-                AddError(new Error()
+                resultBuilder.AddError(new Error()
                 {
                     Number = errorNode.Element("ConditionCode")?.Value,
                     Description = errorNode.Element("ConditionData")?.Value
