@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShippingRates.Models;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Xml.Linq;
@@ -30,7 +31,7 @@ namespace ShippingRates.ShippingProviders
             HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        protected void ParseErrors(XElement response)
+        internal static void ParseErrors(XElement response, RateResultBuilder resultBuilder)
         {
             if (response?.Descendants("Error")?.Any() ?? false)
             {
@@ -47,7 +48,7 @@ namespace ShippingRates.ShippingProviders
 
                 foreach (var err in errors)
                 {
-                    AddError(err);
+                    resultBuilder.AddError(err);
                 }
             }
         }

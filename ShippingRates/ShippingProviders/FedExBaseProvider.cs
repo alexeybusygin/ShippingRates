@@ -1,4 +1,5 @@
 ﻿using ShippingRates.Helpers.Extensions;
+using ShippingRates.Models;
 using ShippingRates.RateServiceWebReference;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ namespace ShippingRates.ShippingProviders
         /// Creates the rate request
         /// </summary>
         /// <returns></returns>
-        protected RateRequest CreateRateRequest()
+        protected RateRequest CreateRateRequest(Shipment shipment)
         {
             // Build the RateRequest
             var request = new RateRequest
@@ -64,22 +65,22 @@ namespace ShippingRates.ShippingProviders
                 ReturnTransitAndCommitSpecified = true,
                 RequestedShipment = new RequestedShipment()
                 {
-                    ShipTimestamp = Shipment.Options.ShippingDate ?? DateTime.Now, // Shipping date and time
+                    ShipTimestamp = shipment.Options.ShippingDate ?? DateTime.Now, // Shipping date and time
                     ShipTimestampSpecified = true,
                     DropoffType = DropoffType.REGULAR_PICKUP, //Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
                     DropoffTypeSpecified = true,
                     PackagingType = "YOUR_PACKAGING",
-                    PackageCount = Shipment.PackageCount.ToString(),
-                    RateRequestTypes = GetRateRequestTypes().ToArray(),
-                    PreferredCurrency = Shipment.Options.GetCurrencyCode()
+                    PackageCount = shipment.PackageCount.ToString(),
+                    RateRequestTypes = GetRateRequestTypes(shipment).ToArray(),
+                    PreferredCurrency = shipment.Options.GetCurrencyCode()
                 }
             };
 
-            if (Shipment.Options.FedExOneRate)
+            if (shipment.Options.FedExOneRate)
             {
-                if (!string.IsNullOrEmpty(Shipment.Options.FedExOneRatePackageOverride))
+                if (!string.IsNullOrEmpty(shipment.Options.FedExOneRatePackageOverride))
                 {
-                    request.RequestedShipment.PackagingType = Shipment.Options.FedExOneRatePackageOverride;
+                    request.RequestedShipment.PackagingType = shipment.Options.FedExOneRatePackageOverride;
                 }
                 else
                 {
@@ -91,20 +92,20 @@ namespace ShippingRates.ShippingProviders
                 };
             }
 
-            if (Shipment.Options.SaturdayDelivery)
+            if (shipment.Options.SaturdayDelivery)
             {
                 request.VariableOptions = new[] { ServiceOptionType.SATURDAY_DELIVERY };
             }
 
-            SetShipmentDetails(request);
+            SetShipmentDetails(request, shipment);
 
             return request;
         }
 
-        private IEnumerable<RateRequestType> GetRateRequestTypes()
+        private static IEnumerable<RateRequestType> GetRateRequestTypes(Shipment shipment)
         {
             yield return RateRequestType.LIST;
-            if (!string.IsNullOrEmpty(Shipment.Options.PreferredCurrencyCode))
+            if (!string.IsNullOrEmpty(shipment.Options.PreferredCurrencyCode))
             {
                 yield return RateRequestType.PREFERRED;
             }
@@ -114,15 +115,17 @@ namespace ShippingRates.ShippingProviders
         /// Sets shipment details
         /// </summary>
         /// <param name="request"></param>
-        protected abstract void SetShipmentDetails(RateRequest request);
+        protected abstract void SetShipmentDetails(RateRequest request, Shipment shipment);
 
         /// <summary>
         /// Gets rates
         /// </summary>
-        public override async Task GetRates()
+        public override async Task<RateResult> GetRatesAsync(Shipment shipment)
         {
-            var request = CreateRateRequest();
+            var request = CreateRateRequest(shipment);
             var service = new RatePortTypeClient(_configuration.UseProduction);
+            var resultBuilder = new RateResultBuilder(Name);
+
             try
             {
                 // Call the web service passing in a RateRequest and returning a RateReply
@@ -130,25 +133,27 @@ namespace ShippingRates.ShippingProviders
 
                 if (reply.RateReply != null)
                 {
-                    ProcessReply(reply.RateReply);
-                    ProcessErrors(reply.RateReply);
+                    ProcessReply(shipment, reply.RateReply, resultBuilder);
+                    ProcessErrors(reply.RateReply, resultBuilder);
                 }
                 else
                 {
-                    AddInternalError($"FedEx provider: API returned NULL result");
+                    resultBuilder.AddInternalError($"FedEx provider: API returned NULL result");
                 }
             }
             catch (Exception e)
             {
-                AddInternalError($"FedEx provider exception: {e.Message}");
+                resultBuilder.AddInternalError($"FedEx provider exception: {e.Message}");
             }
+
+            return resultBuilder.GetRateResult();
         }
 
         /// <summary>
         /// Processes the reply
         /// </summary>
         /// <param name="reply"></param>
-        protected void ProcessReply(RateReply reply)
+        private void ProcessReply(Shipment shipment, RateReply reply, RateResultBuilder resultBuilder)
         {
             if (reply?.RateReplyDetails == null)
                 return;
@@ -157,26 +162,26 @@ namespace ShippingRates.ShippingProviders
             {
                 var key = rateReplyDetail.ServiceType.ToString();
 
-                if (!ServiceCodes.Keys.Contains(key))
-                {
-                    AddInternalError($"Unknown FedEx rate code: {key}");
-                }
-                else
+                if (ServiceCodes.TryGetValue(key, out string value))
                 {
                     var rateDetails = GetRateDetailsByRateType(rateReplyDetail);
-                    var rates = rateDetails.Select(r => GetCurrencyConvertedRate(r.ShipmentRateDetail));
-                    rates = rates.Any(r => r.currencyCode == Shipment.Options.GetCurrencyCode())
-                        ? rates.Where(r => r.currencyCode == Shipment.Options.GetCurrencyCode())
+                    var rates = rateDetails.Select(r => FedExBaseProvider.GetCurrencyConvertedRate(shipment, r.ShipmentRateDetail));
+                    rates = rates.Any(r => r.currencyCode == shipment.Options.GetCurrencyCode())
+                        ? rates.Where(r => r.currencyCode == shipment.Options.GetCurrencyCode())
                         : rates;
 
                     var netCharge = rates.OrderByDescending(r => r.amount).FirstOrDefault();
                     var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
 
-                    AddRate(key, ServiceCodes[key], netCharge.amount, deliveryDate, new RateOptions()
+                    resultBuilder.AddRate(key, value, netCharge.amount, deliveryDate, new RateOptions()
                     {
                         SaturdayDelivery = rateReplyDetail.AppliedOptions?.Contains(ServiceOptionType.SATURDAY_DELIVERY) ?? false
                     },
                     netCharge.currencyCode);
+                }
+                else
+                {
+                    resultBuilder.AddInternalError($"Unknown FedEx rate code: {key}");
                 }
             }
         }
@@ -197,9 +202,9 @@ namespace ShippingRates.ShippingProviders
                 .ToArray();
         }
 
-        private (decimal amount, string currencyCode) GetCurrencyConvertedRate(ShipmentRateDetail rateDetail)
+        private static (decimal amount, string currencyCode) GetCurrencyConvertedRate(Shipment shipment, ShipmentRateDetail rateDetail)
         {
-            var shipmentCurrencyCode = Shipment.Options.GetCurrencyCode();
+            var shipmentCurrencyCode = shipment.Options.GetCurrencyCode();
 
             if (rateDetail?.TotalNetCharge == null)
                 return (0, shipmentCurrencyCode);
@@ -224,11 +229,11 @@ namespace ShippingRates.ShippingProviders
         /// Sets the destination
         /// </summary>
         /// <param name="request"></param>
-        protected void SetDestination(RateRequest request)
+        protected static void SetDestination(RateRequest request, Shipment shipment)
         {
             request.RequestedShipment.Recipient = new Party
             {
-                Address = Shipment.DestinationAddress.GetFedExAddress()
+                Address = shipment.DestinationAddress.GetFedExAddress()
             };
         }
 
@@ -236,11 +241,11 @@ namespace ShippingRates.ShippingProviders
         /// Sets the origin
         /// </summary>
         /// <param name="request"></param>
-        protected void SetOrigin(RateRequest request)
+        protected static void SetOrigin(RateRequest request, Shipment shipment)
         {
             request.RequestedShipment.Shipper = new Party
             {
-                Address = Shipment.OriginAddress.GetFedExAddress()
+                Address = shipment.OriginAddress.GetFedExAddress()
             };
         }
 
@@ -248,12 +253,12 @@ namespace ShippingRates.ShippingProviders
         /// Sets package line items
         /// </summary>
         /// <param name="request"></param>
-        protected void SetPackageLineItems(RateRequest request)
+        protected void SetPackageLineItems(RateRequest request, Shipment shipment)
         {
-            request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[Shipment.PackageCount];
+            request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[shipment.PackageCount];
 
             var i = 0;
-            foreach (var package in Shipment.Packages)
+            foreach (var package in shipment.Packages)
             {
                 request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem()
                 {
@@ -265,16 +270,16 @@ namespace ShippingRates.ShippingProviders
                     {
                         Units = WeightUnits.LB,                         // TODO: Add support for CM and KG
                         UnitsSpecified = true,
-                        Value = Shipment.Packages[i].GetRoundedWeight(UnitsSystem.USCustomary),
+                        Value = shipment.Packages[i].GetRoundedWeight(UnitsSystem.USCustomary),
                         ValueSpecified = true
                     },
 
                     // Package dimensions
                     Dimensions = new Dimensions()
                     {
-                        Length = Shipment.Packages[i].GetRoundedLength(UnitsSystem.USCustomary).ToString(),
-                        Width = Shipment.Packages[i].GetRoundedWidth(UnitsSystem.USCustomary).ToString(),
-                        Height = Shipment.Packages[i].GetRoundedHeight(UnitsSystem.USCustomary).ToString(),
+                        Length = shipment.Packages[i].GetRoundedLength(UnitsSystem.USCustomary).ToString(),
+                        Width = shipment.Packages[i].GetRoundedWidth(UnitsSystem.USCustomary).ToString(),
+                        Height = shipment.Packages[i].GetRoundedHeight(UnitsSystem.USCustomary).ToString(),
                         Units = LinearUnits.IN,                         // TODO: Add support for CM and KG
                         UnitsSpecified = true
                     }
@@ -303,7 +308,7 @@ namespace ShippingRates.ShippingProviders
             }
         }
 
-        private void ProcessErrors(RateReply reply)
+        private static void ProcessErrors(RateReply reply, RateResultBuilder resultBuilder)
         {
             var errorTypes = new NotificationSeverityType[]
             {
@@ -327,7 +332,7 @@ namespace ShippingRates.ShippingProviders
 
                 foreach (var err in errors)
                 {
-                    AddError(err);
+                    resultBuilder.AddError(err);
                 }
             }
         }
