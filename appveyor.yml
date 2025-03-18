@@ -1,5 +1,5 @@
 # version format
-version: 2.3.0.{build}
+version: 2.3.1.{build}
 
 image: Visual Studio 2022
 
