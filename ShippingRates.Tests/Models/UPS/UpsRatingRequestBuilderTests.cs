@@ -10,7 +10,10 @@ namespace ShippingRates.Tests.Models.UPS
     {
         readonly Address AddressFrom = new("Annapolis", "MD", "21401", "US");
         readonly Address AddressTo = new("", "", "30404", "US");
-        readonly List<Package> Packages = new() { new(1, 1, 1, 3, 0), new(1, 2, 3, 4, 5) };
+        readonly List<Package> Packages = [
+            new(1, 1, 1, weight: 3, insuredValue: 0),
+            new(1, 2, 3, weight: 4, insuredValue: 5)
+        ];
 
         [Test()]
         public void UpsRatingRequestBuilder_CustomerClassification()
@@ -57,8 +60,7 @@ namespace ShippingRates.Tests.Models.UPS
             var shipmentNL = new Shipment(fromNL, AddressTo, Packages);
 
             var internationalRequest = regularRatesBuilder.Build(shipmentNL);
-            Assert.That(regularRatesRequest?.RateRequest?.CustomerClassification, Is.Not.Null);
-            Assert.That(regularRatesRequest?.RateRequest?.CustomerClassification.Code, Is.EqualTo("00"));
+            Assert.That(internationalRequest?.RateRequest?.CustomerClassification, Is.Null);
         }
 
 
