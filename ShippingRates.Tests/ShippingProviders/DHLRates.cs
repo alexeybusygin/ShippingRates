@@ -66,14 +66,14 @@ namespace ShippingRates.Tests.ShippingProviders
             var to = new Address("", "", "75011", "FR");
             var package = new Package(7, 7, 7, 6, 0);
 
-            var configuration1 = GetConfiguration().IncludeServices(new char[] { 'I' });
+            var configuration1 = GetConfiguration().IncludeServices(['I']);
 
             var r1 = GetRateManager(configuration1).GetRates(from, to, package);
             Assert.That(r1, Is.Not.Null);
             Assert.That(r1.Rates, Is.Not.Empty);
             Assert.That(r1.Rates, Has.Some.Matches<Rate>(r => r.Name.Contains("DOMESTIC 9:00")));
 
-            var configuration2 = GetConfiguration().ExcludeServices(new char[] { 'C' });
+            var configuration2 = GetConfiguration().ExcludeServices(['C']);
 
             var r2 = GetRateManager(configuration2).GetRates(from, to, package);
             Assert.That(r2, Is.Not.Null);

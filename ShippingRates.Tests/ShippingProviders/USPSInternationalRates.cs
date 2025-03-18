@@ -59,7 +59,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, packages);
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Count));
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -86,7 +86,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, _package1);
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Count));
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -113,7 +113,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(_domesticAddress1, _domesticAddress2, _package1);
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Count));
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Rates, Is.Empty);
@@ -130,7 +130,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(_domesticAddress1, _domesticAddress2, _package1);
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Count));
 
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Rates, Is.Empty);
@@ -145,7 +145,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(_domesticAddress1, _internationalAddress2, _package1);
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Count));
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -216,7 +216,7 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.Multiple(() =>
             {
                 Assert.That(response, Is.Not.Null);
-                Assert.That(rates.Any(), Is.True);
+                Assert.That(rates.Count != 0, Is.True);
                 Assert.That(rates.Any(r => r.CurrencyCode != "USD"), Is.False);
             });
         }

@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using System.Collections.Generic;
 
 namespace ShippingRates.Tests.Models
 {
@@ -17,9 +16,9 @@ namespace ShippingRates.Tests.Models
             var docsPackage1 = new DocumentsPackage(1, 2);
             var docsPackage2 = new DocumentsPackage(3, 4);
 
-            var shipmentNoDocs = new Shipment(from, to, new List<Package>() { package1, package2 });
-            var shipmentWithSomeDocs = new Shipment(from, to, new List<Package>() { package1, docsPackage1, package2 });
-            var shipmentAllDocs = new Shipment(from, to, new List<Package>() { docsPackage1, docsPackage2 });
+            var shipmentNoDocs = new Shipment(from, to, [package1, package2]);
+            var shipmentWithSomeDocs = new Shipment(from, to, [package1, docsPackage1, package2]);
+            var shipmentAllDocs = new Shipment(from, to, [docsPackage1, docsPackage2]);
 
             Assert.Multiple(() =>
             {
