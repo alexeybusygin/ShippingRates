@@ -28,7 +28,9 @@ jobs:
       run: dotnet build --configuration Release --no-restore ./ShippingRates/ShippingRates.csproj
 
     - name: Test
-      run: dotnet test --configuration Release --verbosity normal ./ShippingRates.Tests/ShippingRates.Tests.csproj
+      env:
+        ShippingRates.USPSUserId: ${{ secrets.USPS_USER_ID }}
+      run: dotnet test --configuration Release --no-build --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
 
     - name: Pack
       run: dotnet pack --configuration Release --no-build --output ./nupkgs ./ShippingRates/ShippingRates.csproj
