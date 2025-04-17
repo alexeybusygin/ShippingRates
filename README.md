@@ -1,6 +1,6 @@
 # ShippingRates
 
-[![Build status](https://ci.appveyor.com/api/projects/status/gqq8i6nw932bn01v?svg=true)](https://ci.appveyor.com/project/alexeybusygin/shippingrates/)
+[![Build](https://github.com/alexeybusygin/ShippingRates/actions/workflows/build.yml/badge.svg)](https://github.com/alexeybusygin/ShippingRates/actions/workflows/build.yml)
 [![NuGet Version](https://img.shields.io/nuget/v/ShippingRates.svg?style=flat-square)](https://www.nuget.org/packages/ShippingRates)
 
 .NET wrapper for UPS, FedEx, USPS, and DHL APIs. Use it to retrieve shipping rates from these carriers.
@@ -9,7 +9,7 @@
 
 UPS has deprecated access key authentication in favor of an OAuth 2.0 security model for all APIs. Beginning August 5, 2024, access keys will no longer be supported. More details at the UPS site: https://developer.ups.com/oauth-developer-guide?loc=en_US
 
-The new authentication model has been implemented in the package since version 2.1.0.
+The new authentication model was implemented in the package starting with version 2.1.0.
 
 ## How to Install
 
@@ -112,7 +112,7 @@ var anySaturdayDeliveryMethods = shipment.Rates.Any(r => r.Options.SaturdayDeliv
 
 ## Error Handling
 
-Normally `RateManager.GetRates` wouldn't throw any exceptions. All errors are caught and reported in two properties: `Errors` and `InternalErrors`. `Errors` are for errors coming from APIs (incorrect address etc.) It should be quite safe to show them to the end user. `InternalErrors` are errors that occur during API calls processing (SOAP, HTTP requests) and errors from inside the ShippingRates. They can be used for debugging and internal reporting. Iterating through Errors and InternalErrors:
+Normally, `RateManager.GetRates` wouldn't throw any exceptions. All errors are caught and reported in two properties: `Errors` and `InternalErrors`. `Errors` are for errors coming from APIs (incorrect address, etc.) It should be quite safe to show them to the end user. `InternalErrors` are errors that occur during API calls processing (SOAP, HTTP requests) and errors from inside the ShippingRates. They can be used for debugging and internal reporting. Iterating through Errors and InternalErrors:
 
 ```CSHARP
 var shipment = rateManager.GetRates(origin, destination, packages);
@@ -136,7 +136,7 @@ This one can be tricky to debug. Start by setting at least $1 insurance for your
 
 ## 3rd Party Docs
 
-Developer documentation is often hard to find. The links below are provided as reference.
+Developer documentation is often hard to find. The links below are provided as a reference.
 
 * [FedEx](http://www.fedex.com/us/developer/)
 * [USPS](https://www.usps.com/business/web-tools-apis/welcome.htm)
