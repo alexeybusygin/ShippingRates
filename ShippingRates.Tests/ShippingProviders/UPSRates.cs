@@ -48,7 +48,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
 
-            Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
+            Debug.WriteLine($"Rates returned: {response.Rates.Count}");
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -74,7 +74,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
-            Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
+            Debug.WriteLine($"Rates returned: {response.Rates.Count}");
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -100,7 +100,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
-            Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
+            Debug.WriteLine($"Rates returned: {response.Rates.Count}");
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -177,7 +177,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
 
-            Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
+            Debug.WriteLine($"Rates returned: {response.Rates.Count}");
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -206,7 +206,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
-            Debug.WriteLine($"Rates returned: {(response.Rates.Any() ? response.Rates.Count.ToString() : "0")}");
+            Debug.WriteLine($"Rates returned: {response.Rates.Count}");
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -240,7 +240,7 @@ namespace ShippingRates.Tests.ShippingProviders
             var nonSignatureResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
             var signatureResponse = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1SignatureRequired);
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", nonSignatureResponse.Rates.Any() ? nonSignatureResponse.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", nonSignatureResponse.Rates.Count));
 
             Assert.That(nonSignatureResponse, Is.Not.Null);
             Assert.Multiple(() =>
@@ -251,7 +251,7 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.That(nonSignatureResponse.Rates, Has.Count.EqualTo(1));
             Assert.That(nonSignatureResponse.Rates.First().TotalCharges, Is.GreaterThan(0));
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", signatureResponse.Rates.Any() ? signatureResponse.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", signatureResponse.Rates.Count));
 
             Assert.That(signatureResponse, Is.Not.Null);
             Assert.Multiple(() =>
@@ -299,7 +299,7 @@ namespace ShippingRates.Tests.ShippingProviders
             Assert.Multiple(() =>
             {
                 Assert.That(r, Is.Not.Null);
-                Assert.That(fedExRates.Any(), Is.True);
+                Assert.That(fedExRates.Count != 0, Is.True);
                 Assert.That(fedExRates.Any(r => r.Options.SaturdayDelivery), Is.True);
             });
         }

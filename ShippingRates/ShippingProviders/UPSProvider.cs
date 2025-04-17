@@ -1,10 +1,10 @@
-﻿using ShippingRates.Models;
+﻿using Microsoft.Extensions.Logging;
+using ShippingRates.Models;
 using ShippingRates.Models.UPS;
 using ShippingRates.Services;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -15,6 +15,7 @@ namespace ShippingRates.ShippingProviders
         public override string Name => "UPS";
 
         readonly UPSProviderConfiguration _configuration;
+        readonly ILogger<UPSProvider> _logger;
 
         readonly static Dictionary<string, string> _serviceCodes = new Dictionary<string, string>()
         {
@@ -54,34 +55,54 @@ namespace ShippingRates.ShippingProviders
             HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        public override async Task GetRates()
+        public UPSProvider(UPSProviderConfiguration configuration, ILogger<UPSProvider> logger)
+            : this(configuration)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public UPSProvider(UPSProviderConfiguration configuration, HttpClient httpClient, ILogger<UPSProvider> logger)
+            : this(configuration, httpClient)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public override async Task<RateResult> GetRatesAsync(Shipment shipment)
         {
             var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+            var resultBuilder = new RateResultBuilder(Name);
 
             try
             {
-                var token = await UPSOAuthService.GetTokenAsync(_configuration, httpClient, AddError);
+                var oauthService = new UPSOAuthService(_logger);
+                var token = await oauthService.GetTokenAsync(_configuration, httpClient, resultBuilder);
 
                 if (!string.IsNullOrEmpty(token))
                 {
                     var requestBuilder = new UpsRatingRequestBuilder(_configuration);
-                    var request = requestBuilder.Build(Shipment);
-                    var ratingsResponse = await UpsRatingService.GetRatingAsync(httpClient, token, _configuration.UseProduction, request, AddError);
-                    ParseResponse(ratingsResponse);
+                    var request = requestBuilder.Build(shipment);
+
+                    var ratingService = new UpsRatingService(_logger);
+                    var ratingsResponse = await ratingService.GetRatingAsync(httpClient, token, _configuration.UseProduction, request, resultBuilder);
+
+                    ParseResponse(shipment, ratingsResponse, resultBuilder);
                 }
             }
             catch (Exception e)
             {
-                AddInternalError($"UPS Provider Exception: {e.Message}");
+                resultBuilder.AddInternalError($"UPS Provider Exception: {e.Message}");
+                _logger?.LogError(e, "UPS Provider Exception");
             }
             finally
             {
                 if (!IsExternalHttpClient && httpClient != null)
                     httpClient.Dispose();
             }
+
+            return resultBuilder.GetRateResult();
         }
 
-        private void ParseResponse(UpsRatingResponse response)
+        private void ParseResponse(Shipment shipment, UpsRatingResponse response, RateResultBuilder resultBuilder)
         {
             if (response?.RateResponse?.RatedShipment == null)
                 return;
@@ -93,7 +114,7 @@ namespace ShippingRates.ShippingProviders
                 var serviceCode = rate.Service.Code;
                 if (!_serviceCodes.ContainsKey(serviceCode))
                 {
-                    AddInternalError($"Unknown service code {serviceCode}");
+                    resultBuilder.AddInternalError($"Unknown service code {serviceCode}");
                     continue;
                 }
                 var serviceDescription = _serviceCodes[serviceCode];
@@ -112,7 +133,7 @@ namespace ShippingRates.ShippingProviders
                 var businessDaysInTransit = rate.GuaranteedDelivery?.BusinessDaysInTransit;
                 if (!string.IsNullOrEmpty(businessDaysInTransit))
                 {
-                    estDeliveryDate = (Shipment.Options.ShippingDate ?? DateTime.Now)
+                    estDeliveryDate = (shipment.Options.ShippingDate ?? DateTime.Now)
                         .AddDays(Convert.ToDouble(businessDaysInTransit, cultureInfo)).ToShortDateString();
                 }
                 var deliveryTime = rate.GuaranteedDelivery?.DeliveryByTime;
@@ -126,9 +147,9 @@ namespace ShippingRates.ShippingProviders
                 }
                 var deliveryDate = DateTime.Parse(estDeliveryDate);
 
-                AddRate(serviceCode, serviceDescription, totalCharges, deliveryDate, new RateOptions()
+                resultBuilder.AddRate(serviceCode, serviceDescription, totalCharges, deliveryDate, new RateOptions()
                 {
-                    SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
+                    SaturdayDelivery = shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
                 }, currencyCode);
             }
         }

@@ -61,11 +61,11 @@ namespace ShippingRates.ShippingProviders
         /// Sets shipment details
         /// </summary>
         /// <param name="request"></param>
-        protected sealed override void SetShipmentDetails(RateRequest request)
+        protected sealed override void SetShipmentDetails(RateRequest request, Shipment shipment)
         {
-            SetOrigin(request);
-            SetDestination(request);
-            SetPackageLineItems(request);
+            SetOrigin(request, shipment);
+            SetDestination(request, shipment);
+            SetPackageLineItems(request, shipment);
             SetSmartPostDetails(request);
         }
 

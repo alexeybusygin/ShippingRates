@@ -120,37 +120,40 @@ namespace ShippingRates.ShippingProviders
             return null;
         }
 
-        public override async Task GetRates()
+        public override async Task<RateResult> GetRatesAsync(Shipment shipment)
         {
             // USPS only available for domestic addresses. International is a different API.
-            if (!IsDomesticUSPSAvailable())
+            if (!IsDomesticUSPSAvailable(shipment))
             {
-                return;
+                return null;
             }
 
             var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+            var resultBuilder = new RateResultBuilder(Name);
 
             try
             {
-                var specialServices = GetSpecialServicesForShipment(Shipment);
-                var requestXmlString = GetRequestXmlString(specialServices);
+                var specialServices = GetSpecialServicesForShipment(shipment);
+                var requestXmlString = GetRequestXmlString(shipment, specialServices);
                 var rateUri = new Uri($"{ProductionUrl}?API=RateV4&XML={requestXmlString}");
                 var response = await httpClient.GetStringAsync(rateUri).ConfigureAwait(false);
 
-                ParseResult(response, specialServices);
+                ParseResult(shipment, response, specialServices, resultBuilder);
             }
             catch (Exception e)
             {
-                AddInternalError($"USPS Provider Exception: {e.Message}");
+                resultBuilder.AddInternalError($"USPS Provider Exception: {e.Message}");
             }
             finally
             {
                 if (!IsExternalHttpClient && httpClient != null)
                     httpClient.Dispose();
             }
+
+            return resultBuilder.GetRateResult();
         }
 
-        private string GetRequestXmlString(List<SpecialServices> specialServices)
+        private string GetRequestXmlString(Shipment shipment, List<SpecialServices> specialServices)
         {
             var sb = new StringBuilder();
 
@@ -167,13 +170,13 @@ namespace ShippingRates.ShippingProviders
                 writer.WriteAttributeString("USERID", _configuration.UserId);
                 writer.WriteElementString("Revision", "2");
                 var i = 0;
-                foreach (var package in Shipment.Packages)
+                foreach (var package in shipment.Packages)
                 {
                     writer.WriteStartElement("Package");
                     writer.WriteAttributeString("ID", i.ToString());
                     writer.WriteElementString("Service", _configuration.Service);
-                    writer.WriteElementString("ZipOrigination", Shipment.OriginAddress.CountryCode == "US" && Shipment.OriginAddress.PostalCode.Length > 5 ? Shipment.OriginAddress.PostalCode.Substring(0, 5) : Shipment.OriginAddress.PostalCode);
-                    writer.WriteElementString("ZipDestination", Shipment.DestinationAddress.CountryCode == "US" && Shipment.DestinationAddress.PostalCode.Length > 5 ? Shipment.DestinationAddress.PostalCode.Substring(0, 5) : Shipment.DestinationAddress.PostalCode);
+                    writer.WriteElementString("ZipOrigination", shipment.OriginAddress.CountryCode == "US" && shipment.OriginAddress.PostalCode.Length > 5 ? shipment.OriginAddress.PostalCode.Substring(0, 5) : shipment.OriginAddress.PostalCode);
+                    writer.WriteElementString("ZipDestination", shipment.DestinationAddress.CountryCode == "US" && shipment.DestinationAddress.PostalCode.Length > 5 ? shipment.DestinationAddress.PostalCode.Substring(0, 5) : shipment.DestinationAddress.PostalCode);
                     writer.WriteElementString("Pounds", package.PoundsAndOunces.Pounds.ToString());
                     writer.WriteElementString("Ounces", package.PoundsAndOunces.Ounces.ToString());
 
@@ -187,10 +190,10 @@ namespace ShippingRates.ShippingProviders
                     {
                         writer.WriteElementString("Machinable", IsPackageMachinable(package).ToString());
                     }
-                    if (Shipment.Options.ShippingDate != null)
+                    if (shipment.Options.ShippingDate != null)
                     {
                         writer.WriteElementString("ShipDate",
-                            Shipment.Options.ShippingDate.Value.ToString("yyyy-MM-dd"));
+                            shipment.Options.ShippingDate.Value.ToString("yyyy-MM-dd"));
                     }
 
                     if (AllowsSpecialServices(_configuration.Service) && specialServices.Any())
@@ -235,9 +238,9 @@ namespace ShippingRates.ShippingProviders
             return shipmentSpecialServices;
         }
 
-        public bool IsDomesticUSPSAvailable()
+        public static bool IsDomesticUSPSAvailable(Shipment shipment)
         {
-            return Shipment.OriginAddress.IsUnitedStatesAddress() && Shipment.DestinationAddress.IsUnitedStatesAddress();
+            return shipment.OriginAddress.IsUnitedStatesAddress() && shipment.DestinationAddress.IsUnitedStatesAddress();
         }
 
         public static bool IsPackageLarge(Package package)
@@ -265,7 +268,7 @@ namespace ShippingRates.ShippingProviders
             return (width <= 27 && height <= 17 && length <= 17) || (width <= 17 && height <= 27 && length <= 17) || (width <= 17 && height <= 17 && length <= 27);
         }
 
-        private void ParseResult(string response, IList<SpecialServices> includeSpecialServiceCodes = null)
+        private void ParseResult(Shipment shipment, string response, List<SpecialServices> includeSpecialServiceCodes, RateResultBuilder resultBuilder)
         {
             var document = XElement.Parse(response, LoadOptions.None);
 
@@ -307,18 +310,18 @@ namespace ShippingRates.ShippingProviders
                 {
                     var rateOptions = new RateOptions()
                     {
-                        SaturdayDelivery = Shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
+                        SaturdayDelivery = shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
                     };
-                    AddRate(name, string.Concat("USPS ", name), totalCharges + additionalCharges, deliveryDate, rateOptions, USPSCurrencyCode);
+                    resultBuilder.AddRate(name, string.Concat("USPS ", name), totalCharges + additionalCharges, deliveryDate, rateOptions, USPSCurrencyCode);
                 }
                 else
                 {
-                    AddRate(name, string.Concat("USPS ", name), totalCharges + additionalCharges, DateTime.Now.AddDays(30), null, USPSCurrencyCode);
+                    resultBuilder.AddRate(name, string.Concat("USPS ", name), totalCharges + additionalCharges, DateTime.Now.AddDays(30), null, USPSCurrencyCode);
                 }
             }
 
             //check for errors
-            ParseErrors(document);
+            ParseErrors(document, resultBuilder);
         }
 
         public static bool RequiresMachinable(string service)

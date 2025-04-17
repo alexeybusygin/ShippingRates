@@ -48,8 +48,7 @@ namespace ShippingRates.Models.UPS
                         ShipTo = new ShipAddress(new UpsAddress(shipment.DestinationAddress)),
                         NumOfPieces = shipment.Packages.Count,
                         Package = shipment.Packages.Select(p => new UpsPackage(p, unitsSystem)).ToArray()
-                    },
-                    CustomerClassification = GetCustomerClassification()
+                    }
                 }
             };
             if (!string.IsNullOrEmpty(_configuration.ServiceDescription))
@@ -81,6 +80,12 @@ namespace ShippingRates.Models.UPS
                     NegotiatedRatesIndicator = "Y"
                 };
             }
+
+            if (shipFromUS)         // Valid if ship from US
+            {
+                request.RateRequest.CustomerClassification = GetCustomerClassification();
+            }
+
             if (shipment.Options.ShippingDate != null)
             {
                 request.RateRequest.Shipment.DeliveryTimeInformation = new DeliveryTimeInformation()

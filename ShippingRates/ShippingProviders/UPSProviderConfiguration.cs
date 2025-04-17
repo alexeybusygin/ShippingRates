@@ -41,13 +41,17 @@
         /// </summary>
         public bool UseNegotiatedRates { get; set; }
         /// <summary>
-        /// Customer classification code, valid for shipments originating from a US address
+        /// Customer classification code, valid for shipments originating from a US address. Ignored for non-US shipments.
+        /// Default value is 'Rates associated with Shipper Number.'
         /// </summary>
-        public UPSCustomerClassification CustomerClassification { get; set; }
+        public UPSCustomerClassification CustomerClassification { get; set; } = UPSCustomerClassification.ShipperNumberRates;
     }
 
     public enum UPSCustomerClassification
     {
+        /// <summary>
+        /// Rates associated with Shipper Number
+        /// </summary>
         ShipperNumberRates = 0,
         /// <summary>
         /// Daily rates, for customers who have a scheduled pickup and/or an account that provides you with daily rates

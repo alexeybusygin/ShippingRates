@@ -49,7 +49,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Count));
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -77,7 +77,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Count));
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -104,7 +104,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Count));
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -123,7 +123,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(DomesticAddress1, InternationalAddress1, Package1);
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Count));
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -142,7 +142,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Count));
 
             Assert.That(response, Is.Not.Null);
             Assert.Multiple(() =>
@@ -211,7 +211,7 @@ namespace ShippingRates.Tests.ShippingProviders
 
             var rateManager2 = new RateManager();
             var configuration = GetConfiguration(ShippingRates.ShippingProviders.USPS.Services.Library);
-            configuration.SpecialServices = new SpecialServices[] { SpecialServices.ScanRetention };
+            configuration.SpecialServices = [SpecialServices.ScanRetention];
             rateManager2.AddProvider(new USPSProvider(configuration));
 
             var noSpecialServicesResponse = rateManager1.GetRates(DomesticAddress1, DomesticAddress2, Package1);
@@ -306,7 +306,7 @@ namespace ShippingRates.Tests.ShippingProviders
                 Assert.That(response.Rates, Is.Not.Empty);
             }
 
-            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Any() ? response.Rates.Count.ToString() : "0"));
+            Debug.WriteLine(string.Format("Rates returned: {0}", response.Rates.Count));
 
             Assert.Multiple(() =>
             {

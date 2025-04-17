@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 
-namespace ShippingRates.Tests
+namespace ShippingRates.Tests;
+
+public class ConfigHelper
 {
-    public class ConfigHelper
+    public static IConfigurationRoot GetConfigurationRoot(string outputPath)
     {
-        public static IConfigurationRoot GetConfigurationRoot(string outputPath)
-        {
-            return new ConfigurationBuilder()
-                .SetBasePath(outputPath)                            // For local testing
-                .AddJsonFile("appsettings.json", optional: true)
-                .AddEnvironmentVariables("ShippingRates.")          // For CI
-                .Build();
-        }
+        return new ConfigurationBuilder()
+            .SetBasePath(outputPath)                            // For local testing
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddEnvironmentVariables("ShippingRates.")          // For CI
+            .Build();
+    }
 
-        public static TestsConfiguration GetApplicationConfiguration(string outputPath)
-        {
-            var configurationRoot = GetConfigurationRoot(outputPath);
+    public static TestsConfiguration GetApplicationConfiguration(string outputPath)
+    {
+        var configurationRoot = GetConfigurationRoot(outputPath);
 
-            var configuration = new TestsConfiguration();
+        var configuration = new TestsConfiguration();
 
-            configurationRoot.Bind(configuration);
+        configurationRoot.Bind(configuration);
 
-            return configuration;
-        }
+        return configuration;
     }
 }
 

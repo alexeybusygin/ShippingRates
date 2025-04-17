@@ -1,4 +1,3 @@
-using ShippingRates.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +11,6 @@ namespace ShippingRates
     public class Shipment
     {
         public ReadOnlyCollection<Package> Packages { get; }
-        public ICollection<IRateAdjuster> RateAdjusters { get; set; }
         public Address DestinationAddress { get; }
         public Address OriginAddress { get; }
         public ShipmentOptions Options { get; }
