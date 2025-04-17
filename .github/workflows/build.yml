@@ -33,6 +33,7 @@ jobs:
         ShippingRates.UPSAccountNumber: ${{ secrets.UPS_ACCOUNT_NUMBER }}
         ShippingRates.UPSClientId: ${{ secrets.UPS_CLIENT_ID }}
         ShippingRates.UPSClientSecret: ${{ secrets.UPS_CLIENT_SECRET }}
+        ShippingRates.FedExUseProduction: ${{ secrets.FEDEX_USE_PRODUCTION }}
       run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
 
     - name: Pack
