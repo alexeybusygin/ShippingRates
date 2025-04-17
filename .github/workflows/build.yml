@@ -1,0 +1,54 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '**'       # Build on all branches
+    tags:
+      - 'v*'       # Publish only on version tags
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore ./ShippingRates/ShippingRates.csproj
+
+    - name: Test
+      env:
+        ShippingRates.USPSUserId: ${{ secrets.USPS_USER_ID }}
+        ShippingRates.UPSAccountNumber: ${{ secrets.UPS_ACCOUNT_NUMBER }}
+        ShippingRates.UPSClientId: ${{ secrets.UPS_CLIENT_ID }}
+        ShippingRates.UPSClientSecret: ${{ secrets.UPS_CLIENT_SECRET }}
+        ShippingRates.FedExUseProduction: ${{ secrets.FEDEX_USE_PRODUCTION }}
+        ShippingRates.FedExHubId: ${{ secrets.FEDEX_HUB_ID }}
+        ShippingRates.FedExKey: ${{ secrets.FEDEX_KEY }}
+        ShippingRates.FedExPassword: ${{ secrets.FEDEX_PASSWORD }}
+        ShippingRates.FedExAccountNumber: ${{ secrets.FEDEX_ACCOUNT_NUMBER }}
+        ShippingRates.FedExMeterNumber: ${{ secrets.FEDEX_METER_NUMBER }}
+        ShippingRates.DHLSiteId: ${{ secrets.DHL_SITE_ID }}
+        ShippingRates.DHLPassword: ${{ secrets.DHL_PASSWORD }}
+        ShippingRates.DHLAccountNumber: ${{ secrets.DHL_ACCOUNT_NUMBER }}
+      run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
+
+    - name: Pack
+      run: dotnet pack --configuration Release --no-build --output ./nupkgs ./ShippingRates/ShippingRates.csproj
+
+    - name: Upload NuGet package as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: package
+        path: ./nupkgs
