@@ -34,6 +34,14 @@ jobs:
         ShippingRates.UPSClientId: ${{ secrets.UPS_CLIENT_ID }}
         ShippingRates.UPSClientSecret: ${{ secrets.UPS_CLIENT_SECRET }}
         ShippingRates.FedExUseProduction: ${{ secrets.FEDEX_USE_PRODUCTION }}
+        ShippingRates.FedExHubId: ${{ secrets.FEDEX_HUB_ID }}
+        ShippingRates.FedExKey: ${{ secrets.FEDEX_KEY }}
+        ShippingRates.FedExPassword: ${{ secrets.FEDEX_PASSWORD }}
+        ShippingRates.FedExAccountNumber: ${{ secrets.FEDEX_ACCOUNT_NUMBER }}
+        ShippingRates.FedExMeterNumber: ${{ secrets.FEDEX_METER_NUMBER }}
+        ShippingRates.DHLSiteId: ${{ secrets.DHL_SITE_ID }}
+        ShippingRates.DHLPassword: ${{ secrets.DHL_PASSWORD }}
+        ShippingRates.DHLAccountNumber: ${{ secrets.DHL_ACCOUNT_NUMBER }}
       run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
 
     - name: Pack
