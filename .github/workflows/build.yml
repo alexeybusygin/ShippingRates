@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '**'       # Build on all branches
+    tags:
+      - 'v*'       # Publish only on version tags
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore .\ShippingRates\ShippingRates.csproj
+
+    - name: Test
+      run: dotnet test --configuration Release --verbosity normal .\ShippingRates.Tests\ShippingRates.Tests.csproj
+
+    - name: Pack
+      run: dotnet pack --configuration Release --no-build --output ./nupkgs .\ShippingRates\ShippingRates.csproj
+
+    - name: Upload NuGet package as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: package
+        path: ./nupkgs
