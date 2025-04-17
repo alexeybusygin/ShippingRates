@@ -25,13 +25,13 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore .\ShippingRates\ShippingRates.csproj
+      run: dotnet build --configuration Release --no-restore ./ShippingRates/ShippingRates.csproj
 
     - name: Test
-      run: dotnet test --configuration Release --verbosity normal .\ShippingRates.Tests\ShippingRates.Tests.csproj
+      run: dotnet test --configuration Release --verbosity normal ./ShippingRates.Tests/ShippingRates.Tests.csproj
 
     - name: Pack
-      run: dotnet pack --configuration Release --no-build --output ./nupkgs .\ShippingRates\ShippingRates.csproj
+      run: dotnet pack --configuration Release --no-build --output ./nupkgs ./ShippingRates/ShippingRates.csproj
 
     - name: Upload NuGet package as artifact
       uses: actions/upload-artifact@v4
