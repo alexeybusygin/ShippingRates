@@ -30,7 +30,7 @@ jobs:
     - name: Test
       env:
         ShippingRates.USPSUserId: ${{ secrets.USPS_USER_ID }}
-      run: dotnet test --configuration Release --no-build --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
+      run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
 
     - name: Pack
       run: dotnet pack --configuration Release --no-build --output ./nupkgs ./ShippingRates/ShippingRates.csproj
