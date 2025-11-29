@@ -29,6 +29,9 @@ jobs:
 
     - name: Test
       env:
+        ShippingRates.USPSClientId: ${{ secrets.USPS_CLIENT_ID }}
+        ShippingRates.USPSClientSecret: ${{ secrets.USPS_CLIENT_SECRET }}
+        ShippingRates.USPSExUseProduction: ${{ secrets.USPS_USE_PRODUCTION }}
         ShippingRates.USPSUserId: ${{ secrets.USPS_USER_ID }}
         ShippingRates.UPSAccountNumber: ${{ secrets.UPS_ACCOUNT_NUMBER }}
         ShippingRates.UPSClientId: ${{ secrets.UPS_CLIENT_ID }}
