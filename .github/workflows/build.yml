@@ -3,10 +3,12 @@ name: Build
 on:
   push:
     branches:
-      - '**'       # Build on all branches
+      - '**'
     tags:
-      - 'v*'       # Publish only on version tags
+      - 'v*'
   pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -31,6 +33,7 @@ jobs:
       run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
 
     - name: Test (Integration)
+      if: ${{ github.event_name == 'pull_request' }}
       env:
         ShippingRates.USPSClientId: ${{ secrets.USPS_CLIENT_ID }}
         ShippingRates.USPSClientSecret: ${{ secrets.USPS_CLIENT_SECRET }}
@@ -54,9 +57,11 @@ jobs:
       run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
 
     - name: Pack
+      if: startsWith(github.ref, 'refs/tags/v')
       run: dotnet pack --configuration Release --no-build --output ./nupkgs ./ShippingRates/ShippingRates.csproj
 
     - name: Upload NuGet package as artifact
+      if: startsWith(github.ref, 'refs/tags/v')
       uses: actions/upload-artifact@v4
       with:
         name: package
