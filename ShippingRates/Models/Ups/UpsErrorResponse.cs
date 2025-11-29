@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ShippingRates.Models.UPS
+namespace ShippingRates.Models.Ups
 {
     internal class UpsErrorResponse
     {

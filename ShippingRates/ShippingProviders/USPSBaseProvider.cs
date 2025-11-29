@@ -31,7 +31,7 @@ namespace ShippingRates.ShippingProviders
             HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        internal static void ParseErrors(XElement response, RateResultBuilder resultBuilder)
+        internal static void ParseErrors(XElement response, RateResultAggregator resultBuilder)
         {
             if (response?.Descendants("Error")?.Any() ?? false)
             {
@@ -48,7 +48,7 @@ namespace ShippingRates.ShippingProviders
 
                 foreach (var err in errors)
                 {
-                    resultBuilder.AddError(err);
+                    resultBuilder.AddProviderError(err);
                 }
             }
         }

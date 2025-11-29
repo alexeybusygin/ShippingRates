@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ShippingRates.Models;
-using ShippingRates.Models.UPS;
+using ShippingRates.Models.Ups;
 using ShippingRates.ShippingProviders;
 using System;
 using System.Net.Http;
@@ -30,7 +30,7 @@ namespace ShippingRates.Services
             string token,
             Uri uri,
             TRequest request,
-            RateResultBuilder resultBuilder)
+            RateResultAggregator resultBuilder)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -59,7 +59,7 @@ namespace ShippingRates.Services
                 {
                     foreach (var error in errorResponse.Response.Errors)
                     {
-                        resultBuilder.AddError(new Error()
+                        resultBuilder.AddProviderError(new Error()
                         {
                             Number = error.Code,
                             Description = error.Message

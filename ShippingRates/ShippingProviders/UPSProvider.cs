@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using ShippingRates.Models;
-using ShippingRates.Models.UPS;
+using ShippingRates.Models.Ups;
 using ShippingRates.Services;
+using ShippingRates.ShippingProviders.Ups;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -70,11 +71,11 @@ namespace ShippingRates.ShippingProviders
         public override async Task<RateResult> GetRatesAsync(Shipment shipment)
         {
             var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
-            var resultBuilder = new RateResultBuilder(Name);
+            var resultBuilder = new RateResultAggregator(Name);
 
             try
             {
-                var oauthService = new UPSOAuthService(_logger);
+                var oauthService = new UpsOAuthClient(_logger);
                 var token = await oauthService.GetTokenAsync(_configuration, httpClient, resultBuilder);
 
                 if (!string.IsNullOrEmpty(token))
@@ -99,10 +100,10 @@ namespace ShippingRates.ShippingProviders
                     httpClient.Dispose();
             }
 
-            return resultBuilder.GetRateResult();
+            return resultBuilder.Build();
         }
 
-        private void ParseResponse(Shipment shipment, UpsRatingResponse response, RateResultBuilder resultBuilder)
+        private void ParseResponse(Shipment shipment, UpsRatingResponse response, RateResultAggregator resultBuilder)
         {
             if (response?.RateResponse?.RatedShipment == null)
                 return;

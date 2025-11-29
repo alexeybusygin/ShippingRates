@@ -88,7 +88,7 @@ namespace ShippingRates.ShippingProviders
         public override async Task<RateResult> GetRatesAsync(Shipment shipment)
         {
             var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
-            var resultBuilder = new RateResultBuilder(Name);
+            var resultBuilder = new RateResultAggregator(Name);
 
             try
             {
@@ -108,7 +108,7 @@ namespace ShippingRates.ShippingProviders
                     httpClient.Dispose();
             }
 
-            return resultBuilder.GetRateResult();
+            return resultBuilder.Build();
         }
 
         private string GetRequestXmlString(Shipment shipment)
@@ -189,7 +189,7 @@ namespace ShippingRates.ShippingProviders
             return shipment.OriginAddress.IsUnitedStatesAddress() && shipment.DestinationAddress.IsUnitedStatesAddress();
         }
 
-        private void ParseResult(Shipment shipment, string response, RateResultBuilder resultBuilder)
+        private void ParseResult(Shipment shipment, string response, RateResultAggregator resultBuilder)
         {
             var document = XDocument.Load(new StringReader(response));
 

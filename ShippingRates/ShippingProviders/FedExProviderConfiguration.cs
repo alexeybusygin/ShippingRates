@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ShippingRates.Models.OAuth;
 
 namespace ShippingRates.ShippingProviders
 {
-    public class FedExProviderConfiguration
+    public class FedExProviderConfiguration : IOAuthConfiguration
     {
         /// <summary>
         /// FedEx Account Number

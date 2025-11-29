@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ShippingRates.Models;
-using ShippingRates.Models.UPS;
+using ShippingRates.Models.Ups;
 using ShippingRates.ShippingProviders;
 using System;
 using System.Net.Http;
@@ -24,7 +24,7 @@ namespace ShippingRates.Services
             string token,
             bool isProduction,
             UpsRatingRequest request,
-            RateResultBuilder resultBuilder)
+            RateResultAggregator resultBuilder)
         {
             request = request ?? throw new ArgumentNullException(nameof(request));
 

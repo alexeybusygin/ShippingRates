@@ -3,19 +3,19 @@ using System.Collections.Generic;
 
 namespace ShippingRates.Models
 {
-    internal class RateResultBuilder
+    internal class RateResultAggregator
     {
         private readonly string _providerName;
         private readonly List<Rate> _rates = new List<Rate>();
         private readonly List<Error> _errors = new List<Error>();
         private readonly List<string> _internalErrors = new List<string>();
 
-        internal RateResultBuilder(string providerName)
+        internal RateResultAggregator(string providerName)
         {
             _providerName = providerName;
         }
 
-        internal void AddError(Error error)
+        internal void AddProviderError(Error error)
         {
             _errors.Add(error);
         }
@@ -30,7 +30,7 @@ namespace ShippingRates.Models
             _rates.Add(new Rate(_providerName, providerCode, name, totalCharges, delivery, options, currencyCode));
         }
 
-        internal RateResult GetRateResult()
+        internal RateResult Build()
         {
             var result = new RateResult();
             result.Rates.AddRange(_rates);

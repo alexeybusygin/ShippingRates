@@ -129,7 +129,7 @@ namespace ShippingRates.ShippingProviders
             }
 
             var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
-            var resultBuilder = new RateResultBuilder(Name);
+            var resultBuilder = new RateResultAggregator(Name);
 
             try
             {
@@ -150,7 +150,7 @@ namespace ShippingRates.ShippingProviders
                     httpClient.Dispose();
             }
 
-            return resultBuilder.GetRateResult();
+            return resultBuilder.Build();
         }
 
         private string GetRequestXmlString(Shipment shipment, List<SpecialServices> specialServices)
@@ -268,7 +268,7 @@ namespace ShippingRates.ShippingProviders
             return (width <= 27 && height <= 17 && length <= 17) || (width <= 17 && height <= 27 && length <= 17) || (width <= 17 && height <= 17 && length <= 27);
         }
 
-        private void ParseResult(Shipment shipment, string response, List<SpecialServices> includeSpecialServiceCodes, RateResultBuilder resultBuilder)
+        private void ParseResult(Shipment shipment, string response, List<SpecialServices> includeSpecialServiceCodes, RateResultAggregator resultBuilder)
         {
             var document = XElement.Parse(response, LoadOptions.None);
 

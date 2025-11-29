@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace ShippingRates.Services
+namespace ShippingRates.Services.OAuth
 {
     /// <summary>
-    /// Token caching for UPS, FedEx
+    /// Token caching for UPS, FedEx, and USPS OAuth tokens
     /// </summary>
     internal class TokenCacheService
     {

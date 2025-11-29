@@ -1,4 +1,4 @@
-﻿namespace ShippingRates.Models.UPS
+﻿namespace ShippingRates.Models.Ups
 {
     internal class UpsRatingResponse
     {

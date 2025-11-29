@@ -124,7 +124,7 @@ namespace ShippingRates.ShippingProviders
         {
             var request = CreateRateRequest(shipment);
             var service = new RatePortTypeClient(_configuration.UseProduction);
-            var resultBuilder = new RateResultBuilder(Name);
+            var resultBuilder = new RateResultAggregator(Name);
 
             try
             {
@@ -146,14 +146,14 @@ namespace ShippingRates.ShippingProviders
                 resultBuilder.AddInternalError($"FedEx provider exception: {e.Message}");
             }
 
-            return resultBuilder.GetRateResult();
+            return resultBuilder.Build();
         }
 
         /// <summary>
         /// Processes the reply
         /// </summary>
         /// <param name="reply"></param>
-        private void ProcessReply(Shipment shipment, RateReply reply, RateResultBuilder resultBuilder)
+        private void ProcessReply(Shipment shipment, RateReply reply, RateResultAggregator resultBuilder)
         {
             if (reply?.RateReplyDetails == null)
                 return;
@@ -308,7 +308,7 @@ namespace ShippingRates.ShippingProviders
             }
         }
 
-        private static void ProcessErrors(RateReply reply, RateResultBuilder resultBuilder)
+        private static void ProcessErrors(RateReply reply, RateResultAggregator resultBuilder)
         {
             var errorTypes = new NotificationSeverityType[]
             {
@@ -332,7 +332,7 @@ namespace ShippingRates.ShippingProviders
 
                 foreach (var err in errors)
                 {
-                    resultBuilder.AddError(err);
+                    resultBuilder.AddProviderError(err);
                 }
             }
         }

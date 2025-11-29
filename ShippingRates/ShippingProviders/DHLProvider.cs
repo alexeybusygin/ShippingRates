@@ -221,7 +221,7 @@ namespace ShippingRates.ShippingProviders
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
-            var resultBuilder = new RateResultBuilder(Name);
+            var resultBuilder = new RateResultAggregator(Name);
 
             try
             {
@@ -263,12 +263,12 @@ namespace ShippingRates.ShippingProviders
                     httpClient.Dispose();
             }
 
-            return resultBuilder.GetRateResult();
+            return resultBuilder.Build();
         }
 
         private static string GetMessageId() => Guid.NewGuid().ToString().Replace("-", "");
 
-        private void ParseRatesResponseMessage(Shipment shipment, XElement xDoc, RateResultBuilder resultBuilder)
+        private void ParseRatesResponseMessage(Shipment shipment, XElement xDoc, RateResultAggregator resultBuilder)
         {
             if (xDoc == null)
             {
@@ -281,7 +281,7 @@ namespace ShippingRates.ShippingProviders
             ParseErrors(xDoc.XPathSelectElements("Response/Status/Condition"), resultBuilder);
         }
 
-        private void ParseRates(Shipment shipment, IEnumerable<XElement> rates, RateResultBuilder resultBuilder)
+        private void ParseRates(Shipment shipment, IEnumerable<XElement> rates, RateResultAggregator resultBuilder)
         {
             var includedServices = _configuration.ServicesIncluded;
             var excludedServices = _configuration.ServicesExcluded;
@@ -339,11 +339,11 @@ namespace ShippingRates.ShippingProviders
             }
         }
 
-        private void ParseErrors(IEnumerable<XElement> errors, RateResultBuilder resultBuilder)
+        private void ParseErrors(IEnumerable<XElement> errors, RateResultAggregator resultBuilder)
         {
             foreach (var errorNode in errors)
             {
-                resultBuilder.AddError(new Error()
+                resultBuilder.AddProviderError(new Error()
                 {
                     Number = errorNode.Element("ConditionCode")?.Value,
                     Description = errorNode.Element("ConditionData")?.Value

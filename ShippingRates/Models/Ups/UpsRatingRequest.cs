@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace ShippingRates.Models.UPS
+﻿namespace ShippingRates.Models.Ups
 {
     internal class UpsRatingRequest
     {

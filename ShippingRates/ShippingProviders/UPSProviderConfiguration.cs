@@ -1,9 +1,11 @@
-﻿namespace ShippingRates.ShippingProviders
+﻿using ShippingRates.Models.OAuth;
+
+namespace ShippingRates.ShippingProviders
 {
     /// <summary>
     /// UPS Provider Configuration
     /// </summary>
-    public class UPSProviderConfiguration
+    public class UPSProviderConfiguration : IOAuthConfiguration
     {
         /// <summary>
         /// UPS Client Id (required)
