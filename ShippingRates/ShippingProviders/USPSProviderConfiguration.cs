@@ -15,6 +15,10 @@ namespace ShippingRates.ShippingProviders
         public string Service { get; set; }
         public USPS.SpecialServices[] SpecialServices { get; set; }
 
+        internal USPSProviderConfiguration()
+        {
+        }
+
         public USPSProviderConfiguration(string userId)
         {
             UserId = userId;

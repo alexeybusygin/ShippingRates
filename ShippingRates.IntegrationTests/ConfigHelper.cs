@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace ShippingRates.Tests;
+namespace ShippingRates.IntegrationTests;
 
 public class ConfigHelper
 {
