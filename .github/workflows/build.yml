@@ -27,7 +27,10 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore ./ShippingRates/ShippingRates.csproj
 
-    - name: Test
+    - name: Test (Unit)
+      run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
+
+    - name: Test (Integration)
       env:
         ShippingRates.USPSClientId: ${{ secrets.USPS_CLIENT_ID }}
         ShippingRates.USPSClientSecret: ${{ secrets.USPS_CLIENT_SECRET }}
@@ -45,7 +48,7 @@ jobs:
         ShippingRates.DHLSiteId: ${{ secrets.DHL_SITE_ID }}
         ShippingRates.DHLPassword: ${{ secrets.DHL_PASSWORD }}
         ShippingRates.DHLAccountNumber: ${{ secrets.DHL_ACCOUNT_NUMBER }}
-      run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
+      run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
 
     - name: Pack
       run: dotnet pack --configuration Release --no-build --output ./nupkgs ./ShippingRates/ShippingRates.csproj
