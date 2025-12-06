@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
+using ShippingRates.ShippingProviders.Usps;
 
 namespace ShippingRates.SampleApp
 {
@@ -28,9 +29,6 @@ namespace ShippingRates.SampleApp
             var fedexMeterNumber = appSettings["FedExMeterNumber"];
             var fedexHubId = appSettings["FedExHubId"]; // 5531 is the hubId to use in FedEx's test environment
             var fedexUseProduction = Convert.ToBoolean(appSettings["FedExUseProduction"]);
-
-            // You will need a userId to use the USPS provider. Your account will also need access to the production servers.
-            var uspsUserId = appSettings["USPSUserId"];
 
             // You will need a Site ID and Password to use DHL provider.
             var dhlSiteId = appSettings["DHLSiteId"];
@@ -76,14 +74,19 @@ namespace ShippingRates.SampleApp
                     var upsProviderLogger = loggerFactory.CreateLogger<UPSProvider>();
                     rateManager.AddProvider(new UPSProvider(upsConfiguration, httpClient, upsProviderLogger));
 
-                    //// FedEx
+                    // FedEx
                     rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction));
                     rateManager.AddProvider(new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction));
 
-                    //// USPS Domestic
-                    rateManager.AddProvider(new USPSProvider(new USPSProviderConfiguration(uspsUserId), httpClient));
-                    // USPS International
-                    rateManager.AddProvider(new USPSInternationalProvider(new USPSProviderConfiguration(uspsUserId), httpClient));
+                    // USPS
+                    var uspsProviderConfiguration = new UspsProviderConfiguration()
+                    {
+                        ClientId = appSettings["UspsClientId"],
+                        ClientSecret = appSettings["UspsClientSecret"],
+                        UseProduction = Convert.ToBoolean(appSettings["UspsUseProduction"])
+                    };
+                    var uspsProviderLogger = loggerFactory.CreateLogger<UspsProvider>();
+                    rateManager.AddProvider(new UspsProvider(uspsProviderConfiguration, httpClient, uspsProviderLogger));
 
                     //// DHL
                     var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: true).ExcludeServices(new char[] { 'C' });
