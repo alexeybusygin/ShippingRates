@@ -15,7 +15,7 @@
                 RateResponse = new RateResponse()
                 {
                     Response = RateResponse?.Response,
-                    RatedShipment = new[] { RateResponse?.RatedShipment }
+                    RatedShipment = [RateResponse?.RatedShipment]
                 }
             };
         }

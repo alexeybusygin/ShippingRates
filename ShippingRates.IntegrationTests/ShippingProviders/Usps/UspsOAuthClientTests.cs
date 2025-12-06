@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using ShippingRates.Models;
+using ShippingRates.Services.Usps;
 using ShippingRates.ShippingProviders;
 using ShippingRates.ShippingProviders.Usps;
 
@@ -8,7 +9,7 @@ namespace ShippingRates.IntegrationTests.ShippingProviders.Usps;
 [TestFixture]
 public class UspsOAuthClientTests
 {
-    private USPSProviderConfiguration _configuration;
+    private UspsProviderConfiguration _configuration;
     private static readonly HttpClient _httpClient = new();
 
     [OneTimeSetUp]
@@ -16,7 +17,7 @@ public class UspsOAuthClientTests
     {
         var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
 
-        _configuration = new USPSProviderConfiguration
+        _configuration = new UspsProviderConfiguration
         {
             ClientId = config.USPSClientId,
             ClientSecret = config.USPSClientSecret,
@@ -49,7 +50,7 @@ public class UspsOAuthClientTests
         var logger = NullLogger<UPSProvider>.Instance;
         var oauthService = new UspsOAuthClient(logger);
         var resultAggregator = new RateResultAggregator("USPS");
-        var wrongConfiguration = new USPSProviderConfiguration
+        var wrongConfiguration = new UspsProviderConfiguration
         {
             ClientId = "WRONG",
             ClientSecret = "WRONG",

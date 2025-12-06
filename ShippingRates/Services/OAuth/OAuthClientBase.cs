@@ -13,9 +13,9 @@ namespace ShippingRates.Services.OAuth
 {
     internal abstract class OAuthClientBase<TConfiguration> where TConfiguration : IOAuthConfiguration
     {
-        protected readonly ILogger _logger;
+        protected readonly ILogger? _logger;
 
-        public OAuthClientBase(ILogger logger)
+        public OAuthClientBase(ILogger? logger)
         {
             _logger = logger;
         }
@@ -23,9 +23,10 @@ namespace ShippingRates.Services.OAuth
         protected virtual string GetOAuthRequestUri(bool isProduction)
             => throw new NotImplementedException();
 
-        protected virtual string ServiceName => "Service";
+        protected virtual string ServiceName
+            => throw new NotImplementedException();
 
-        public async Task<string> GetTokenAsync(
+        public async Task<string?> GetTokenAsync(
             TConfiguration configuration,
             HttpClient httpClient,
             RateResultAggregator resultAggregator,
@@ -38,7 +39,7 @@ namespace ShippingRates.Services.OAuth
             var token = TokenCacheService.GetToken(configuration.ClientId);
             if (!string.IsNullOrEmpty(token))
             {
-                _logger?.LogDebug("Fetched {ServiceName} token from cache for clientId {ClientId}", ServiceName, configuration.ClientId);
+                _logger?.LogDebug(OAuthMessages.Debug.TokenFetchedFromCache, ServiceName, configuration.ClientId);
                 return token;
             }
 
@@ -60,14 +61,14 @@ namespace ShippingRates.Services.OAuth
 
                         TokenCacheService.AddToken(configuration.ClientId, tokenResponse.AccessToken, tokenResponse.ExpiresIn);
 
-                        _logger?.LogDebug("Received OAuth token from {ServiceName}", ServiceName);
+                        _logger?.LogDebug(OAuthMessages.Debug.TokenReceived, ServiceName);
                         return tokenResponse.AccessToken;
                     }
 
                     if (!ParseError(response, resultAggregator))
                     {
-                        resultAggregator.AddInternalError($"Unknown error while fetching {ServiceName} OAuth token: {responseMessage.StatusCode} {response}");
-                        _logger?.LogError("Unknown error while fetching {ServiceName} OAuth token: {statusCode} {response}", ServiceName, responseMessage.StatusCode, response);
+                        resultAggregator.AddInternalError(OAuthMessages.Error.Unknown, ServiceName, responseMessage.StatusCode, response);
+                        _logger?.LogError(OAuthMessages.Error.Unknown, ServiceName, responseMessage.StatusCode, response);
                     }
 
                     return null;
@@ -110,7 +111,7 @@ namespace ShippingRates.Services.OAuth
                     Number = error.Code,
                     Description = error.Message
                 });
-                _logger?.LogError("Error while fetching {ServiceName} OAuth token: {code} {message}", ServiceName, error.Code, error.Message);
+                _logger?.LogError(OAuthMessages.Error.TokenError, ServiceName, error.Code, error.Message);
             }
             return true;
         }

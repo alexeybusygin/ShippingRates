@@ -15,7 +15,7 @@ namespace ShippingRates.Models.Ups
 
         public UpsRatingRequest Build(Shipment shipment)
         {
-            var shipFromUS = shipment.OriginAddress.CountryCode == "US";
+            var shipFromUS = shipment.OriginAddress.IsUnitedStatesAddress();
             var unitsSystem = shipFromUS ? UnitsSystem.USCustomary : UnitsSystem.Metric;
 
             var request = new UpsRatingRequest()

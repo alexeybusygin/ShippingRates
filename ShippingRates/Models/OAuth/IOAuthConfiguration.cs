@@ -8,12 +8,12 @@
         /// <summary>
         /// The OAuth client identifier issued by the provider.
         /// </summary>
-        string ClientId { get; set; }
+        string? ClientId { get; set; }
 
         /// <summary>
         /// The OAuth client secret used to authenticate the application.
         /// </summary>
-        string ClientSecret { get; set; }
+        string? ClientSecret { get; set; }
 
         /// <summary>
         /// Indicates whether the client should target production (live) API endpoints.

@@ -25,7 +25,7 @@ public class UpsOAuthClientTests
         };
     }
 
-    [Test, Category("Integration")]
+    [Test]
     public async Task GetToken_Success()
     {
         var logger = NullLogger<UPSProvider>.Instance;

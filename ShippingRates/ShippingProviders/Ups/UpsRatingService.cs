@@ -1,18 +1,17 @@
 ﻿using Microsoft.Extensions.Logging;
 using ShippingRates.Models;
 using ShippingRates.Models.Ups;
-using ShippingRates.ShippingProviders;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace ShippingRates.Services
+namespace ShippingRates.ShippingProviders.Ups
 {
     internal class UpsRatingService : UpsBaseService
     {
         const string Version = "v2403";
 
-        internal UpsRatingService(ILogger<UPSProvider> logger) : base(logger)
+        internal UpsRatingService(ILogger logger) : base(logger)
         {
         }
 

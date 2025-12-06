@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ShippingRates.Models;
 using ShippingRates.Models.Ups;
-using ShippingRates.ShippingProviders;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,13 +8,13 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace ShippingRates.Services
+namespace ShippingRates.ShippingProviders.Ups
 {
     internal class UpsBaseService
     {
-        private readonly ILogger<UPSProvider> _logger;
+        private readonly ILogger _logger;
 
-        internal UpsBaseService(ILogger<UPSProvider> logger)
+        internal UpsBaseService(ILogger logger)
         {
             _logger = logger;
         }

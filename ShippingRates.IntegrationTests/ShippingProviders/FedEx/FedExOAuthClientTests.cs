@@ -24,7 +24,7 @@ public class FedExOAuthClientTests
         };
     }
 
-    [Test, Category("Integration")]
+    [Test]
     public async Task GetToken_Success()
     {
         var logger = NullLogger<FedExProvider>.Instance;
