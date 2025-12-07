@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using ShippingRates.Models;
+using ShippingRates.Services.FedEx;
 using ShippingRates.ShippingProviders;
-using ShippingRates.ShippingProviders.FedEx;
 
 namespace ShippingRates.IntegrationTests.ShippingProviders.FedEx;
 

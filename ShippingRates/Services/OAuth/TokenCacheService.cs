@@ -8,13 +8,13 @@ namespace ShippingRates.Services.OAuth
     /// </summary>
     internal class TokenCacheService
     {
-        static readonly ConcurrentDictionary<string, CacheItem> _cache = new ConcurrentDictionary<string, CacheItem>();
+        static readonly ConcurrentDictionary<string, CacheItem> _cache = new();
         /// <summary>
         /// Get token for a given client ID
         /// </summary>
         /// <param name="clientId">Client ID</param>
         /// <returns>Token string or null</returns>
-        public static string GetToken(string clientId)
+        public static string? GetToken(string clientId)
         {
             if (_cache.TryGetValue(clientId, out var item))
             {
@@ -34,18 +34,14 @@ namespace ShippingRates.Services.OAuth
         /// <param name="expiresIn">Expiration interval in seconds</param>
         public static void AddToken(string clientId, string token, int expiresIn)
         {
-            var item = new CacheItem()
-            {
-                Token = token,
-                ExpirationTime = DateTime.Now.AddSeconds(expiresIn)
-            };
-            _cache.AddOrUpdate(clientId, item, (key, existingVal) => item);
+            var item = new CacheItem(
+                token,
+                DateTime.Now.AddSeconds(expiresIn)
+            );
+
+            _cache.AddOrUpdate(clientId, item, (_, _) => item);
         }
 
-        class CacheItem
-        {
-            public string Token { get; set; }
-            public DateTime ExpirationTime { get; set; }
-        }
+        private sealed record CacheItem(string Token, DateTime ExpirationTime);
     }
 }

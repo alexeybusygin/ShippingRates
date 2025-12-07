@@ -24,7 +24,7 @@ internal class UspsOAuthClient(ILogger? logger) : OAuthClientBase<UspsProviderCo
         {
             Description = error.ErrorDescription,
         });
-        _logger?.LogError("Error while fetching {ServiceName} OAuth token: {ErrorDescription}", ServiceName, error.ErrorDescription);
+        _logger?.LogError(OAuthMessages.Error.TokenError, ServiceName, error.ErrorDescription);
 
         return true;
     }
