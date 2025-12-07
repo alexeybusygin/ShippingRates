@@ -11,12 +11,6 @@ Starting with **version 3.0.0**, the package introduces a new **USPS integration
 
 More details are available at the USPS developer site: https://developers.usps.com/
 
-## UPS Breaking Changes
-
-UPS has deprecated access key authentication in favor of an OAuth 2.0 security model for all APIs. Beginning August 5, 2024, access keys will no longer be supported. More details at the UPS site: https://developer.ups.com/oauth-developer-guide?loc=en_US
-
-The new authentication model was implemented in the package starting with version 2.1.0.
-
 ## How to Install
 
 Available in the [NuGet Gallery](http://nuget.org/packages/ShippingRates):
