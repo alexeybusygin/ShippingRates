@@ -15,7 +15,7 @@
         /// <param name="insuredValue">The insured-value of the package, in dollars.</param>
         /// <param name="container">A specific packaging from a shipping provider. E.g. "LG FLAT RATE BOX" for USPS</param>
         /// <param name="signatureRequiredOnDelivery">If true, will attempt to send this to the appropriate rate provider.</param>
-        public PackageKgCm(int length, int width, int height, int weight, decimal insuredValue, string container = null, bool signatureRequiredOnDelivery = false)
+        public PackageKgCm(int length, int width, int height, int weight, decimal insuredValue, string? container = null, bool signatureRequiredOnDelivery = false)
             : this(length, width, height, (decimal)weight, insuredValue, container, signatureRequiredOnDelivery)
         {
         }
@@ -30,7 +30,7 @@
         /// <param name="insuredValue">The insured-value of the package, in dollars.</param>
         /// <param name="container">A specific packaging from a shipping provider. E.g. "LG FLAT RATE BOX" for USPS</param>
         /// <param name="signatureRequiredOnDelivery">If true, will attempt to send this to the appropriate rate provider.</param>
-        public PackageKgCm(decimal length, decimal width, decimal height, decimal weight, decimal insuredValue, string container = null, bool signatureRequiredOnDelivery = false)
+        public PackageKgCm(decimal length, decimal width, decimal height, decimal weight, decimal insuredValue, string? container = null, bool signatureRequiredOnDelivery = false)
             : base(UnitsSystem.Metric, length, width, height, weight)
 
         {

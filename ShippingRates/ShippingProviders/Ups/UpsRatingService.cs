@@ -16,9 +16,9 @@ namespace ShippingRates.ShippingProviders.Ups
         }
 
         static Uri GetRequestUri(bool isRateRequest, bool isProduction)
-            => new Uri($"https://{(isProduction ? "onlinetools" : "wwwcie")}.ups.com/api/rating/{Version}/{(isRateRequest ? "Rate" : "Shop")}");
+            => new($"https://{(isProduction ? "onlinetools" : "wwwcie")}.ups.com/api/rating/{Version}/{(isRateRequest ? "Rate" : "Shop")}");
 
-        public async Task<UpsRatingResponse> GetRatingAsync(
+        public async Task<UpsRatingResponse?> GetRatingAsync(
             HttpClient httpClient,
             string token,
             bool isProduction,

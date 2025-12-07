@@ -27,7 +27,7 @@ internal class UpsRatingRequestBuilderTests
         var dailyRatesBuilder = new UpsRatingRequestBuilder(dailyRatesConfig);
         var dailyRatesRequest = dailyRatesBuilder.Build(shipment);
         Assert.That(dailyRatesRequest?.RateRequest?.CustomerClassification, Is.Not.Null);
-        Assert.That(dailyRatesRequest?.RateRequest?.CustomerClassification.Code, Is.EqualTo("01"));
+        Assert.That(dailyRatesRequest?.RateRequest?.CustomerClassification?.Code, Is.EqualTo("01"));
 
         // Retail rates
         var retailRatesConfig = new UPSProviderConfiguration()
@@ -37,7 +37,7 @@ internal class UpsRatingRequestBuilderTests
         var retailRatesBuilder = new UpsRatingRequestBuilder(retailRatesConfig);
         var retailRatesRequest = retailRatesBuilder.Build(shipment);
         Assert.That(retailRatesRequest?.RateRequest?.CustomerClassification, Is.Not.Null);
-        Assert.That(retailRatesRequest?.RateRequest?.CustomerClassification.Code, Is.EqualTo("04"));
+        Assert.That(retailRatesRequest?.RateRequest?.CustomerClassification?.Code, Is.EqualTo("04"));
     }
 
 
@@ -51,7 +51,7 @@ internal class UpsRatingRequestBuilderTests
         var regularRatesBuilder = new UpsRatingRequestBuilder(regularRatesConfig);
         var regularRatesRequest = regularRatesBuilder.Build(shipment);
         Assert.That(regularRatesRequest?.RateRequest?.CustomerClassification, Is.Not.Null);
-        Assert.That(regularRatesRequest?.RateRequest?.CustomerClassification.Code, Is.EqualTo("00"));
+        Assert.That(regularRatesRequest?.RateRequest?.CustomerClassification?.Code, Is.EqualTo("00"));
 
         // International shipment
         var fromNL = new Address("Amsterdam", "", "1043 AG", "NL");
@@ -76,7 +76,7 @@ internal class UpsRatingRequestBuilderTests
         var dailyRatesBuilder = new UpsRatingRequestBuilder(dailyRatesConfig);
         var dailyRatesRequest = dailyRatesBuilder.Build(shipment);
         Assert.That(dailyRatesRequest?.RateRequest?.CustomerClassification, Is.Not.Null);
-        Assert.That(dailyRatesRequest?.RateRequest?.CustomerClassification.Code, Is.EqualTo("01"));
+        Assert.That(dailyRatesRequest?.RateRequest?.CustomerClassification?.Code, Is.EqualTo("01"));
 
         // Standard rates
         var retailRatesConfig = new UPSProviderConfiguration()
@@ -86,6 +86,6 @@ internal class UpsRatingRequestBuilderTests
         var retailRatesBuilder = new UpsRatingRequestBuilder(retailRatesConfig);
         var retailRatesRequest = retailRatesBuilder.Build(shipment);
         Assert.That(retailRatesRequest?.RateRequest?.CustomerClassification, Is.Not.Null);
-        Assert.That(retailRatesRequest?.RateRequest?.CustomerClassification.Code, Is.EqualTo("53"));
+        Assert.That(retailRatesRequest?.RateRequest?.CustomerClassification?.Code, Is.EqualTo("53"));
     }
 }

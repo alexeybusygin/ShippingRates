@@ -88,13 +88,13 @@ namespace ShippingRates.ShippingProviders
                 }
                 request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested()
                 {
-                    SpecialServiceTypes = new[] { "FEDEX_ONE_RATE" }
+                    SpecialServiceTypes = ["FEDEX_ONE_RATE"]
                 };
             }
 
             if (shipment.Options.SaturdayDelivery)
             {
-                request.VariableOptions = new[] { ServiceOptionType.SATURDAY_DELIVERY };
+                request.VariableOptions = [ServiceOptionType.SATURDAY_DELIVERY];
             }
 
             SetShipmentDetails(request, shipment);
@@ -162,7 +162,7 @@ namespace ShippingRates.ShippingProviders
             {
                 var key = rateReplyDetail.ServiceType.ToString();
 
-                if (ServiceCodes.TryGetValue(key, out string value))
+                if (ServiceCodes.TryGetValue(key, out string? value))
                 {
                     var rateDetails = GetRateDetailsByRateType(rateReplyDetail);
                     var rates = rateDetails.Select(r => FedExBaseProvider.GetCurrencyConvertedRate(shipment, r.ShipmentRateDetail));
@@ -170,14 +170,14 @@ namespace ShippingRates.ShippingProviders
                         ? rates.Where(r => r.currencyCode == shipment.Options.GetCurrencyCode())
                         : rates;
 
-                    var netCharge = rates.OrderByDescending(r => r.amount).FirstOrDefault();
+                    var (amount, currencyCode) = rates.OrderByDescending(r => r.amount).FirstOrDefault();
                     var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
 
-                    resultBuilder.AddRate(key, value, netCharge.amount, deliveryDate, new RateOptions()
+                    resultBuilder.AddRate(key, value, amount, deliveryDate, new RateOptions()
                     {
                         SaturdayDelivery = rateReplyDetail.AppliedOptions?.Contains(ServiceOptionType.SATURDAY_DELIVERY) ?? false
                     },
-                    netCharge.currencyCode);
+                    currencyCode);
                 }
                 else
                 {
@@ -318,7 +318,7 @@ namespace ShippingRates.ShippingProviders
 
             var noReplyDetails = reply.RateReplyDetails == null;
 
-            if (reply.Notifications != null && reply.Notifications.Any())
+            if (reply.Notifications != null && reply.Notifications.Length != 0)
             {
                 var errors = reply.Notifications
                     .Where(e => !e.SeveritySpecified || errorTypes.Contains(e.Severity) || noReplyDetails)

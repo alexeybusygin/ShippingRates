@@ -12,7 +12,7 @@ namespace ShippingRates.Helpers.Extensions
         /// </summary>
         /// <param name="requestedShipment"></param>
         /// <returns>Calculated weight if RequestedPackageLineItems in RequestedShipment, otherwise null.</returns>
-        public static Weight GetTotalWeight(this RequestedShipment requestedShipment)
+        public static Weight? GetTotalWeight(this RequestedShipment requestedShipment)
         {
             if (requestedShipment != null && requestedShipment.RequestedPackageLineItems != null && requestedShipment.RequestedPackageLineItems.Length > 0)
             {

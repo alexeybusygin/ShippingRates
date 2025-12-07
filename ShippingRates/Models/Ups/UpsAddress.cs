@@ -1,28 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace ShippingRates.Models.Ups
+namespace ShippingRates.Models.Ups;
+
+internal sealed class UpsAddress
 {
-    internal class UpsAddress
+    public IReadOnlyList<string> AddressLine { get; } = [];
+    public string? City { get; }
+    public string? StateProvinceCode { get; }
+    public string? PostalCode { get; }
+    public string? CountryCode { get; }
+    public string? ResidentialAddressIndicator { get; set; }
+
+    public UpsAddress(Address address)
     {
-        public string[] AddressLine = Array.Empty<string>();
-        public string City { get; set; }
-        public string StateProvinceCode { get; set; }
-        public string PostalCode { get; set; }
-        public string CountryCode { get; set; }
-        public string ResidentialAddressIndicator { get; set; }
+        address = address ?? throw new ArgumentNullException(nameof(address));
 
-        public UpsAddress(Address address)
-        {
-            var addressLines = new string[] { address.Line1, address.Line2, address.Line3 }
-                .Where(s => !string.IsNullOrEmpty(s))
-                .ToArray();
+        AddressLine = new[] { address.Line1, address.Line2, address.Line3 }
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s => s!)
+            .ToArray();
 
-            AddressLine = addressLines;
-            City = address.City;
-            StateProvinceCode = address.State;
-            PostalCode = address.PostalCode;
-            CountryCode = address.CountryCode;
-        }
+        City = address.City;
+        StateProvinceCode = address.State;
+        PostalCode = address.PostalCode;
+        CountryCode = address.CountryCode;
     }
 }
