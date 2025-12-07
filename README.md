@@ -5,6 +5,12 @@
 
 .NET wrapper for UPS, FedEx, USPS, and DHL APIs. Use it to retrieve shipping rates from these carriers.
 
+## USPS Breaking Changes
+
+Starting with **version 3.0.0**, the package introduces a new **USPS integration** based on the modern USPS REST APIs and OAuth 2.0 authentication. Earlier versions relied on legacy USPS APIs and are not compatible with the new USPS platform. Upgrading to v3.0.0 or later is required to use USPS services.
+
+More details are available at the USPS developer site: https://developers.usps.com/
+
 ## UPS Breaking Changes
 
 UPS has deprecated access key authentication in favor of an OAuth 2.0 security model for all APIs. Beginning August 5, 2024, access keys will no longer be supported. More details at the UPS site: https://developer.ups.com/oauth-developer-guide?loc=en_US
@@ -40,8 +46,14 @@ rateManager.AddProvider(new UPSProvider(upsConfiguration, httpClient));
 // You will need an account # and meter # to utilize the FedEx provider.
 rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
 
-// You will need a userId to use the USPS provider. Your account will also need access to the production servers.
-rateManager.AddProvider(new USPSProvider(new USPSProviderConfiguration(uspsUserId), httpClient));
+// You will need an OAuth Client ID and Client Secret to use the USPS provider.
+var uspsProviderConfiguration = new UspsProviderConfiguration()
+{
+    ClientId = upsClientId,
+    ClientSecret = upsClientSecret,
+    UseProduction = false
+};
+rateManager.AddProvider(new UspsProvider(uspsProviderConfiguration, httpClient));
 
 // You will need a Site ID and Password to use the DHL provider.
 var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: false));
