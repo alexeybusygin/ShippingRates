@@ -144,7 +144,7 @@ This one can be tricky to debug. Start by setting at least $1 insurance for your
 Developer documentation is often hard to find. The links below are provided as a reference.
 
 * [FedEx](http://www.fedex.com/us/developer/)
-* [USPS](https://www.usps.com/business/web-tools-apis/welcome.htm)
+* [USPS](https://developers.usps.com/apis)
 * [UPS](https://developer.ups.com/api/reference?loc=en_US#operation/Rate)
 * [DHL](https://xmlportal.dhl.com/capability_and_qoute#cap_quote)
 
