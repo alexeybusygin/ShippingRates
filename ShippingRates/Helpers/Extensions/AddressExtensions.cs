@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ShippingRates.Helpers.Extensions
@@ -32,16 +31,21 @@ namespace ShippingRates.Helpers.Extensions
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        private static string[] GetStreetLines(Address address)
+        private static string?[] GetStreetLines(Address address)
         {
-            var streetLines = new List<string>
+            var streetLines = new[]
             {
-                address.Line1?.Trim(),
-                address.Line2?.Trim(),
-                address.Line3?.Trim()
-            };
-            streetLines = streetLines.Where(l => !string.IsNullOrEmpty(l)).ToList();
-            return streetLines.Any() ? streetLines.ToArray() : new string[] { "" };
+                address.Line1,
+                address.Line2,
+                address.Line3
+            }
+            .Select(l => l?.Trim())
+            .Where(l => !string.IsNullOrEmpty(l))
+            .ToArray();
+
+            return streetLines.Length > 0
+                ? streetLines
+                : [string.Empty];
         }
     }
 }

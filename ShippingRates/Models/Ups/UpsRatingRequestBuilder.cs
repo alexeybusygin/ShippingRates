@@ -119,9 +119,9 @@ namespace ShippingRates.Models.Ups
             };
         }
 
-        static string GetServiceCode(string serviceDescription)
+        static string? GetServiceCode(string? serviceDescription)
         {
-            if (serviceDescription.Length == 2)
+            if (serviceDescription == null || serviceDescription.Length == 2)
                 return serviceDescription;
 
             var serviceCode = UPSProvider.GetServiceCodes().FirstOrDefault(c => c.Value == serviceDescription).Key;

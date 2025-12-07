@@ -10,15 +10,15 @@ namespace ShippingRates.ShippingProviders
         /// <summary>
         /// UPS Client Id (required)
         /// </summary>
-        public string ClientId { get; set; }
+        public string? ClientId { get; set; }
         /// <summary>
         /// UPS Client Secret (required)
         /// </summary>
-        public string ClientSecret { get; set; }
+        public string? ClientSecret { get; set; }
         /// <summary>
         /// UPS Account Number (6 chars, required)
         /// </summary>
-        public string AccountNumber { get; set; }
+        public string? AccountNumber { get; set; }
         /// <summary>
         /// Use production endpoint
         /// </summary>
@@ -27,7 +27,7 @@ namespace ShippingRates.ShippingProviders
         /// Optional. Service description from GetServiceCodes() values, e.g. "UPS Second Day Air".
         /// If omitted, all possible services will be fetched
         /// </summary>
-        public string ServiceDescription { get; set; }
+        public string? ServiceDescription { get; set; }
         /// <summary>
         /// Use retails rates (for shipping from a UPS retail location).
         /// Overrides CustomerClassification.

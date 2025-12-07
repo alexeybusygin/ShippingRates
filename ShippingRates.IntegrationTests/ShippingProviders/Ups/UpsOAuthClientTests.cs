@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using ShippingRates.Models;
+using ShippingRates.Services.Ups;
 using ShippingRates.ShippingProviders;
-using ShippingRates.ShippingProviders.Ups;
 
 namespace ShippingRates.IntegrationTests.ShippingProviders.Ups;
 

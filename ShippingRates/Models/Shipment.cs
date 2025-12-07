@@ -15,7 +15,7 @@ namespace ShippingRates
         public Address OriginAddress { get; }
         public ShipmentOptions Options { get; }
 
-        public Shipment(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions options = null)
+        public Shipment(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions? options = null)
         {
             OriginAddress = originAddress ?? throw new ArgumentNullException(nameof(originAddress));
             DestinationAddress = destinationAddress ?? throw new ArgumentNullException(nameof(destinationAddress));
@@ -38,15 +38,15 @@ namespace ShippingRates
         /// <summary>
         ///     Shipment rates
         /// </summary>
-        public List<Rate> Rates { get; } = new List<Rate>();
+        public List<Rate> Rates { get; } = [];
         /// <summary>
         ///     Errors returned by service provider (e.g. 'Wrong postal code')
         /// </summary>
-        public List<Error> Errors { get; } = new List<Error>();
+        public List<Error> Errors { get; } = [];
         /// <summary>
         ///     Internal library errors during interaction with service provider
         ///     (e.g. SoapException was thrown)
         /// </summary>
-        public List<string> InternalErrors { get; } = new List<string>();
+        public List<string> InternalErrors { get; } = [];
     }
 }
