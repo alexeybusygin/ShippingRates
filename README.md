@@ -84,8 +84,7 @@ See the sample app in this repository for a working example.
 * [HttpClient lifecycle](https://github.com/alexeybusygin/ShippingRates/wiki/HttpClient-lifecycle)
 * [Negotiated Rates](https://github.com/alexeybusygin/ShippingRates/wiki/Negotiated-Rates)
 * [Logging](https://github.com/alexeybusygin/ShippingRates/wiki/Logging)
-* [USPS: International Rates](https://github.com/alexeybusygin/ShippingRates/wiki/USPS-International-Rates)
-* [USPS: Special Services](https://github.com/alexeybusygin/ShippingRates/wiki/USPS-Special-Services)
+* [USPS: Extra Services](https://github.com/alexeybusygin/ShippingRates/wiki/USPS-Special-Services)
 * [Single Rate for UPS and USPS](https://github.com/alexeybusygin/ShippingRates/wiki/Single-Rate-for-UPS-and-USPS)
 * [Rate Adjusters](https://github.com/alexeybusygin/ShippingRates/wiki/Rate-Adjusters)
 
