@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace ShippingRates.Services.Usps;
 
-internal class UspsOAuthClient(ILogger? logger) : OAuthClientBase<UspsProviderConfiguration>(logger)
+internal sealed class UspsOAuthClient(ILogger? logger) : OAuthClientBase<UspsProviderConfiguration>(logger)
 {
     protected override string ServiceName => "USPS";
 
@@ -24,7 +24,7 @@ internal class UspsOAuthClient(ILogger? logger) : OAuthClientBase<UspsProviderCo
         {
             Description = error.ErrorDescription,
         });
-        _logger?.LogError(OAuthMessages.Error.TokenError, ServiceName, error.ErrorDescription);
+        Logger?.LogError(OAuthMessages.Error.TokenError, ServiceName, error.ErrorDescription);
 
         return true;
     }

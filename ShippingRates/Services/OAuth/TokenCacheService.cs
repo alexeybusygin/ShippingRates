@@ -1,47 +1,48 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace ShippingRates.Services.OAuth
+namespace ShippingRates.Services.OAuth;
+
+/// <summary>
+/// Simple in-memory cache for UPS, FedEx, and USPS OAuth tokens.
+/// </summary>
+internal static class TokenCacheService
 {
+    static readonly ConcurrentDictionary<string, CacheItem> _cache = new();
     /// <summary>
-    /// Token caching for UPS, FedEx, and USPS OAuth tokens
+    /// Try to get a cached, unexpired token for the client.
     /// </summary>
-    internal class TokenCacheService
+    /// <param name="clientId">Unique identifier for the client.</param>
+    /// <returns><c>true</c> when a valid token is returned.</returns>
+    public static bool TryGetToken(string clientId, out string? token)
     {
-        static readonly ConcurrentDictionary<string, CacheItem> _cache = new();
-        /// <summary>
-        /// Get token for a given client ID
-        /// </summary>
-        /// <param name="clientId">Client ID</param>
-        /// <returns>Token string or null</returns>
-        public static string? GetToken(string clientId)
+        var now = DateTimeOffset.UtcNow;
+        if (_cache.TryGetValue(clientId, out var item) && item.ExpirationTime > now)
         {
-            if (_cache.TryGetValue(clientId, out var item))
-            {
-                if (item.ExpirationTime > DateTime.Now)
-                {
-                    return item.Token;
-                }
-            }
-            return null;
+            token = item.Token;
+            return true;
         }
 
-        /// <summary>
-        /// Add token
-        /// </summary>
-        /// <param name="clientId">Client ID</param>
-        /// <param name="token">Token</param>
-        /// <param name="expiresIn">Expiration interval in seconds</param>
-        public static void AddToken(string clientId, string token, int expiresIn)
-        {
-            var item = new CacheItem(
-                token,
-                DateTime.Now.AddSeconds(expiresIn)
-            );
-
-            _cache.AddOrUpdate(clientId, item, (_, _) => item);
-        }
-
-        private sealed record CacheItem(string Token, DateTime ExpirationTime);
+        token = null;
+        return false;
     }
+
+    /// <summary>
+    /// Store or refresh the token for the client.
+    /// </summary>
+    /// <param name="clientId">Unique identifier for the client.</param>
+    /// <param name="token">OAuth access token.</param>
+    /// <param name="expiresIn">Time-to-live before the token expires.</param>
+    public static void AddToken(string clientId, string token, TimeSpan expiresIn)
+    {
+        if (string.IsNullOrWhiteSpace(clientId)) throw new ArgumentException("clientId required", nameof(clientId));
+        if (string.IsNullOrWhiteSpace(token)) throw new ArgumentException("token required", nameof(token));
+
+        var now = DateTimeOffset.UtcNow;
+        var item = new CacheItem(token, now + expiresIn);
+
+        _cache.AddOrUpdate(clientId, item, (_, _) => item);
+    }
+
+    private sealed record CacheItem(string Token, DateTimeOffset ExpirationTime);
 }

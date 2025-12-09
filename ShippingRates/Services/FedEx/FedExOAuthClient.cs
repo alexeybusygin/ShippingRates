@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace ShippingRates.Services.FedEx;
 
-internal class FedExOAuthClient(ILogger logger) : OAuthClientBase<FedExProviderConfiguration>(logger)
+internal sealed class FedExOAuthClient(ILogger? logger) : OAuthClientBase<FedExProviderConfiguration>(logger)
 {
     protected override string GetOAuthRequestUri(bool isProduction)
         => $"https://{(isProduction ? "apis" : "apis-sandbox")}.fedex.com/oauth/token";
@@ -41,7 +41,7 @@ internal class FedExOAuthClient(ILogger logger) : OAuthClientBase<FedExProviderC
                 Number = error.Code,
                 Description = error.Message
             });
-            _logger?.LogError(OAuthMessages.Error.TokenErrorWithCode, ServiceName, error.Code, error.Message);
+            Logger?.LogError(OAuthMessages.Error.TokenErrorWithCode, ServiceName, error.Code, error.Message);
         }
         return true;
     }

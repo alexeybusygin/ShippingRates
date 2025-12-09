@@ -14,13 +14,13 @@ namespace ShippingRates.Services.OAuth;
 internal abstract class OAuthClientBase<TConfiguration>(ILogger? logger)
     where TConfiguration : IOAuthConfiguration
 {
-    protected readonly ILogger? _logger = logger;
+    private const int ExpirationBufferSeconds = 30;
 
-    protected virtual string GetOAuthRequestUri(bool isProduction)
-        => throw new NotImplementedException();
+    protected ILogger? Logger { get; } = logger;
 
-    protected virtual string ServiceName
-        => throw new NotImplementedException();
+    protected abstract string GetOAuthRequestUri(bool isProduction);
+
+    protected abstract string ServiceName { get; }
 
     public async Task<string?> GetTokenAsync(
         TConfiguration configuration,
@@ -32,10 +32,11 @@ internal abstract class OAuthClientBase<TConfiguration>(ILogger? logger)
         if (httpClient == null) throw new ArgumentNullException(nameof(httpClient));
         if (resultAggregator == null) throw new ArgumentNullException(nameof(resultAggregator));
 
-        var token = TokenCacheService.GetToken(configuration.ClientId);
-        if (!string.IsNullOrEmpty(token))
+        var clientId = configuration.ClientId ?? throw new ArgumentException(OAuthMessages.Error.ClientIdMissing);
+
+        if (TokenCacheService.TryGetToken(clientId, out var token))
         {
-            _logger?.LogDebug(OAuthMessages.Debug.TokenFetchedFromCache, ServiceName, configuration.ClientId);
+            Logger?.LogDebug(OAuthMessages.Debug.TokenFetchedFromCache, ServiceName, clientId);
             return token;
         }
 
@@ -49,22 +50,31 @@ internal abstract class OAuthClientBase<TConfiguration>(ILogger? logger)
             .ReadAsStringAsync()
             .ConfigureAwait(false);
 
-        if (responseMessage.IsSuccessStatusCode)
+        try
         {
-            var tokenResponse = ParseResponse(response);
-            if (tokenResponse != null && tokenResponse.AccessToken != null)
+            if (responseMessage.IsSuccessStatusCode)
             {
-                TokenCacheService.AddToken(configuration.ClientId, tokenResponse.AccessToken, tokenResponse.ExpiresIn);
+                var tokenResponse = ParseResponse(response);
+                if (tokenResponse != null && tokenResponse.AccessToken != null)
+                {
+                    TokenCacheService.AddToken(clientId, tokenResponse.AccessToken,
+                        TimeSpan.FromSeconds(Math.Max(1, tokenResponse.ExpiresIn - ExpirationBufferSeconds)));
 
-                _logger?.LogDebug(OAuthMessages.Debug.TokenReceived, ServiceName);
-                return tokenResponse.AccessToken;
+                    Logger?.LogDebug(OAuthMessages.Debug.TokenReceived, ServiceName);
+                    return tokenResponse.AccessToken;
+                }
+            }
+
+            if (!ParseError(response, resultAggregator))
+            {
+                resultAggregator.AddInternalError(OAuthMessages.Error.Unknown, ServiceName, responseMessage.StatusCode, response);
+                Logger?.LogError(OAuthMessages.Error.Unknown, ServiceName, responseMessage.StatusCode, response);
             }
         }
-
-        if (!ParseError(response, resultAggregator))
+        catch (Exception ex)
         {
-            resultAggregator.AddInternalError(OAuthMessages.Error.Unknown, ServiceName, responseMessage.StatusCode, response);
-            _logger?.LogError(OAuthMessages.Error.Unknown, ServiceName, responseMessage.StatusCode, response);
+            resultAggregator.AddInternalError(OAuthMessages.Error.Unknown, ex.Message, responseMessage.StatusCode, response);
+            Logger?.LogError(OAuthMessages.Error.Unknown, ex.Message, responseMessage.StatusCode, response);
         }
 
         return null;

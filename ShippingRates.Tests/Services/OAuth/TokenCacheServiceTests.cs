@@ -13,19 +13,27 @@ public class TokenCacheServiceTests
         var tokenA = "aaaa";
         var tokenB = "bbbb";
 
-        TokenCacheService.AddToken(clientId, tokenA, 5);
-        TokenCacheService.AddToken(clientId, tokenB, 2);
+        TokenCacheService.AddToken(clientId, tokenA, TimeSpan.FromSeconds(5));
+        TokenCacheService.AddToken(clientId, tokenB, TimeSpan.FromSeconds(2));
 
-        Assert.That(TokenCacheService.GetToken(clientId), Is.EqualTo(tokenB));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(TokenCacheService.TryGetToken(clientId, out var token1), Is.True);
+            Assert.That(token1, Is.EqualTo(tokenB));
+        }
 
         Thread.Sleep(1000);
 
-        TokenCacheService.AddToken(clientId2, tokenA, 5);
+        TokenCacheService.AddToken(clientId2, tokenA, TimeSpan.FromSeconds(5));
 
-        Assert.That(TokenCacheService.GetToken(clientId), Is.EqualTo(tokenB));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(TokenCacheService.TryGetToken(clientId, out var token2), Is.True);
+            Assert.That(token2, Is.EqualTo(tokenB));
+        }
 
         Thread.Sleep(2000);
 
-        Assert.That(TokenCacheService.GetToken(clientId), Is.Null);
+        Assert.That(TokenCacheService.TryGetToken(clientId, out var _), Is.False);
     }
 }

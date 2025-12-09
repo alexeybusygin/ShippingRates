@@ -58,7 +58,7 @@ internal sealed class UpsOAuthClient(ILogger? logger) : OAuthClientBase<UPSProvi
                 Number = error.Code,
                 Description = error.Message
             });
-            _logger?.LogError(OAuthMessages.Error.TokenErrorWithCode, ServiceName, error.Code, error.Message);
+            Logger?.LogError(OAuthMessages.Error.TokenErrorWithCode, ServiceName, error.Code, error.Message);
         }
 
         return true;
