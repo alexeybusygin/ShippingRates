@@ -5,11 +5,11 @@
 
 .NET wrapper for UPS, FedEx, USPS, and DHL APIs. Use it to retrieve shipping rates from these carriers.
 
-## UPS Breaking Changes
+## USPS Breaking Changes
 
-UPS has deprecated access key authentication in favor of an OAuth 2.0 security model for all APIs. Beginning August 5, 2024, access keys will no longer be supported. More details at the UPS site: https://developer.ups.com/oauth-developer-guide?loc=en_US
+Starting with **version 3.0.0**, the package introduces a new **USPS integration** based on the modern USPS REST APIs and OAuth 2.0 authentication. Earlier versions relied on legacy USPS APIs and are not compatible with the new USPS platform. Upgrading to v3.0.0 or later is required to use USPS services.
 
-The new authentication model was implemented in the package starting with version 2.1.0.
+More details are available at the USPS developer site: https://developers.usps.com/
 
 ## How to Install
 
@@ -40,8 +40,14 @@ rateManager.AddProvider(new UPSProvider(upsConfiguration, httpClient));
 // You will need an account # and meter # to utilize the FedEx provider.
 rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
 
-// You will need a userId to use the USPS provider. Your account will also need access to the production servers.
-rateManager.AddProvider(new USPSProvider(new USPSProviderConfiguration(uspsUserId), httpClient));
+// You will need an OAuth Client ID and Client Secret to use the USPS provider.
+var uspsProviderConfiguration = new UspsProviderConfiguration()
+{
+    ClientId = upsClientId,
+    ClientSecret = upsClientSecret,
+    UseProduction = false
+};
+rateManager.AddProvider(new UspsProvider(uspsProviderConfiguration, httpClient));
 
 // You will need a Site ID and Password to use the DHL provider.
 var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: false));
@@ -72,8 +78,7 @@ See the sample app in this repository for a working example.
 * [HttpClient lifecycle](https://github.com/alexeybusygin/ShippingRates/wiki/HttpClient-lifecycle)
 * [Negotiated Rates](https://github.com/alexeybusygin/ShippingRates/wiki/Negotiated-Rates)
 * [Logging](https://github.com/alexeybusygin/ShippingRates/wiki/Logging)
-* [USPS: International Rates](https://github.com/alexeybusygin/ShippingRates/wiki/USPS-International-Rates)
-* [USPS: Special Services](https://github.com/alexeybusygin/ShippingRates/wiki/USPS-Special-Services)
+* [USPS: Extra Services](https://github.com/alexeybusygin/ShippingRates/wiki/USPS-Special-Services)
 * [Single Rate for UPS and USPS](https://github.com/alexeybusygin/ShippingRates/wiki/Single-Rate-for-UPS-and-USPS)
 * [Rate Adjusters](https://github.com/alexeybusygin/ShippingRates/wiki/Rate-Adjusters)
 
@@ -139,7 +144,7 @@ This one can be tricky to debug. Start by setting at least $1 insurance for your
 Developer documentation is often hard to find. The links below are provided as a reference.
 
 * [FedEx](http://www.fedex.com/us/developer/)
-* [USPS](https://www.usps.com/business/web-tools-apis/welcome.htm)
+* [USPS](https://developers.usps.com/apis)
 * [UPS](https://developer.ups.com/api/reference?loc=en_US#operation/Rate)
 * [DHL](https://xmlportal.dhl.com/capability_and_qoute#cap_quote)
 

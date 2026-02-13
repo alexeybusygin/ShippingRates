@@ -33,7 +33,7 @@ namespace ShippingRates
         /// <param name="insuredValue">The insured-value of the package, in dollars.</param>
         /// <param name="container">A specific packaging from a shipping provider. E.g. "LG FLAT RATE BOX" for USPS</param>
         /// <param name="signatureRequiredOnDelivery">If true, will attempt to send this to the appropriate rate provider.</param>
-        public Package(int length, int width, int height, int weight, decimal insuredValue, string container = null, bool signatureRequiredOnDelivery = false)
+        public Package(int length, int width, int height, int weight, decimal insuredValue, string? container = null, bool signatureRequiredOnDelivery = false)
             : this(length, width, height, (decimal) weight, insuredValue, container, signatureRequiredOnDelivery)
         {
         }
@@ -48,7 +48,7 @@ namespace ShippingRates
         /// <param name="insuredValue">The insured-value of the package, in dollars.</param>
         /// <param name="container">A specific packaging from a shipping provider. E.g. "LG FLAT RATE BOX" for USPS</param>
         /// <param name="signatureRequiredOnDelivery">If true, will attempt to send this to the appropriate rate provider.</param>
-        public Package(decimal length, decimal width, decimal height, decimal weight, decimal insuredValue, string container = null, bool signatureRequiredOnDelivery = false)
+        public Package(decimal length, decimal width, decimal height, decimal weight, decimal insuredValue, string? container = null, bool signatureRequiredOnDelivery = false)
             : this(UnitsSystem.USCustomary, length, width, height, weight)
 
         {
@@ -70,7 +70,7 @@ namespace ShippingRates
 
         public decimal InsuredValue { get; set; }
         public bool IsOversize { get; set; }
-        public string Container { get; set; }
+        public string? Container { get; set; }
         public bool SignatureRequiredOnDelivery { get; set; }
 
         public decimal GetHeight(UnitsSystem unitsSystem) => _height.Get(unitsSystem);

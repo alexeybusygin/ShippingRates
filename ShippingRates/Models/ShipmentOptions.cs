@@ -17,7 +17,7 @@ namespace ShippingRates
         /// <summary>
         /// Preferred currency code, applies to FedEx only
         /// </summary>
-        public string PreferredCurrencyCode { get; set; }
+        public string? PreferredCurrencyCode { get; set; }
         /// <summary>
         /// Use FedEx One Rate pricing option. Ignored for non-FedEx providers
         /// </summary>
@@ -36,6 +36,6 @@ namespace ShippingRates
         /// FEDEX_TUBE
         /// Ignored for non-FedEx providers. Not applied unless FedExOneRate is true.
         /// </summary>
-        public string FedExOneRatePackageOverride { get; set; }
+        public string? FedExOneRatePackageOverride { get; set; }
     }
 }

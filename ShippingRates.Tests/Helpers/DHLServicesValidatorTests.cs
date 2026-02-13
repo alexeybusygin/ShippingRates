@@ -1,37 +1,34 @@
-﻿using NUnit.Framework;
-using ShippingRates.Helpers;
-using System.Linq;
+﻿using ShippingRates.Helpers;
 
-namespace ShippingRates.Tests.Helpers
+namespace ShippingRates.Tests.Helpers;
+
+[TestFixture()]
+public class DHLServicesValidatorTests
 {
-    [TestFixture()]
-    public class DHLServicesValidatorTests
+    [Test()]
+    public void IsServiceValidTest()
     {
-        [Test()]
-        public void IsServiceValidTest()
+        using (Assert.EnterMultipleScope())
         {
-            Assert.Multiple(() =>
-            {
-                Assert.That(DHLServicesValidator.IsServiceValid('M'), Is.True);
-                Assert.That(DHLServicesValidator.IsServiceValid('n'), Is.True);
-                Assert.That(DHLServicesValidator.IsServiceValid('9'), Is.False);
-            });
+            Assert.That(DHLServicesValidator.IsServiceValid('M'), Is.True);
+            Assert.That(DHLServicesValidator.IsServiceValid('n'), Is.True);
+            Assert.That(DHLServicesValidator.IsServiceValid('9'), Is.False);
         }
+    }
 
-        [Test()]
-        public void GetValidServicesTest()
+    [Test()]
+    public void GetValidServicesTest()
+    {
+        var services = new char[] { 'M', 'n', '9' };
+        var validServices = DHLServicesValidator.GetValidServices(services);
+
+        using (Assert.EnterMultipleScope())
         {
-            var services = new char[] { 'M', 'n', '9' };
-            var validServices = DHLServicesValidator.GetValidServices(services);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(validServices, Has.Length.EqualTo(2));
-                Assert.That(validServices.Count(s => s == 'M'), Is.EqualTo(1));
-                Assert.That(validServices.Where(s => s == 'n'), Is.Empty);
-                Assert.That(validServices.Count(s => s == 'N'), Is.EqualTo(1));
-                Assert.That(validServices.Where(s => s == '9'), Is.Empty);
-            });
+            Assert.That(validServices, Has.Length.EqualTo(2));
+            Assert.That(validServices.Count(s => s == 'M'), Is.EqualTo(1));
+            Assert.That(validServices.Where(s => s == 'n'), Is.Empty);
+            Assert.That(validServices.Count(s => s == 'N'), Is.EqualTo(1));
+            Assert.That(validServices.Where(s => s == '9'), Is.Empty);
         }
     }
 }

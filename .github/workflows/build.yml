@@ -3,10 +3,12 @@ name: Build
 on:
   push:
     branches:
-      - '**'       # Build on all branches
+      - '**'
     tags:
-      - 'v*'       # Publish only on version tags
+      - 'v*'
   pull_request:
+    branches:
+      - master
 
 jobs:
   build:
@@ -27,8 +29,15 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore ./ShippingRates/ShippingRates.csproj
 
-    - name: Test
+    - name: Test (Unit)
+      run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
+
+    - name: Test (Integration)
+      if: ${{ github.event_name == 'pull_request' }}
       env:
+        ShippingRates.USPSClientId: ${{ secrets.USPS_CLIENT_ID }}
+        ShippingRates.USPSClientSecret: ${{ secrets.USPS_CLIENT_SECRET }}
+        ShippingRates.USPSUseProduction: ${{ secrets.USPS_USE_PRODUCTION }}
         ShippingRates.USPSUserId: ${{ secrets.USPS_USER_ID }}
         ShippingRates.UPSAccountNumber: ${{ secrets.UPS_ACCOUNT_NUMBER }}
         ShippingRates.UPSClientId: ${{ secrets.UPS_CLIENT_ID }}
@@ -39,15 +48,20 @@ jobs:
         ShippingRates.FedExPassword: ${{ secrets.FEDEX_PASSWORD }}
         ShippingRates.FedExAccountNumber: ${{ secrets.FEDEX_ACCOUNT_NUMBER }}
         ShippingRates.FedExMeterNumber: ${{ secrets.FEDEX_METER_NUMBER }}
+        ShippingRates.FedExRestClientId: ${{ secrets.FEDEX_REST_CLIENT_ID }}
+        ShippingRates.FedExRestClientSecret: ${{ secrets.FEDEX_REST_CLIENT_SECRET }}
+        ShippingRates.FedExRestUseProduction: ${{ secrets.FEDEX_REST_USE_PRODUCTION }}
         ShippingRates.DHLSiteId: ${{ secrets.DHL_SITE_ID }}
         ShippingRates.DHLPassword: ${{ secrets.DHL_PASSWORD }}
         ShippingRates.DHLAccountNumber: ${{ secrets.DHL_ACCOUNT_NUMBER }}
-      run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
+      run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
 
     - name: Pack
+      if: startsWith(github.ref, 'refs/tags/v')
       run: dotnet pack --configuration Release --no-build --output ./nupkgs ./ShippingRates/ShippingRates.csproj
 
     - name: Upload NuGet package as artifact
+      if: startsWith(github.ref, 'refs/tags/v')
       uses: actions/upload-artifact@v4
       with:
         name: package

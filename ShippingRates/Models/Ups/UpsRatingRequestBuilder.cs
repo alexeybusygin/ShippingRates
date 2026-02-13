@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace ShippingRates.Models.UPS
+namespace ShippingRates.Models.Ups
 {
     internal class UpsRatingRequestBuilder
     {
@@ -15,7 +15,7 @@ namespace ShippingRates.Models.UPS
 
         public UpsRatingRequest Build(Shipment shipment)
         {
-            var shipFromUS = shipment.OriginAddress.CountryCode == "US";
+            var shipFromUS = shipment.OriginAddress.IsUnitedStatesAddress();
             var unitsSystem = shipFromUS ? UnitsSystem.USCustomary : UnitsSystem.Metric;
 
             var request = new UpsRatingRequest()
@@ -119,9 +119,9 @@ namespace ShippingRates.Models.UPS
             };
         }
 
-        static string GetServiceCode(string serviceDescription)
+        static string? GetServiceCode(string? serviceDescription)
         {
-            if (serviceDescription.Length == 2)
+            if (serviceDescription == null || serviceDescription.Length == 2)
                 return serviceDescription;
 
             var serviceCode = UPSProvider.GetServiceCodes().FirstOrDefault(c => c.Value == serviceDescription).Key;

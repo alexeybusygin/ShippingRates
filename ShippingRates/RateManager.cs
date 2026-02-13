@@ -1,10 +1,7 @@
-using System;
-using System.Collections;
+using ShippingRates.ShippingProviders;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-using ShippingRates.ShippingProviders;
 
 namespace ShippingRates
 {
@@ -21,8 +18,8 @@ namespace ShippingRates
         /// </summary>
         public RateManager()
         {
-            _providers = new List<IShippingProvider>();
-            _adjusters = new List<IRateAdjuster>();
+            _providers = [];
+            _adjusters = [];
         }
 
         /// <summary>
@@ -47,9 +44,9 @@ namespace ShippingRates
         /// <param name="package">An instance of <see cref="Package" /> specifying the package to be rated.</param>
         /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public Shipment GetRates(Address originAddress, Address destinationAddress, Package package, ShipmentOptions options = null)
+        public Shipment GetRates(Address originAddress, Address destinationAddress, Package package, ShipmentOptions? options = null)
         {
-            return GetRates(originAddress, destinationAddress, new List<Package> { package }, options);
+            return GetRates(originAddress, destinationAddress, [package], options);
         }
 
         /// <summary>
@@ -60,9 +57,9 @@ namespace ShippingRates
         /// <param name="package">An instance of <see cref="Package" /> specifying the package to be rated.</param>
         /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, Package package, ShipmentOptions options = null)
+        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, Package package, ShipmentOptions? options = null)
         {
-            return await GetRatesAsync(originAddress, destinationAddress, new List<Package> { package }, options).ConfigureAwait(false);
+            return await GetRatesAsync(originAddress, destinationAddress, [package], options).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -73,7 +70,7 @@ namespace ShippingRates
         /// <param name="packages">An instance of <see cref="PackageCollection" /> specifying the packages to be rated.</param>
         /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public Shipment GetRates(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions options = null)
+        public Shipment GetRates(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions? options = null)
         {
             return GetRatesAsync(originAddress, destinationAddress, packages, options).GetAwaiter().GetResult();
         }
@@ -86,7 +83,7 @@ namespace ShippingRates
         /// <param name="packages">An instance of <see cref="PackageCollection" /> specifying the packages to be rated.</param>
         /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions options = null)
+        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions? options = null)
         {
             var shipment = new Shipment(originAddress, destinationAddress, packages, options);
 
@@ -115,8 +112,8 @@ namespace ShippingRates
                     aggregatedRates.AddRange(rates);
                 }
 
-                aggregatedErrors.AddRange(result?.Errors ?? new List<Error>());
-                aggregatedInternalErrors.AddRange(result?.InternalErrors ?? new List<string>());
+                aggregatedErrors.AddRange(result?.Errors ?? []);
+                aggregatedInternalErrors.AddRange(result?.InternalErrors ?? []);
             }
 
             // Aggregate everything into the shipment object
