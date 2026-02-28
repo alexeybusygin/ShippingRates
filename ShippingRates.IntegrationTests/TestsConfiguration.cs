@@ -6,8 +6,6 @@ public class TestsConfiguration
     public string? USPSClientSecret { get; set; }
     public bool USPSUseProduction { get; set; }
 
-    public string? USPSUserId { get; set; } 
-
     public string? UPSAccountNumber { get; set; }
     public string? UPSClientId { get; set; }
     public string? UPSClientSecret { get; set; }
@@ -17,7 +15,7 @@ public class TestsConfiguration
     public string? FedExClientSecret { get; set; }
     public string? FedExAccountNumber { get; set; }
     public string? FedExHubId { get; set; }
-    public bool FedExUseProduction { get; set; } = false;
+    public bool FedExUseProduction { get; set; }
 
     public string? DHLSiteId { get; set; }
     public string? DHLPassword { get; set; }

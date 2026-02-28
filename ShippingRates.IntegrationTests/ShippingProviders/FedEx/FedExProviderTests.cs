@@ -105,11 +105,6 @@ public class FedExTests : FedExTestsBase
     [Test]
     public void FedExNegotiatedRates()
     {
-        //var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
-        //if(!config.FedExRestUseProduction)
-        //{
-        //    Assert.Ignore("Negotiated rates may not be different in test account.");
-        //}
         var from = new Address("Annapolis", "MD", "21401", "US");
         var to = new Address("Fitchburg", "WI", "53711", "US");
         var package = new Package(7, 7, 7, 6, 1);
