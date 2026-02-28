@@ -42,15 +42,11 @@ jobs:
         ShippingRates.UPSAccountNumber: ${{ secrets.UPS_ACCOUNT_NUMBER }}
         ShippingRates.UPSClientId: ${{ secrets.UPS_CLIENT_ID }}
         ShippingRates.UPSClientSecret: ${{ secrets.UPS_CLIENT_SECRET }}
+        ShippingRates.FedExClientId: ${{ secrets.FEDEX_CLIENT_ID }}
+        ShippingRates.FedExClientSecret: ${{ secrets.FEDEX_CLIENT_SECRET }}
         ShippingRates.FedExUseProduction: ${{ secrets.FEDEX_USE_PRODUCTION }}
         ShippingRates.FedExHubId: ${{ secrets.FEDEX_HUB_ID }}
-        ShippingRates.FedExKey: ${{ secrets.FEDEX_KEY }}
-        ShippingRates.FedExPassword: ${{ secrets.FEDEX_PASSWORD }}
         ShippingRates.FedExAccountNumber: ${{ secrets.FEDEX_ACCOUNT_NUMBER }}
-        ShippingRates.FedExMeterNumber: ${{ secrets.FEDEX_METER_NUMBER }}
-        ShippingRates.FedExRestClientId: ${{ secrets.FEDEX_REST_CLIENT_ID }}
-        ShippingRates.FedExRestClientSecret: ${{ secrets.FEDEX_REST_CLIENT_SECRET }}
-        ShippingRates.FedExRestUseProduction: ${{ secrets.FEDEX_REST_USE_PRODUCTION }}
         ShippingRates.DHLSiteId: ${{ secrets.DHL_SITE_ID }}
         ShippingRates.DHLPassword: ${{ secrets.DHL_PASSWORD }}
         ShippingRates.DHLAccountNumber: ${{ secrets.DHL_ACCOUNT_NUMBER }}
