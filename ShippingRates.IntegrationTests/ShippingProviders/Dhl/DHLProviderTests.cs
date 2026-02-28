@@ -1,4 +1,5 @@
-﻿using ShippingRates.ShippingProviders;
+﻿using NUnit.Framework;
+using ShippingRates.ShippingProviders;
 using System;
 using System.Globalization;
 
