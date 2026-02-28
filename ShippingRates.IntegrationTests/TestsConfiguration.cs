@@ -13,16 +13,11 @@ public class TestsConfiguration
     public string? UPSClientSecret { get; set; }
     public bool UPSUseProduction { get; set; }
 
-    public string? FedExKey { get; set; }
-    public string? FedExPassword { get; set; }
+    public string? FedExClientId { get; set; }
+    public string? FedExClientSecret { get; set; }
     public string? FedExAccountNumber { get; set; }
-    public string? FedExMeterNumber { get; set; }
     public string? FedExHubId { get; set; }
     public bool FedExUseProduction { get; set; } = false;
-
-    public string? FedExRestClientId { get; set; }
-    public string? FedExRestClientSecret { get; set; }
-    public bool FedExRestUseProduction { get; set; } = false;
 
     public string? DHLSiteId { get; set; }
     public string? DHLPassword { get; set; }

@@ -5,6 +5,8 @@
     <TargetFramework>net461</TargetFramework>
     <RootNamespace>SampleApp</RootNamespace>
     <AssemblyName>SampleApp</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Authors>Alexey Busygin</Authors>
     <Copyright>Copyright © 2025 Alexey Busygin, Kyle West</Copyright>
