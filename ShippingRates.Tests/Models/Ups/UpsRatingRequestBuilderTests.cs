@@ -1,4 +1,4 @@
-﻿using ShippingRates.Models.Ups;
+using ShippingRates.Models.Ups;
 using ShippingRates.ShippingProviders;
 
 namespace ShippingRates.Tests.Models.UPS;

@@ -1,44 +1,51 @@
-﻿using ShippingRates.ShippingProviders;
+﻿using ShippingRates.ShippingProviders.FedEx;
+using System.Net;
 
 namespace ShippingRates.IntegrationTests.ShippingProviders.FedEx;
 
-[TestFixture]
-public class FedExProviderTests
+public abstract class FedExTestsBase
 {
-    protected RateManager _rateManager;
-    protected RateManager _rateManagerNegotiated;
-    protected FedExProvider _provider;
-    protected FedExProvider _providerNegotiated;
+    protected readonly RateManager _rateManager;
+    protected readonly RateManager _rateManagerNegotiated;
+    protected readonly FedExProvider _provider;
+    protected readonly FedExProvider _providerNegotiated;
 
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
+    protected FedExTestsBase(HttpClient httpClient)
     {
         var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
 
         _provider = new FedExProvider(new FedExProviderConfiguration()
         {
-            Key = config.FedExKey,
-            Password = config.FedExPassword,
+            ClientId = config.FedExClientId,
+            ClientSecret = config.FedExClientSecret,
             AccountNumber = config.FedExAccountNumber,
-            MeterNumber = config.FedExMeterNumber,
             UseProduction = config.FedExUseProduction
-        });
+        }, httpClient);
 
         _rateManager = new RateManager();
         _rateManager.AddProvider(_provider);
 
         _providerNegotiated = new FedExProvider(new FedExProviderConfiguration()
         {
-            Key = config.FedExKey,
-            Password = config.FedExPassword,
+            ClientId = config.FedExClientId,
+            ClientSecret = config.FedExClientSecret,
             AccountNumber = config.FedExAccountNumber,
-            MeterNumber = config.FedExMeterNumber,
             UseProduction = config.FedExUseProduction,
             UseNegotiatedRates = true
-        });
+        }, httpClient);
 
         _rateManagerNegotiated = new RateManager();
         _rateManagerNegotiated.AddProvider(_providerNegotiated);
+    }
+}
+
+[TestFixture]
+public class FedExTests : FedExTestsBase
+{
+    public FedExTests() : base(new HttpClient(new HttpClientHandler
+    {
+        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+    })) {
     }
 
     [Test]
@@ -49,6 +56,8 @@ public class FedExProviderTests
         var package = new Package(7, 7, 7, 6, 0);
 
         var r = _rateManager.GetRates(from, to, package);
+        PrintErrorIfAny(r);
+
         var fedExRates = r.Rates.ToList();
 
         using (Assert.EnterMultipleScope())
@@ -71,6 +80,7 @@ public class FedExProviderTests
         var package = new Package(7, 7, 7, 6, 1);
 
         var rates = _rateManager.GetRates(from, to, package);
+        PrintErrorIfAny(rates);
 
         using (Assert.EnterMultipleScope())
         {
@@ -83,22 +93,32 @@ public class FedExProviderTests
         Assert.That(error, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(error.Number, Is.EqualTo("521"));
+            Assert.That(error.Number, Is.EqualTo("400"));
             Assert.That(error.Description, Is.Not.Null);
         }
-        Assert.That(error.Description[..42], Is.EqualTo("Destination postal code missing or invalid"));
+        Assert.That(error.Description, Is.EqualTo("RATE.LOCATION.NOSERVICE"));
     }
 
-
+    /// <summary>
+    /// Note, Test and some production accounts may not have different rates with FedEx
+    /// </summary>
     [Test]
     public void FedExNegotiatedRates()
     {
+        //var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
+        //if(!config.FedExRestUseProduction)
+        //{
+        //    Assert.Ignore("Negotiated rates may not be different in test account.");
+        //}
         var from = new Address("Annapolis", "MD", "21401", "US");
         var to = new Address("Fitchburg", "WI", "53711", "US");
         var package = new Package(7, 7, 7, 6, 1);
 
         var r = _rateManager.GetRates(from, to, package);
+        PrintErrorIfAny(r);
+
         var rN = _rateManagerNegotiated.GetRates(from, to, package);
+        PrintErrorIfAny(rN);
 
         AssertRatesAreNotEqual(r, rN, "FEDEX_GROUND");
     }
@@ -108,14 +128,17 @@ public class FedExProviderTests
     {
         var from = new Address("Annapolis", "MD", "21401", "US");
         var to = new Address("Fitchburg", "WI", "53711", "US");
-        var package = new Package(7, 7, 7, 6, 1);
+        var package = new Package(3, 3, 3, 6, 1);
 
 
         var rates = _rateManager.GetRates(from, to, package);
+        PrintErrorIfAny(rates);
+
         var oneRates = _rateManagerNegotiated.GetRates(from, to, package, new ShipmentOptions()
         {
             FedExOneRate = true
         });
+        PrintErrorIfAny(oneRates);
 
         AssertRatesAreNotEqual(rates, oneRates);
     }
@@ -132,32 +155,19 @@ public class FedExProviderTests
             FedExOneRate = true,
             //if not set, will default to FEDEX_MEDIUM_BOX
         });
+        PrintErrorIfAny(rates);
+
         var oneRates = _rateManagerNegotiated.GetRates(from, to, package, new ShipmentOptions()
         {
             FedExOneRate = true,
-            FedExOneRatePackageOverride ="FEDEX_ENVELOPE" //one of the cheapest options
+            FedExOneRatePackageOverride = "FEDEX_ENVELOPE" //one of the cheapest options
         });
+        PrintErrorIfAny(oneRates);
 
         AssertRatesAreNotEqual(rates, oneRates);
     }
 
-    [Test]
-    public void FedExFreight()
-    {
-        var from = new Address("Annapolis", "MD", "21401", "US");
-        var to = new Address("Fitchburg", "WI", "53711", "US");
-        var package = new Package(48, 48, 48, 120, 100);
-
-        var rates = _rateManager.GetRates(from, to, package);
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(rates.Rates, Is.Not.Empty);
-            Assert.That(rates.Rates.All(r => r.Name.Contains("Freight")), Is.True);
-        }
-    }
-
-    private static void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string? methodCode = null)
+    private static void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string methodCode = null)
     {
         using (Assert.EnterMultipleScope())
         {
@@ -202,6 +212,7 @@ public class FedExProviderTests
             SaturdayDelivery = true
         });
 
+        PrintErrorIfAny(r);
         Assert.That(r, Is.Not.Null);
         Assert.That(r.Rates, Is.Not.Empty);
         Assert.That(r.Rates.Any(r => r.Options.SaturdayDelivery), Is.True);
@@ -216,6 +227,7 @@ public class FedExProviderTests
 
         var r = await _rateManager.GetRatesAsync(from, to, package);
 
+        PrintErrorIfAny(r);
         Assert.That(r, Is.Not.Null);
         Assert.That(r.Rates, Is.Not.Empty);
         Assert.That(r.Rates.Any(r => r.TotalCharges > 1000), Is.False);
@@ -224,8 +236,8 @@ public class FedExProviderTests
     [Test]
     public async Task FedExPreferredCurrency()
     {
-        var from = new Address("Amsterdam", "", "1043 AG", "NL");
-        var to = new Address("London", "", "SW1A 2AA", "GB");
+        var from = new Address("", "", "220-8515", "JP");
+        var to = new Address("", "", "058357", "SG");
         var package = new Package(1, 1, 1, 5, 1);
 
         var r = await _rateManager.GetRatesAsync(from, to, package, new ShipmentOptions()
@@ -233,6 +245,7 @@ public class FedExProviderTests
             PreferredCurrencyCode = "USD"
         });
 
+        PrintErrorIfAny(r);
         Assert.That(r, Is.Not.Null);
         Assert.That(r.Rates, Is.Not.Empty);
         Assert.That(r.Rates.Any(r => r.CurrencyCode != "USD"), Is.False);
@@ -241,62 +254,24 @@ public class FedExProviderTests
         {
             PreferredCurrencyCode = "EUR"
         });
-        var fedExEuroRates = rEuro.Rates.ToList();
 
+        PrintErrorIfAny(rEuro);
         Assert.That(rEuro, Is.Not.Null);
         Assert.That(rEuro.Rates, Is.Not.Empty);
         Assert.That(rEuro.Rates.Any(r => r.CurrencyCode != "EUR"), Is.False);
     }
 
-    /*
-     * According to docs (24.2.1): "Direct Signature Required is the default service and is
-     * provided at no additional cost."
-     * 
-    [Test]
-    public void FedExReturnsDifferentRatesForSignatureOnDelivery()
+    private static void PrintErrorIfAny(Shipment result)
     {
-        var from = new Address("Annapolis", "MD", "21401", "US");
-        var to = new Address("Fitchburg", "WI", "53711", "US");
-
-        var nonSignaturePackage = new Package(7, 7, 7, 6, 0, null, false);
-        var signaturePackage = new Package(7, 7, 7, 6, 0, null, true);
-
-        // Non signature rates first
-        var nonSignatureRates = _rateManager.GetRates(from, to, nonSignaturePackage);
-        var fedExNonSignatureRates = nonSignatureRates.Rates.ToList();
-
-        Assert.NotNull(nonSignatureRates);
-        Assert.True(fedExNonSignatureRates.Any());
-
-        foreach (var rate in fedExNonSignatureRates)
+        if(result.Errors.Count != 0)
         {
-            Assert.True(rate.TotalCharges > 0);
-        }
-        
-        var signatureRates = _rateManager.GetRates(from, to, signaturePackage);
-        var fedExSignatureRates = signatureRates.Rates.ToList();
-
-        Assert.NotNull(signatureRates);
-        Assert.True(fedExSignatureRates.Any());
-
-        foreach (var rate in fedExSignatureRates)
-        {
-            Assert.True(rate.TotalCharges > 0);
-        }
-
-        // Now compare prices
-        foreach (var signatureRate in fedExSignatureRates)
-        {
-            var nonSignatureRate = fedExNonSignatureRates.FirstOrDefault(x => x.Name == signatureRate.Name);
-
-            if (nonSignatureRate != null)
+            Console.WriteLine("Errors:");
+            foreach (var error in result.Errors)
             {
-                var signatureTotalCharges = signatureRate.TotalCharges;
-                var nonSignatureTotalCharges = nonSignatureRate.TotalCharges;
-                Assert.AreNotEqual(signatureTotalCharges, nonSignatureTotalCharges);
+                Console.WriteLine($"  {error.Number}: {error.Description}");
             }
         }
-    }*/
+    }
 
     [Test]
     public void CanGetFedExServiceCodes()

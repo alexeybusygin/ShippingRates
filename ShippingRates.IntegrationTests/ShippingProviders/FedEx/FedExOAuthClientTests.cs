@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using ShippingRates.Models;
 using ShippingRates.Services.FedEx;
-using ShippingRates.ShippingProviders;
+using ShippingRates.ShippingProviders.FedEx;
 
 namespace ShippingRates.IntegrationTests.ShippingProviders.FedEx;
 
@@ -18,9 +18,9 @@ public class FedExOAuthClientTests
 
         _configuration = new FedExProviderConfiguration
         {
-            ClientId = config.FedExRestClientId,
-            ClientSecret = config.FedExRestClientSecret,
-            UseProduction = config.FedExRestUseProduction
+            ClientId = config.FedExClientId,
+            ClientSecret = config.FedExClientSecret,
+            UseProduction = config.FedExUseProduction
         };
     }
 

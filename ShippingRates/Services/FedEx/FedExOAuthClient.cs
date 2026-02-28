@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ShippingRates.Models;
 using ShippingRates.Services.OAuth;
-using ShippingRates.ShippingProviders;
+using ShippingRates.ShippingProviders.FedEx;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;

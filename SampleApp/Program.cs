@@ -6,9 +6,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using ShippingRates.ShippingProviders;
+using ShippingRates.ShippingProviders.FedEx;
 using ShippingRates.ShippingProviders.Usps;
+using ShippingRates;
 
-namespace ShippingRates.SampleApp
+namespace SampleApp
 {
     class Program
     {
@@ -22,11 +24,10 @@ namespace ShippingRates.SampleApp
             var upsClientSecret = appSettings["UPSClientSecret"];
             var upsAccountNumber = appSettings["UPSAccountNumber"];
 
-            // You will need an account # and meter # to utilize the FedEx provider.
-            var fedexKey = appSettings["FedExKey"];
-            var fedexPassword = appSettings["FedExPassword"];
+            // You will need Client Id, Client Secret, and Account # to use the FedEx provider.
+            var fedexClientId = appSettings["FedExClientId"];
+            var fedexClientSecret = appSettings["FedExClientSecret"];
             var fedexAccountNumber = appSettings["FedExAccountNumber"];
-            var fedexMeterNumber = appSettings["FedExMeterNumber"];
             var fedexHubId = appSettings["FedExHubId"]; // 5531 is the hubId to use in FedEx's test environment
             var fedexUseProduction = Convert.ToBoolean(appSettings["FedExUseProduction"]);
 
@@ -75,8 +76,17 @@ namespace ShippingRates.SampleApp
                     rateManager.AddProvider(new UPSProvider(upsConfiguration, httpClient, upsProviderLogger));
 
                     // FedEx
-                    rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexUseProduction));
-                    rateManager.AddProvider(new FedExSmartPostProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber, fedexHubId, fedexUseProduction));
+                    var fedExConfiguration = new FedExProviderConfiguration()
+                    {
+                        ClientId = fedexClientId,
+                        ClientSecret = fedexClientSecret,
+                        AccountNumber = fedexAccountNumber,
+                        HubId = fedexHubId,
+                        UseProduction = fedexUseProduction
+                    };
+                    var fedExProviderLogger = loggerFactory.CreateLogger<FedExProvider>();
+                    rateManager.AddProvider(new FedExProvider(fedExConfiguration, httpClient, fedExProviderLogger));
+                    rateManager.AddProvider(new FedExSmartPostProvider(fedExConfiguration, httpClient));
 
                     // USPS
                     var uspsProviderConfiguration = new UspsProviderConfiguration()
@@ -88,7 +98,7 @@ namespace ShippingRates.SampleApp
                     var uspsProviderLogger = loggerFactory.CreateLogger<UspsProvider>();
                     rateManager.AddProvider(new UspsProvider(uspsProviderConfiguration, httpClient, uspsProviderLogger));
 
-                    //// DHL
+                    // DHL
                     var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: true).ExcludeServices(new char[] { 'C' });
                     rateManager.AddProvider(new DHLProvider(dhlConfiguration, httpClient));
 
