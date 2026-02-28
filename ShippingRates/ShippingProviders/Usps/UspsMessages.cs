@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace ShippingRates.ShippingProviders.Usps;
+﻿namespace ShippingRates.ShippingProviders.Usps;
 
 internal static class UspsMessages
 {
