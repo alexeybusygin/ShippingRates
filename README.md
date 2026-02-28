@@ -73,14 +73,16 @@ foreach (Rate rate in shipment.Rates)
 
 See the sample app in this repository for a working example.
 
-## Documentation in [Wiki](https://github.com/alexeybusygin/ShippingRates/wiki)
+## [Documentation](docs)
 
-* [HttpClient lifecycle](https://github.com/alexeybusygin/ShippingRates/wiki/HttpClient-lifecycle)
-* [Negotiated Rates](https://github.com/alexeybusygin/ShippingRates/wiki/Negotiated-Rates)
-* [Logging](https://github.com/alexeybusygin/ShippingRates/wiki/Logging)
-* [USPS: Extra Services](https://github.com/alexeybusygin/ShippingRates/wiki/USPS-Special-Services)
-* [Single Rate for UPS and USPS](https://github.com/alexeybusygin/ShippingRates/wiki/Single-Rate-for-UPS-and-USPS)
-* [Rate Adjusters](https://github.com/alexeybusygin/ShippingRates/wiki/Rate-Adjusters)
+* [Breaking Changes](docs/Breaking-Changes.md)
+* [HttpClient lifecycle](docs/HttpClient-lifecycle.md)
+* [Negotiated Rates](docs/Negotiated-Rates.md)
+* [Logging](docs/Logging.md)
+* [USPS: International Rates](docs/USPS-International-Rates.md)
+* [USPS: Extra Services](docs/USPS-Extra-Services.md)
+* [Single Rate for UPS and USPS](docs/Single-Rate-for-UPS-and-USPS.md)
+* [Rate Adjusters](docs/Rate-Adjusters.md)
 
 ## Shipping Options
 
@@ -138,15 +140,6 @@ foreach (var error in shipment.InternalErrors)
 #### FedEx and 556 There are no valid services available
 
 This one can be tricky to debug. Start by setting at least $1 insurance for your shipment. For some reason, FedEx will not report errors like the wrong ZIP code for the origin address if no insurance is set.
-
-## 3rd Party Docs
-
-Developer documentation is often hard to find. The links below are provided as a reference.
-
-* [FedEx](http://www.fedex.com/us/developer/)
-* [USPS](https://developers.usps.com/apis)
-* [UPS](https://developer.ups.com/api/reference?loc=en_US#operation/Rate)
-* [DHL](https://xmlportal.dhl.com/capability_and_qoute#cap_quote)
 
 ## Credits
 
