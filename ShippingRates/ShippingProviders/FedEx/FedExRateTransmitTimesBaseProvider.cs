@@ -216,7 +216,7 @@ namespace ShippingRates.ShippingProviders.FedEx
             }
             catch (ApiException e)
             {
-                ProcessErrors(resultBuilder, e);
+                FedExRateTransmitTimesBaseProvider<T>.ProcessErrors(resultBuilder, e);
             }
             catch (Exception e)
             {
@@ -334,7 +334,7 @@ namespace ShippingRates.ShippingProviders.FedEx
             return ((decimal)Math.Round(rateDetail.TotalNetCharge / rateDetail.ShipmentRateDetail.CurrencyExchangeRate.Rate, 2), shipmentCurrencyCode);
         }
 
-        private void ProcessErrors(RateResultAggregator rateResult, ApiException exception)
+        private static void ProcessErrors(RateResultAggregator rateResult, ApiException exception)
         {
             var msg = exception.Message;
             if (exception is ApiException<ErrorResponseVO> typedResponseException)
