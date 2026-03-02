@@ -5,11 +5,11 @@
 
 .NET wrapper for UPS, FedEx, USPS, and DHL APIs. Use it to retrieve shipping rates from these carriers.
 
-## USPS Breaking Changes
+## FedEx Breaking Changes
 
-Starting with **version 3.0.0**, the package introduces a new **USPS integration** based on the modern USPS REST APIs and OAuth 2.0 authentication. Earlier versions relied on legacy USPS APIs and are not compatible with the new USPS platform. Upgrading to v3.0.0 or later is required to use USPS services.
+Version **4.0.0** includes breaking changes and now supports the modern **FedEx REST API** with OAuth 2.0.
 
-More details are available at the USPS developer site: https://developers.usps.com/
+As FedEx API migration timelines approach, please review the migration guidance in the [Breaking Changes](docs/Breaking-Changes.md).
 
 ## How to Install
 
