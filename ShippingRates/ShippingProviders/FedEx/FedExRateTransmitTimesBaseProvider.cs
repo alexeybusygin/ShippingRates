@@ -192,7 +192,7 @@ namespace ShippingRates.ShippingProviders.FedEx
                 {
                     var request = CreateRateRequest(shipment);
 
-                    var service = new Client(HttpClient)
+                    var service = new Client(httpClient)
                     {
                         BaseUrl = GetRequestUri(_configuration.UseProduction)
                     };
