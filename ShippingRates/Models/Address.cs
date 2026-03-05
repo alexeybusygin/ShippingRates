@@ -6,6 +6,11 @@ namespace ShippingRates
 {
     public class Address
     {
+        static readonly HashSet<string> UsAndTerritories = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "AS", "GU", "MP", "PR", "UM", "VI", "US"
+        };
+
         public Address(string? city, string? state, string? postalCode, string? countryCode) : this(null, null, null, city, state, postalCode, countryCode)
         {
         }
@@ -67,9 +72,7 @@ namespace ShippingRates
         /// <returns></returns>
         public bool IsUnitedStatesAddress()
         {
-            var usAndTerritories = new List<string> { "AS", "GU", "MP", "PR", "UM", "VI", "US" };
-
-            return CountryCode != null && usAndTerritories.Contains(CountryCode);
+            return !string.IsNullOrWhiteSpace(CountryCode) && UsAndTerritories.Contains(CountryCode.Trim());
         }
     }
 }
