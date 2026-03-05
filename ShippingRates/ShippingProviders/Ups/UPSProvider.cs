@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShippingRates.ShippingProviders;
@@ -68,7 +69,7 @@ public class UPSProvider : AbstractShippingProvider
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public override async Task<RateResult> GetRatesAsync(Shipment shipment)
+    public override async Task<RateResult> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
     {
         var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
         var resultBuilder = new RateResultAggregator(Name);
@@ -76,7 +77,7 @@ public class UPSProvider : AbstractShippingProvider
         try
         {
             var oauthService = new UpsOAuthClient(_logger);
-            var token = await oauthService.GetTokenAsync(_configuration, httpClient, resultBuilder);
+            var token = await oauthService.GetTokenAsync(_configuration, httpClient, resultBuilder, cancellationToken).ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(token))
             {
@@ -84,7 +85,7 @@ public class UPSProvider : AbstractShippingProvider
                 var request = requestBuilder.Build(shipment);
 
                 var ratingService = new UpsRatingService(_logger);
-                var ratingsResponse = await ratingService.GetRatingAsync(httpClient, token, _configuration.UseProduction, request, resultBuilder);
+                var ratingsResponse = await ratingService.GetRatingAsync(httpClient, token, _configuration.UseProduction, request, resultBuilder, cancellationToken).ConfigureAwait(false);
 
                 ParseResponse(shipment, ratingsResponse, resultBuilder);
             }
@@ -103,7 +104,7 @@ public class UPSProvider : AbstractShippingProvider
         return resultBuilder.Build();
     }
 
-    private void ParseResponse(Shipment shipment, UpsRatingResponse response, RateResultAggregator resultBuilder)
+    private void ParseResponse(Shipment shipment, UpsRatingResponse? response, RateResultAggregator resultBuilder)
     {
         if (response?.RateResponse?.RatedShipment == null)
             return;
@@ -122,22 +123,43 @@ public class UPSProvider : AbstractShippingProvider
             }
             var serviceDescription = _serviceCodes[serviceCode];
 
-            var totalCharges = Convert.ToDecimal(rate.TotalCharges.MonetaryValue, cultureInfo);
-            var currencyCode = rate.TotalCharges.CurrencyCode;
+            if (!decimal.TryParse(rate.TotalCharges?.MonetaryValue, NumberStyles.Number, cultureInfo, out var totalCharges))
+            {
+                resultBuilder.AddInternalError($"Invalid total charges value for service code {serviceCode}");
+                continue;
+            }
+
+            var currencyCode = rate.TotalCharges?.CurrencyCode;
 
             if (_configuration.UseNegotiatedRates && rate.NegotiatedRateCharges != null)
             {
-                totalCharges = Convert.ToDecimal(rate.NegotiatedRateCharges.TotalCharge.MonetaryValue, cultureInfo);
-                currencyCode = rate.NegotiatedRateCharges.TotalCharge.CurrencyCode;
+                if (decimal.TryParse(rate.NegotiatedRateCharges.TotalCharge?.MonetaryValue, NumberStyles.Number, cultureInfo, out var negotiatedTotalCharges))
+                {
+                    totalCharges = negotiatedTotalCharges;
+                }
+                else
+                {
+                    resultBuilder.AddInternalError($"Invalid negotiated total charges value for service code {serviceCode}");
+                    continue;
+                }
+
+                currencyCode = rate.NegotiatedRateCharges.TotalCharge?.CurrencyCode;
             }
 
             // Use MaxDate as default to ensure correct sorting
-            var estDeliveryDate = DateTime.MaxValue.ToShortDateString();;
+            var estDeliveryDate = DateTime.MaxValue.ToShortDateString();
             var businessDaysInTransit = rate.GuaranteedDelivery?.BusinessDaysInTransit;
             if (!string.IsNullOrEmpty(businessDaysInTransit))
             {
-                estDeliveryDate = (shipment.Options.ShippingDate ?? DateTime.Now)
-                    .AddDays(Convert.ToDouble(businessDaysInTransit, cultureInfo)).ToShortDateString();
+                if (double.TryParse(businessDaysInTransit, NumberStyles.Number, cultureInfo, out var businessDays))
+                {
+                    estDeliveryDate = (shipment.Options.ShippingDate ?? DateTime.Now)
+                        .AddDays(businessDays).ToShortDateString();
+                }
+                else
+                {
+                    resultBuilder.AddInternalError($"Invalid BusinessDaysInTransit value for service code {serviceCode}");
+                }
             }
             var deliveryTime = rate.GuaranteedDelivery?.DeliveryByTime;
             if (string.IsNullOrEmpty(deliveryTime)) // No scheduled delivery time, so use 11:59:00 PM to ensure correct sorting
@@ -148,12 +170,17 @@ public class UPSProvider : AbstractShippingProvider
             {
                 estDeliveryDate += " " + deliveryTime.Replace("Noon", "PM").Replace("P.M.", "PM").Replace("A.M.", "AM");
             }
-            var deliveryDate = DateTime.Parse(estDeliveryDate);
+
+            if (!DateTime.TryParse(estDeliveryDate, cultureInfo, DateTimeStyles.None, out var deliveryDate))
+            {
+                resultBuilder.AddInternalError($"Invalid delivery date value for service code {serviceCode}");
+                deliveryDate = DateTime.MaxValue;
+            }
 
             resultBuilder.AddRate(serviceCode, serviceDescription, totalCharges, deliveryDate, new RateOptions()
             {
                 SaturdayDelivery = shipment.Options.SaturdayDelivery && deliveryDate.DayOfWeek == DayOfWeek.Saturday
-            }, currencyCode);
+            }, currencyCode ?? ShipmentOptions.DefaultCurrencyCode);
         }
     }
 

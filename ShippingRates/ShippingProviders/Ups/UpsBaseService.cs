@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShippingRates.ShippingProviders.Ups
@@ -29,12 +30,13 @@ namespace ShippingRates.ShippingProviders.Ups
             string token,
             Uri uri,
             TRequest request,
-            RateResultAggregator resultBuilder)
+            RateResultAggregator resultBuilder,
+            CancellationToken cancellationToken = default)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var jsonRequest = JsonSerializer.Serialize(request, _jsonSerializerOptions);
@@ -42,8 +44,8 @@ namespace ShippingRates.ShippingProviders.Ups
 
             _logger?.LogInformation("Rates Request: {jsonRequest}", jsonRequest);
 
-            var responseMessage = await httpClient.SendAsync(requestMessage);
-            var response = await responseMessage.Content.ReadAsStringAsync();
+            using var responseMessage = await httpClient.SendAsync(requestMessage, cancellationToken).ConfigureAwait(false);
+            var response = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             _logger?.LogInformation("Rates Response: {response}", response);
 

@@ -1,6 +1,7 @@
 using ShippingRates.ShippingProviders;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShippingRates
@@ -44,9 +45,9 @@ namespace ShippingRates
         /// <param name="package">An instance of <see cref="Package" /> specifying the package to be rated.</param>
         /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public Shipment GetRates(Address originAddress, Address destinationAddress, Package package, ShipmentOptions? options = null)
+        public Shipment GetRates(Address originAddress, Address destinationAddress, Package package, ShipmentOptions? options = null, CancellationToken cancellationToken = default)
         {
-            return GetRates(originAddress, destinationAddress, [package], options);
+            return GetRates(originAddress, destinationAddress, [package], options, cancellationToken);
         }
 
         /// <summary>
@@ -57,9 +58,9 @@ namespace ShippingRates
         /// <param name="package">An instance of <see cref="Package" /> specifying the package to be rated.</param>
         /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, Package package, ShipmentOptions? options = null)
+        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, Package package, ShipmentOptions? options = null, CancellationToken cancellationToken = default)
         {
-            return await GetRatesAsync(originAddress, destinationAddress, [package], options).ConfigureAwait(false);
+            return await GetRatesAsync(originAddress, destinationAddress, [package], options, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -70,9 +71,13 @@ namespace ShippingRates
         /// <param name="packages">An instance of <see cref="PackageCollection" /> specifying the packages to be rated.</param>
         /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public Shipment GetRates(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions? options = null)
+        public Shipment GetRates(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions? options = null, CancellationToken cancellationToken = default)
         {
-            return GetRatesAsync(originAddress, destinationAddress, packages, options).GetAwaiter().GetResult();
+            return Task.Run(
+                    () => GetRatesAsync(originAddress, destinationAddress, packages, options, cancellationToken),
+                    cancellationToken)
+                .GetAwaiter()
+                .GetResult();
         }
 
         /// <summary>
@@ -83,12 +88,13 @@ namespace ShippingRates
         /// <param name="packages">An instance of <see cref="PackageCollection" /> specifying the packages to be rated.</param>
         /// <param name="options">An optional instance of <see cref="ShipmentOptions" /> specifying the shipment options.</param>
         /// <returns>A <see cref="Shipment" /> instance containing all returned rates.</returns>
-        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions? options = null)
+        public async Task<Shipment> GetRatesAsync(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions? options = null, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var shipment = new Shipment(originAddress, destinationAddress, packages, options);
 
             // Create a list of tasks that return RateResult
-            var tasks = _providers.Select(provider => provider.GetRatesAsync(shipment)).ToList();
+            var tasks = _providers.Select(provider => provider.GetRatesAsync(shipment, cancellationToken)).ToList();
 
             // Await all tasks and collect results
             var results = await Task.WhenAll(tasks).ConfigureAwait(false);
