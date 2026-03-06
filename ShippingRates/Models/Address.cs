@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 
 namespace ShippingRates
 {
@@ -36,35 +35,6 @@ namespace ShippingRates
         public string? PostalCode { get; set; }
         public string? State { get; set; }
         public bool IsResidential { get; set; }
-
-        public string GetCountryName()
-        {
-            if (CountryName is { Length: > 0 })
-            {
-                return CountryName;
-            }
-
-            if (string.IsNullOrEmpty(CountryCode))
-            {
-                return string.Empty;
-            }
-            try
-            {
-                var regionInfo = new RegionInfo(CountryCode);
-                return regionInfo.EnglishName;
-            }
-            catch
-            {
-                //causes the whole application to crash.
-            }
-
-            return string.Empty;
-        }
-
-        public bool IsCanadaAddress()
-        {
-            return !string.IsNullOrEmpty(CountryCode) && string.Equals(CountryCode, "CA", StringComparison.OrdinalIgnoreCase);
-        }
 
         /// <summary>
         ///     Returns true if the CountryCode matches US or one of the US territories.
