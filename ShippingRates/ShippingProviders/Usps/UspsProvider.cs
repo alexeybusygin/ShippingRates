@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -49,7 +50,7 @@ public class UspsProvider : AbstractShippingProvider
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public override async Task<RateResult> GetRatesAsync(Shipment shipment)
+    public override async Task<RateResult> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
     {
         var resultBuilder = new RateResultAggregator(Name);
 
@@ -65,7 +66,7 @@ public class UspsProvider : AbstractShippingProvider
         try
         {
             var oauthService = new UspsOAuthClient(_logger);
-            var token = await oauthService.GetTokenAsync(_configuration, httpClient, resultBuilder);
+            var token = await oauthService.GetTokenAsync(_configuration, httpClient, resultBuilder, cancellationToken).ConfigureAwait(false);
 
             if (token is { Length: > 0 })
             {
@@ -74,7 +75,7 @@ public class UspsProvider : AbstractShippingProvider
                     var ratingService = new UspsPricesService(_logger);
                     var domesticRequest = GetDomesticRequest(shipment);
                     var pricesResponse = await ratingService.GetDomesticPrices(
-                        httpClient, token, domesticRequest, _configuration.UseProduction, resultBuilder);
+                        httpClient, token, domesticRequest, _configuration.UseProduction, resultBuilder, cancellationToken).ConfigureAwait(false);
 
                     ParsePricesResponse(shipment, pricesResponse, resultBuilder);
 
@@ -90,7 +91,7 @@ public class UspsProvider : AbstractShippingProvider
                     var ratingService = new UspsPricesService(_logger);
                     var internationalRequest = GetInternationalRequest(shipment);
                     var pricesResponse = await ratingService.GetInternationalPrices(
-                        httpClient, token, internationalRequest, _configuration.UseProduction, resultBuilder);
+                        httpClient, token, internationalRequest, _configuration.UseProduction, resultBuilder, cancellationToken).ConfigureAwait(false);
 
                     ParsePricesResponse(shipment, pricesResponse, resultBuilder);
                 }

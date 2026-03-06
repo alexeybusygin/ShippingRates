@@ -1,4 +1,5 @@
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShippingRates.ShippingProviders;
@@ -9,7 +10,7 @@ namespace ShippingRates.ShippingProviders;
 /// </summary>
 public abstract class AbstractShippingProvider : IShippingProvider
 {
-    public abstract Task<RateResult> GetRatesAsync(Shipment shipment);
+    public abstract Task<RateResult> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default);
     public abstract string Name { get; }
 
     private HttpClient? _httpClient;

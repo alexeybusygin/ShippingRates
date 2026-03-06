@@ -3,6 +3,7 @@ using ShippingRates.Models;
 using ShippingRates.Models.Ups;
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShippingRates.ShippingProviders.Ups
@@ -23,7 +24,8 @@ namespace ShippingRates.ShippingProviders.Ups
             string token,
             bool isProduction,
             UpsRatingRequest request,
-            RateResultAggregator resultBuilder)
+            RateResultAggregator resultBuilder,
+            CancellationToken cancellationToken = default)
         {
             request = request ?? throw new ArgumentNullException(nameof(request));
 
@@ -32,12 +34,12 @@ namespace ShippingRates.ShippingProviders.Ups
 
             if (isRateRequest)
             {
-                var singleRateResponse = await PostAsync<UpsRatingRequest, UpsSingleRatingResponse>(httpClient, token, uri, request, resultBuilder);
+                var singleRateResponse = await PostAsync<UpsRatingRequest, UpsSingleRatingResponse>(httpClient, token, uri, request, resultBuilder, cancellationToken).ConfigureAwait(false);
                 return singleRateResponse?.GetRatesResponse();
             }
             else
             {
-                return await PostAsync<UpsRatingRequest, UpsRatingResponse>(httpClient, token, uri, request, resultBuilder);
+                return await PostAsync<UpsRatingRequest, UpsRatingResponse>(httpClient, token, uri, request, resultBuilder, cancellationToken).ConfigureAwait(false);
             }
         }
     }

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShippingRates.ShippingProviders.FedEx
@@ -177,7 +178,7 @@ namespace ShippingRates.ShippingProviders.FedEx
         /// <summary>
         /// Gets rates
         /// </summary>
-        public override async Task<RateResult> GetRatesAsync(Shipment shipment)
+        public override async Task<RateResult> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
         {
             var resultBuilder = new RateResultAggregator(Name);
 
@@ -186,7 +187,7 @@ namespace ShippingRates.ShippingProviders.FedEx
             try
             {
                 var oauthService = new FedExOAuthClient(_logger);
-                var token = await oauthService.GetTokenAsync(_configuration, httpClient, resultBuilder);
+                var token = await oauthService.GetTokenAsync(_configuration, httpClient, resultBuilder, cancellationToken).ConfigureAwait(false);
 
                 if (token is { Length: > 0 })
                 {
@@ -201,7 +202,8 @@ namespace ShippingRates.ShippingProviders.FedEx
                         DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
                         "application/json",
                         "en-US",
-                        "Bearer " + token
+                        "Bearer " + token,
+                        cancellationToken
                     ).ConfigureAwait(false);
 
                     if (reply.Output != null)

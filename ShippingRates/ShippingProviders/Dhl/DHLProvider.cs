@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -216,7 +217,7 @@ namespace ShippingRates.ShippingProviders
             writer.WriteEndElement(); // </From>
         }
 
-        public override async Task<RateResult> GetRatesAsync(Shipment shipment)
+        public override async Task<RateResult> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
@@ -240,7 +241,7 @@ namespace ShippingRates.ShippingProviders
 
                 using (var httpContent = new StringContent(request, Encoding.UTF8, "text/xml"))
                 {
-                    var response = await httpClient.PostAsync(RatesUri, httpContent).ConfigureAwait(false);
+                    var response = await httpClient.PostAsync(RatesUri, httpContent, cancellationToken).ConfigureAwait(false);
 
                     if (response.IsSuccessStatusCode)
                     {
