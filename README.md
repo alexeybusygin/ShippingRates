@@ -76,6 +76,7 @@ See the sample app in this repository for a working example.
 ## [Documentation](docs)
 
 * [Breaking Changes](docs/Breaking-Changes.md)
+* [Release Notes](docs/Release-Notes.md)
 * [HttpClient lifecycle](docs/HttpClient-lifecycle.md)
 * [Negotiated Rates](docs/Negotiated-Rates.md)
 * [Logging](docs/Logging.md)

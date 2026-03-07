@@ -1,4 +1,5 @@
 * [Breaking Changes](Breaking-Changes.md)
+* [Release Notes](Release-Notes.md)
 * [HttpClient lifecycle](HttpClient-lifecycle.md)
 * [Negotiated Rates](Negotiated-Rates.md)
 * [Logging](Logging.md)
