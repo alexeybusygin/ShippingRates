@@ -25,7 +25,7 @@ public abstract class FedExBaseProvider<T> : AbstractShippingProvider where T : 
     public FedExBaseProvider(FedExProviderConfiguration configuration, HttpClient httpClient)
         : this(configuration)
     {
-        HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        SetHttpClient(httpClient);
     }
 
     public FedExBaseProvider(FedExProviderConfiguration configuration, ILogger<T> logger)
