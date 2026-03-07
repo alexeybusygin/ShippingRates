@@ -21,6 +21,14 @@ public class FedExProviderConfiguration : IOAuthConfiguration
     public bool UseProduction { get; set; }
     public bool UseNegotiatedRates { get; set; } = false;
     /// <summary>
+    /// Pickup type.
+    /// </summary>
+    public FedExPickupType PickupType { get; set; } = FedExPickupType.UseScheduledPickup;
+    /// <summary>
+    /// Packaging type.
+    /// </summary>
+    public FedExPackagingType PackagingType { get; set; } = FedExPackagingType.YourPackaging;
+    /// <summary>
     /// Hub ID for FedEx SmartPost.
     /// If not using the production Rate API, you can use 5531 as the HubID per FedEx documentation.
     /// </summary>

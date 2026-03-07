@@ -1,4 +1,5 @@
 ﻿using System;
+using ShippingRates.ShippingProviders.FedEx;
 
 namespace ShippingRates
 {
@@ -23,19 +24,16 @@ namespace ShippingRates
         /// </summary>
         public bool FedExOneRate { get; set; }
         /// <summary>
-        /// For FedEx One Rate pricing option, allows ability to specify FedEx-specific packages:
-        /// FEDEX_10KG_BOX
-        /// FEDEX_25KG_BOX
-        /// FEDEX_BOX
-        /// FEDEX_ENVELOPE
-        /// FEDEX_EXTRA_LARGE_BOX
-        /// FEDEX_LARGE_BOX
-        /// FEDEX_MEDIUM_BOX
-        /// FEDEX_PAK
-        /// FEDEX_SMALL_BOX
-        /// FEDEX_TUBE
-        /// Ignored for non-FedEx providers. Not applied unless FedExOneRate is true.
+        /// FedEx packaging type override for this shipment.
+        /// Ignored for non-FedEx providers.
         /// </summary>
+        public FedExPackagingType? FedExPackagingTypeOverride { get; set; }
+        /// <summary>
+        /// Legacy FedEx One Rate package override.
+        /// Ignored for non-FedEx providers. Not applied unless FedExOneRate is true.
+        /// Prefer <see cref="FedExPackagingTypeOverride"/>.
+        /// </summary>
+        [Obsolete("Use FedExPackagingTypeOverride instead.")]
         public string? FedExOneRatePackageOverride { get; set; }
     }
 }

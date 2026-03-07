@@ -95,7 +95,7 @@ var shipment = await rateManager.GetRatesAsync(origin, destination, packages,
         ShippingDate = new DateTime(2020, 7, 15),
         PreferredCurrencyCode = "EUR",                  // For FedEx only
         FedExOneRate = true,                            // For FedEx only
-        FedExOneRatePackageOverride = "FEDEX_ENVELOPE"  // For FedEx only
+        FedExPackagingTypeOverride = FedExPackagingType.FedExEnvelope // For FedEx only
     });
 ```
 
@@ -107,7 +107,8 @@ The following options are available:
 | ShippingDate | null | Pickup date. The current date and time are used if not specified. |
 | PreferredCurrencyCode | USD | Preferred rates currency code in the ISO format. Applies to FedEx only. |
 | FedExOneRate | False | Use the FedEx One Rate pricing option. Applies to FedEx only. |
-| FedExOneRatePackageOverride | FEDEX_MEDIUM_BOX | Packing option when using FedEx OneRate. |
+| FedExPackagingTypeOverride | null | FedEx packaging type override for this shipment. |
+| FedExOneRatePackageOverride | null | Legacy string override for FedEx One Rate packaging. Prefer `FedExPackagingTypeOverride`. |
 
 ### Saturday Delivery
 
