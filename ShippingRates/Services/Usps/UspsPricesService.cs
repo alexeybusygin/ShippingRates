@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShippingRates.Services.Usps;
@@ -33,10 +34,11 @@ internal class UspsPricesService
         string token,
         UspsDomesticRequest request,
         bool isProduction,
-        RateResultAggregator resultBuilder)
+        RateResultAggregator resultBuilder,
+        CancellationToken cancellationToken = default)
     {
         var uri = new Uri(new Uri(GetBaseUri(isProduction)), "/prices/v3/total-rates/search");
-        return await PostAsync<UspsDomesticRequest, UspsPricesResponse>(httpClient, token, uri, request, resultBuilder);
+        return await PostAsync<UspsDomesticRequest, UspsPricesResponse>(httpClient, token, uri, request, resultBuilder, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<UspsPricesResponse?> GetInternationalPrices(
@@ -44,10 +46,11 @@ internal class UspsPricesService
         string token,
         UspsInternationalRequest request,
         bool isProduction,
-        RateResultAggregator resultBuilder)
+        RateResultAggregator resultBuilder,
+        CancellationToken cancellationToken = default)
     {
         var uri = new Uri(new Uri(GetBaseUri(isProduction)), "/international-prices/v3/total-rates/search");
-        return await PostAsync<UspsInternationalRequest, UspsPricesResponse>(httpClient, token, uri, request, resultBuilder);
+        return await PostAsync<UspsInternationalRequest, UspsPricesResponse>(httpClient, token, uri, request, resultBuilder, cancellationToken).ConfigureAwait(false);
     }
 
     protected async Task<TResponse?> PostAsync<TRequest, TResponse>(
@@ -55,12 +58,13 @@ internal class UspsPricesService
         string token,
         Uri uri,
         TRequest request,
-        RateResultAggregator resultBuilder)
+        RateResultAggregator resultBuilder,
+        CancellationToken cancellationToken = default)
     {
         if (request == null)
             throw new ArgumentNullException(nameof(request));
 
-        var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
+        using var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
         requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var jsonRequest = JsonSerializer.Serialize(request, _jsonSerializerOptions);
@@ -68,8 +72,8 @@ internal class UspsPricesService
 
         _logger?.LogInformation("Rates Request: {jsonRequest}", jsonRequest);
 
-        var responseMessage = await httpClient.SendAsync(requestMessage);
-        var response = await responseMessage.Content.ReadAsStringAsync();
+        using var responseMessage = await httpClient.SendAsync(requestMessage, cancellationToken).ConfigureAwait(false);
+        var response = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
         _logger?.LogInformation("Rates Response: {response}", response);
 

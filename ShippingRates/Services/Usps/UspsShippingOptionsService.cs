@@ -3,6 +3,7 @@ using ShippingRates.Models;
 using ShippingRates.Models.Usps;
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShippingRates.Services.Usps;
@@ -18,9 +19,10 @@ internal class UspsShippingOptionsService : UspsPricesService
         string token,
         UspsShippingOptionsRequest request,
         bool isProduction,
-        RateResultAggregator resultBuilder)
+        RateResultAggregator resultBuilder,
+        CancellationToken cancellationToken = default)
     {
         var uri = new Uri(new Uri(GetBaseUri(isProduction)), "/shipments/v3/options/search");
-        return await PostAsync<UspsShippingOptionsRequest, UspsShippingOptionsResponse>(httpClient, token, uri, request, resultBuilder);
+        return await PostAsync<UspsShippingOptionsRequest, UspsShippingOptionsResponse>(httpClient, token, uri, request, resultBuilder, cancellationToken).ConfigureAwait(false);
     }
 }

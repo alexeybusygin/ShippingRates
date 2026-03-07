@@ -4,11 +4,11 @@
     <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
     <Authors>Alexey Busygin</Authors>
     <Description>Wrapper for UPS, FedEx, USPS, and DHL shipping rates APIs. Works with .NET 6+, .NET Core 2.0+ and .NET Framework 4.6.1+</Description>
-    <Copyright>Copyright © 2025 Alexey Busygin, Kyle West</Copyright>
+    <Copyright>Copyright © 2026 Alexey Busygin, Kyle West</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/alexeybusygin/ShippingRates</PackageProjectUrl>
     <PackageTags>ups fedex usps shipping rates .net .net6 .net-standard .net-core dhl dhl-ecommerce</PackageTags>
-    <Version>3.0.0</Version>
+    <Version>4.0.3</Version>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -17,20 +17,12 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="System.ServiceModel.Http" Version="4.10.3" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.3" />
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net6.0'">
-    <PackageReference Include="System.ServiceModel.Http" Version="6.0.0" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
   <ItemGroup>

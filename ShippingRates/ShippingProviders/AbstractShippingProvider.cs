@@ -1,4 +1,6 @@
 using System.Net.Http;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShippingRates.ShippingProviders;
@@ -9,18 +11,45 @@ namespace ShippingRates.ShippingProviders;
 /// </summary>
 public abstract class AbstractShippingProvider : IShippingProvider
 {
-    public abstract Task<RateResult> GetRatesAsync(Shipment shipment);
+    public abstract Task<RateResult> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default);
     public abstract string Name { get; }
 
-    private HttpClient? _httpClient;
-    protected HttpClient? HttpClient
+    private HttpClient? _externalHttpClient;
+
+    protected void SetHttpClient(HttpClient httpClient)
     {
-        get => _httpClient;
-        set
+        _externalHttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    }
+
+    protected virtual HttpClient CreateInternalHttpClient() => new();
+
+    protected HttpClientLease RentHttpClient()
+    {
+        if (_externalHttpClient != null)
         {
-            _httpClient = value;
-            IsExternalHttpClient = _httpClient != null;
+            return new HttpClientLease(_externalHttpClient, ownsClient: false);
+        }
+
+        return new HttpClientLease(CreateInternalHttpClient(), ownsClient: true);
+    }
+
+    protected readonly struct HttpClientLease : IDisposable
+    {
+        public HttpClient HttpClient { get; }
+        private readonly bool _ownsClient;
+
+        public HttpClientLease(HttpClient httpClient, bool ownsClient)
+        {
+            HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _ownsClient = ownsClient;
+        }
+
+        public void Dispose()
+        {
+            if (_ownsClient)
+            {
+                HttpClient.Dispose();
+            }
         }
     }
-    protected bool IsExternalHttpClient { get; private set; }
 }

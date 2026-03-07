@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace ShippingRates.ShippingProviders
 {
@@ -15,6 +16,6 @@ namespace ShippingRates.ShippingProviders
         /// <summary>
         ///     Retrieves rates from the provider.
         /// </summary>
-        Task<RateResult> GetRatesAsync(Shipment shipment);
+        Task<RateResult> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default);
     }
 }
