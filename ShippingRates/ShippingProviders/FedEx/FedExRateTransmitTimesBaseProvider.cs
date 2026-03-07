@@ -182,7 +182,8 @@ namespace ShippingRates.ShippingProviders.FedEx
         {
             var resultBuilder = new RateResultAggregator(Name);
 
-            var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+            using var httpClientLease = RentHttpClient();
+            var httpClient = httpClientLease.HttpClient;
 
             try
             {
@@ -224,11 +225,6 @@ namespace ShippingRates.ShippingProviders.FedEx
             {
                 resultBuilder.AddInternalError($"FedEx Provider Exception: {e.Message}");
                 _logger?.LogError(e, "FedEx Provider Exception");
-            }
-            finally
-            {
-                if (!IsExternalHttpClient && httpClient != null)
-                    httpClient.Dispose();
             }
 
             return resultBuilder.Build();

@@ -35,7 +35,7 @@ public class UspsProvider : AbstractShippingProvider
     public UspsProvider(UspsProviderConfiguration configuration, HttpClient httpClient)
         : this(configuration)
     {
-        HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        SetHttpClient(httpClient);
     }
 
     public UspsProvider(UspsProviderConfiguration configuration, ILogger<UspsProvider> logger)
@@ -61,7 +61,8 @@ public class UspsProvider : AbstractShippingProvider
             return resultBuilder.Build();
         }
 
-        var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+        using var httpClientLease = RentHttpClient();
+        var httpClient = httpClientLease.HttpClient;
 
         try
         {
@@ -101,11 +102,6 @@ public class UspsProvider : AbstractShippingProvider
         {
             resultBuilder.AddInternalError($"USPS Provider Exception: {e.Message}");
             _logger?.LogError(e, "USPS Provider Exception");
-        }
-        finally
-        {
-            if (!IsExternalHttpClient && httpClient != null)
-                httpClient.Dispose();
         }
 
         return resultBuilder.Build();

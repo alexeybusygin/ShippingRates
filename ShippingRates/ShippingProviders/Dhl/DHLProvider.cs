@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -92,10 +92,19 @@ namespace ShippingRates.ShippingProviders
         public DHLProvider(DHLProviderConfiguration configuration, HttpClient httpClient)
             : this(configuration)
         {
-            HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            SetHttpClient(httpClient);
         }
 
         private Uri RatesUri => new Uri(_configuration.UseProduction ? ProductionServicesUrl : TestServicesUrl);
+
+        protected override HttpClient CreateInternalHttpClient()
+        {
+            // Scope TLS settings to DHL-managed HTTP clients instead of mutating process-wide defaults.
+            return new HttpClient(new HttpClientHandler
+            {
+                SslProtocols = SslProtocols.Tls12
+            });
+        }
 
         private string BuildRatesRequestMessage(
             Shipment shipment,
@@ -219,9 +228,9 @@ namespace ShippingRates.ShippingProviders
 
         public override async Task<RateResult> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            using var httpClientLease = RentHttpClient();
+            var httpClient = httpClientLease.HttpClient;
 
-            var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
             var resultBuilder = new RateResultAggregator(Name);
 
             try
@@ -257,11 +266,6 @@ namespace ShippingRates.ShippingProviders
             catch (Exception e)
             {
                 resultBuilder.AddInternalError($"DHL Provider Exception: {e.Message}");
-            }
-            finally
-            {
-                if (!IsExternalHttpClient && httpClient != null)
-                    httpClient.Dispose();
             }
 
             return resultBuilder.Build();
