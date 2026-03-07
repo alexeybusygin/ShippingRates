@@ -61,10 +61,11 @@ namespace ShippingRates.ShippingProviders.FedEx
                             CountryCode = shipment.DestinationAddress.CountryCode
                         }
                     },
-                    PickupType = RequestedShipmentPickupType.USE_SCHEDULED_PICKUP,
+                    PickupType = ToApiPickupType(_configuration.PickupType),
                     RateRequestType = [.. GetRateRequestTypes(shipment)],
                     PreferredCurrency = shipment.Options.GetCurrencyCode(),
-                    PackagingType = "YOUR_PACKAGING",
+                    PackagingType = ToApiPackagingType(
+                        shipment.Options.FedExPackagingTypeOverride ?? _configuration.PackagingType),
                     TotalPackageCount = shipment.Packages.Count,
                 },
             };
@@ -76,14 +77,7 @@ namespace ShippingRates.ShippingProviders.FedEx
 
             if (shipment.Options.FedExOneRate)
             {
-                if (!string.IsNullOrEmpty(shipment.Options.FedExOneRatePackageOverride))
-                {
-                    request.RequestedShipment.PackagingType = shipment.Options.FedExOneRatePackageOverride;
-                }
-                else
-                {
-                    request.RequestedShipment.PackagingType = "FEDEX_MEDIUM_BOX";
-                }
+                request.RequestedShipment.PackagingType = GetPackagingTypeForOneRate(shipment);
                 request.RequestedShipment.ShipmentSpecialServices = new RequestedShipmentSpecialServicesRequested()
                 {
                     SpecialServiceTypes = ["FEDEX_ONE_RATE"]
@@ -114,6 +108,47 @@ namespace ShippingRates.ShippingProviders.FedEx
                 yield return RateRequestType.PREFERRED;
             }
         }
+
+        private static RequestedShipmentPickupType ToApiPickupType(FedExPickupType pickupType)
+            => pickupType switch
+            {
+                FedExPickupType.ContactFedExToSchedule => RequestedShipmentPickupType.CONTACT_FEDEX_TO_SCHEDULE,
+                FedExPickupType.DropoffAtFedExLocation => RequestedShipmentPickupType.DROPOFF_AT_FEDEX_LOCATION,
+                _ => RequestedShipmentPickupType.USE_SCHEDULED_PICKUP
+            };
+
+        private string GetPackagingTypeForOneRate(Shipment shipment)
+        {
+            if (shipment.Options.FedExPackagingTypeOverride.HasValue)
+            {
+                return ToApiPackagingType(shipment.Options.FedExPackagingTypeOverride.Value);
+            }
+
+#pragma warning disable CS0618 // Backward compatibility fallback for deprecated API.
+            if (!string.IsNullOrEmpty(shipment.Options.FedExOneRatePackageOverride))
+            {
+                return shipment.Options.FedExOneRatePackageOverride;
+            }
+#pragma warning restore CS0618
+
+            return "FEDEX_MEDIUM_BOX";
+        }
+
+        private static string ToApiPackagingType(FedExPackagingType packagingType)
+            => packagingType switch
+            {
+                FedExPackagingType.FedExEnvelope => "FEDEX_ENVELOPE",
+                FedExPackagingType.FedExPak => "FEDEX_PAK",
+                FedExPackagingType.FedExBox => "FEDEX_BOX",
+                FedExPackagingType.FedExTube => "FEDEX_TUBE",
+                FedExPackagingType.FedEx10KgBox => "FEDEX_10KG_BOX",
+                FedExPackagingType.FedEx25KgBox => "FEDEX_25KG_BOX",
+                FedExPackagingType.FedExSmallBox => "FEDEX_SMALL_BOX",
+                FedExPackagingType.FedExMediumBox => "FEDEX_MEDIUM_BOX",
+                FedExPackagingType.FedExLargeBox => "FEDEX_LARGE_BOX",
+                FedExPackagingType.FedExExtraLargeBox => "FEDEX_EXTRA_LARGE_BOX",
+                _ => "YOUR_PACKAGING"
+            };
 
         /// <summary>
         /// Sets shipment details

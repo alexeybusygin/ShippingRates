@@ -155,7 +155,7 @@ public class FedExTests : FedExTestsBase
         var oneRates = _rateManagerNegotiated.GetRates(from, to, package, new ShipmentOptions()
         {
             FedExOneRate = true,
-            FedExOneRatePackageOverride = "FEDEX_ENVELOPE" //one of the cheapest options
+            FedExPackagingTypeOverride = FedExPackagingType.FedExEnvelope // one of the cheapest options
         });
         PrintErrorIfAny(oneRates);
 
