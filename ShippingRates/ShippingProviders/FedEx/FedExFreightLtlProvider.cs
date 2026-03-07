@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ShippingRates.ShippingProviders.FedEx;
@@ -35,7 +36,8 @@ public class FedExFreightLtlProvider : FedExBaseProvider<FedExFreightLtlProvider
     /// </summary>
     protected override Dictionary<string, string> ServiceCodes => new()
     {
-        {"FEDEX_FREIGHT_PRIORITY", "FEDEX_FREIGHT_ECONOMY"}
+        { "FEDEX_FREIGHT_PRIORITY", "FedEx Freight Priority" },
+        { "FEDEX_FREIGHT_ECONOMY", "FedEx Freight Economy" }
     };
 
     /// <summary>
@@ -151,22 +153,23 @@ public class FedExFreightLtlProvider : FedExBaseProvider<FedExFreightLtlProvider
     /// <summary>
     /// Gets rates
     /// </summary>
-    public override async Task<RateResult> GetRatesAsync(Shipment shipment)
+    public override async Task<RateResult> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
     {
         var resultBuilder = new RateResultAggregator(Name);
 
-        var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+        using var httpClientLease = RentHttpClient();
+        var httpClient = httpClientLease.HttpClient;
 
         try
         {
             var oauthService = new FedExOAuthClient(_logger);
-            var token = await oauthService.GetTokenAsync(_configuration, httpClient, resultBuilder);
+            var token = await oauthService.GetTokenAsync(_configuration, httpClient, resultBuilder, cancellationToken).ConfigureAwait(false);
 
             if (token is { Length: > 0 })
             {
                 var request = CreateRateRequest(shipment);
 
-                var service = new Client(HttpClient)
+                var service = new Client(httpClient)
                 {
                     BaseUrl = GetRequestUri(_configuration.UseProduction)
                 };
@@ -175,7 +178,8 @@ public class FedExFreightLtlProvider : FedExBaseProvider<FedExFreightLtlProvider
                     DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
                     "application/json",
                     "en-US",
-                    "Bearer " + token
+                    "Bearer " + token,
+                    cancellationToken
                 ).ConfigureAwait(false);
 
                 if (reply.Output != null)
@@ -196,11 +200,6 @@ public class FedExFreightLtlProvider : FedExBaseProvider<FedExFreightLtlProvider
         {
             resultBuilder.AddInternalError($"FedEx Freight LTL Provider Exception: {e.Message}");
             _logger?.LogError(e, "FedEx Freight LTL Provider Exception");
-        }
-        finally
-        {
-            if (!IsExternalHttpClient && httpClient != null)
-                httpClient.Dispose();
         }
 
         return resultBuilder.Build();
