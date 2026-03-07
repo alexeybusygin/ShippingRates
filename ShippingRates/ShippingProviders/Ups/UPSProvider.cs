@@ -54,7 +54,7 @@ public class UPSProvider : AbstractShippingProvider
     public UPSProvider(UPSProviderConfiguration configuration, HttpClient httpClient)
         : this(configuration)
     {
-        HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        SetHttpClient(httpClient);
     }
 
     public UPSProvider(UPSProviderConfiguration configuration, ILogger<UPSProvider> logger)
@@ -71,7 +71,8 @@ public class UPSProvider : AbstractShippingProvider
 
     public override async Task<RateResult> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
     {
-        var httpClient = IsExternalHttpClient ? HttpClient : new HttpClient();
+        using var httpClientLease = RentHttpClient();
+        var httpClient = httpClientLease.HttpClient;
         var resultBuilder = new RateResultAggregator(Name);
 
         try
@@ -94,11 +95,6 @@ public class UPSProvider : AbstractShippingProvider
         {
             resultBuilder.AddInternalError($"UPS Provider Exception: {e.Message}");
             _logger?.LogError(e, "UPS Provider Exception");
-        }
-        finally
-        {
-            if (!IsExternalHttpClient && httpClient != null)
-                httpClient.Dispose();
         }
 
         return resultBuilder.Build();
