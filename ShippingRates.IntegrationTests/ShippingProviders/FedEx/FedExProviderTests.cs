@@ -87,16 +87,10 @@ public class FedExTests : FedExTestsBase
             Assert.That(rates, Is.Not.Null);
             Assert.That(rates.Rates, Is.Empty);
         }
-        Assert.That(rates.Errors, Has.Count.EqualTo(1));
-
-        var error = rates.Errors.FirstOrDefault();
-        Assert.That(error, Is.Not.Null);
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(error.Number, Is.EqualTo("400"));
-            Assert.That(error.Description, Is.Not.Null);
-        }
-        Assert.That(error.Description, Is.EqualTo("RATE.LOCATION.NOSERVICE"));
+        AssertSingleFedExError(
+            rates,
+            "400",
+            "RATE.LOCATION.NOSERVICE: FedEx service is not currently available to this origin / destination combination. Enter new information or contact FedEx Customer Service.");
     }
 
     [Test]
@@ -126,15 +120,16 @@ public class FedExTests : FedExTestsBase
         PrintErrorIfAny(rates);
 
         Assert.That(rates, Is.Not.Null);
-        Assert.That(rates.Rates, Is.Empty);
-        Assert.That(rates.Errors, Is.Not.Empty);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(rates.Rates, Is.Empty);
+            Assert.That(rates.Errors, Is.Not.Empty);
+        }
 
-        var error = rates.Errors.First();
-        Assert.That(error.Number, Is.EqualTo("400"));
-        Assert.That(
-            error.Description,
-            Is.EqualTo("ACCOUNT.NUMBER.MISMATCH: Account Number Mismatch -As the payment Type is SENDER, ShippingChargesPayment Payor AccountNumber should match the shipper account number .Please update and try again"));
-        TestContext.WriteLine($"FedEx mismatch response: {error.Number}: {error.Description}");
+        AssertSingleFedExError(
+            rates,
+            "400",
+            "ACCOUNT.NUMBER.MISMATCH: Account Number Mismatch -As the payment Type is SENDER, ShippingChargesPayment Payor AccountNumber should match the shipper account number .Please update and try again");
     }
 
     /// <summary>
@@ -200,7 +195,7 @@ public class FedExTests : FedExTestsBase
         AssertRatesAreNotEqual(rates, oneRates);
     }
 
-    private static void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string methodCode = null)
+    private static void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string? methodCode = null)
     {
         using (Assert.EnterMultipleScope())
         {
@@ -294,6 +289,15 @@ public class FedExTests : FedExTestsBase
         Assert.That(rEuro.Rates.Any(r => r.CurrencyCode != "EUR"), Is.False);
     }
 
+    [Test]
+    public void CanGetFedExServiceCodes()
+    {
+        var serviceCodes = _provider.GetServiceCodes();
+
+        Assert.That(serviceCodes, Is.Not.Null);
+        Assert.That(serviceCodes, Is.Not.Empty);
+    }
+
     private static void PrintErrorIfAny(Shipment result)
     {
         if(result.Errors.Count != 0)
@@ -316,12 +320,16 @@ public class FedExTests : FedExTestsBase
         return new string(chars);
     }
 
-    [Test]
-    public void CanGetFedExServiceCodes()
+    private static void AssertSingleFedExError(Shipment rates, string errorNumber, string errorDescription)
     {
-        var serviceCodes = _provider.GetServiceCodes();
+        Assert.That(rates.Errors, Has.Count.EqualTo(1));
 
-        Assert.That(serviceCodes, Is.Not.Null);
-        Assert.That(serviceCodes, Is.Not.Empty);
+        var error = rates.Errors.FirstOrDefault();
+        Assert.That(error, Is.Not.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(error.Number, Is.EqualTo(errorNumber));
+            Assert.That(error.Description, Is.EqualTo(errorDescription));
+        }
     }
 }
