@@ -99,6 +99,44 @@ public class FedExTests : FedExTestsBase
         Assert.That(error.Description, Is.EqualTo("RATE.LOCATION.NOSERVICE"));
     }
 
+    [Test]
+    public void FedExReturnsAccountMismatchError()
+    {
+        var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
+
+        var provider = new FedExProvider(new FedExProviderConfiguration()
+        {
+            ClientId = config.FedExClientId,
+            ClientSecret = config.FedExClientSecret,
+            AccountNumber = CreateMismatchedAccountNumber(config.FedExAccountNumber),
+            UseProduction = config.FedExUseProduction
+        }, new HttpClient(new HttpClientHandler
+        {
+            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+        }));
+
+        var rateManager = new RateManager();
+        rateManager.AddProvider(provider);
+
+        var from = new Address("Annapolis", "MD", "21401", "US");
+        var to = new Address("Fitchburg", "WI", "53711", "US");
+        var package = new Package(7, 7, 7, 6, 0);
+
+        var rates = rateManager.GetRates(from, to, package);
+        PrintErrorIfAny(rates);
+
+        Assert.That(rates, Is.Not.Null);
+        Assert.That(rates.Rates, Is.Empty);
+        Assert.That(rates.Errors, Is.Not.Empty);
+
+        var error = rates.Errors.First();
+        Assert.That(error.Number, Is.EqualTo("400"));
+        Assert.That(
+            error.Description,
+            Is.EqualTo("ACCOUNT.NUMBER.MISMATCH: Account Number Mismatch -As the payment Type is SENDER, ShippingChargesPayment Payor AccountNumber should match the shipper account number .Please update and try again"));
+        TestContext.WriteLine($"FedEx mismatch response: {error.Number}: {error.Description}");
+    }
+
     /// <summary>
     /// Note, Test and some production accounts may not have different rates with FedEx
     /// </summary>
@@ -266,6 +304,16 @@ public class FedExTests : FedExTestsBase
                 Console.WriteLine($"  {error.Number}: {error.Description}");
             }
         }
+    }
+
+    private static string CreateMismatchedAccountNumber(string? accountNumber)
+    {
+        Assert.That(accountNumber, Is.Not.Null.And.Not.Empty);
+
+        var chars = accountNumber!.ToCharArray();
+        var lastIndex = chars.Length - 1;
+        chars[lastIndex] = chars[lastIndex] == '9' ? '0' : (char)(chars[lastIndex] + 1);
+        return new string(chars);
     }
 
     [Test]
