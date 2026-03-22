@@ -9,17 +9,17 @@ on:
     types: [created]
 
 permissions:
-  contents: read
+  contents: write
   issues: write
   pull-requests: write
 
 jobs:
-  integration-tests:
+  prepare-integration-branch:
     if: github.event.issue.pull_request && github.event.comment.body == '/run-integration-tests'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Validate trigger and load PR details
+      - name: Validate trigger and prepare integration branch
         id: pr
         uses: actions/github-script@v8
         with:
@@ -40,8 +40,46 @@ jobs:
               pull_number: pullNumber,
             });
 
+            if (pull.state !== 'open') {
+              core.setFailed(`Pull request #${pull.number} is not open.`);
+              return;
+            }
+
+            const branchName = `ci/pr-${pull.number}-integration`;
+            const mergeRef = await github.rest.git.getRef({
+              owner,
+              repo,
+              ref: `pull/${pull.number}/merge`,
+            });
+
+            const mergeSha = mergeRef.data.object.sha;
+            const fullRef = `refs/heads/${branchName}`;
+
+            try {
+              await github.rest.git.createRef({
+                owner,
+                repo,
+                ref: fullRef,
+                sha: mergeSha,
+              });
+            } catch (error) {
+              if (error.status !== 422) {
+                throw error;
+              }
+
+              await github.rest.git.updateRef({
+                owner,
+                repo,
+                ref: `heads/${branchName}`,
+                sha: mergeSha,
+                force: true,
+              });
+            }
+
             core.setOutput('pull_number', String(pull.number));
             core.setOutput('merge_ref', `refs/pull/${pull.number}/merge`);
+            core.setOutput('merge_sha', mergeSha);
+            core.setOutput('branch_name', branchName);
 
       - name: Add reaction
         continue-on-error: true
@@ -59,58 +97,19 @@ jobs:
               core.warning(`Failed to add reaction: ${error.message}`);
             }
 
-      - name: Checkout PR head
-        uses: actions/checkout@v5
-        with:
-          repository: ${{ github.repository }}
-          ref: ${{ steps.pr.outputs.merge_ref }}
-          persist-credentials: false
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 9.0.x
-
-      - name: Restore
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore ./ShippingRates/ShippingRates.csproj
-
-      - name: Test (Integration)
-        env:
-          ShippingRates.USPSClientId: ${{ secrets.USPS_CLIENT_ID }}
-          ShippingRates.USPSClientSecret: ${{ secrets.USPS_CLIENT_SECRET }}
-          ShippingRates.USPSUseProduction: ${{ secrets.USPS_USE_PRODUCTION }}
-          ShippingRates.USPSUserId: ${{ secrets.USPS_USER_ID }}
-          ShippingRates.UPSAccountNumber: ${{ secrets.UPS_ACCOUNT_NUMBER }}
-          ShippingRates.UPSClientId: ${{ secrets.UPS_CLIENT_ID }}
-          ShippingRates.UPSClientSecret: ${{ secrets.UPS_CLIENT_SECRET }}
-          ShippingRates.FedExClientId: ${{ secrets.FEDEX_CLIENT_ID }}
-          ShippingRates.FedExClientSecret: ${{ secrets.FEDEX_CLIENT_SECRET }}
-          ShippingRates.FedExUseProduction: ${{ secrets.FEDEX_USE_PRODUCTION }}
-          ShippingRates.FedExHubId: ${{ secrets.FEDEX_HUB_ID }}
-          ShippingRates.FedExAccountNumber: ${{ secrets.FEDEX_ACCOUNT_NUMBER }}
-          ShippingRates.DHLSiteId: ${{ secrets.DHL_SITE_ID }}
-          ShippingRates.DHLPassword: ${{ secrets.DHL_PASSWORD }}
-          ShippingRates.DHLAccountNumber: ${{ secrets.DHL_ACCOUNT_NUMBER }}
-        run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
-
-      - name: Comment result
-        if: always() && steps.pr.outcome == 'success'
+      - name: Comment queued run
+        if: steps.pr.outcome == 'success'
         continue-on-error: true
         uses: actions/github-script@v8
         with:
           script: |
-            const conclusion = '${{ job.status }}' === 'success' ? 'passed' : 'failed';
-
             try {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.payload.issue.number,
-                body: `Integration test run for merge ref \`${{ steps.pr.outputs.merge_ref }}\` (${conclusion}). See workflow run for details.`,
+                body: `Queued integration tests for merge ref \`${{ steps.pr.outputs.merge_ref }}\` on branch \`${{ steps.pr.outputs.branch_name }}\` at commit \`${{ steps.pr.outputs.merge_sha }}\`. Check the Build workflow run for results.`,
               });
             } catch (error) {
-              core.warning(`Failed to comment with result: ${error.message}`);
+              core.warning(`Failed to comment with queue details: ${error.message}`);
             }
