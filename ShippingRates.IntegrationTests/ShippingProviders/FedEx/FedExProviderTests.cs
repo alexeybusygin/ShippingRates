@@ -87,16 +87,49 @@ public class FedExTests : FedExTestsBase
             Assert.That(rates, Is.Not.Null);
             Assert.That(rates.Rates, Is.Empty);
         }
-        Assert.That(rates.Errors, Has.Count.EqualTo(1));
+        AssertSingleFedExError(
+            rates,
+            "400",
+            "RATE.LOCATION.NOSERVICE: FedEx service is not currently available to this origin / destination combination. Enter new information or contact FedEx Customer Service.");
+    }
 
-        var error = rates.Errors.FirstOrDefault();
-        Assert.That(error, Is.Not.Null);
+    [Test]
+    public void FedExReturnsAccountMismatchError()
+    {
+        var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
+
+        var provider = new FedExProvider(new FedExProviderConfiguration()
+        {
+            ClientId = config.FedExClientId,
+            ClientSecret = config.FedExClientSecret,
+            AccountNumber = CreateMismatchedAccountNumber(config.FedExAccountNumber),
+            UseProduction = config.FedExUseProduction
+        }, new HttpClient(new HttpClientHandler
+        {
+            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+        }));
+
+        var rateManager = new RateManager();
+        rateManager.AddProvider(provider);
+
+        var from = new Address("Annapolis", "MD", "21401", "US");
+        var to = new Address("Fitchburg", "WI", "53711", "US");
+        var package = new Package(7, 7, 7, 6, 0);
+
+        var rates = rateManager.GetRates(from, to, package);
+        PrintErrorIfAny(rates);
+
+        Assert.That(rates, Is.Not.Null);
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(error.Number, Is.EqualTo("400"));
-            Assert.That(error.Description, Is.Not.Null);
+            Assert.That(rates.Rates, Is.Empty);
+            Assert.That(rates.Errors, Is.Not.Empty);
         }
-        Assert.That(error.Description, Is.EqualTo("RATE.LOCATION.NOSERVICE"));
+
+        AssertSingleFedExError(
+            rates,
+            "400",
+            "ACCOUNT.NUMBER.MISMATCH: Account Number Mismatch -As the payment Type is SENDER, ShippingChargesPayment Payor AccountNumber should match the shipper account number .Please update and try again");
     }
 
     /// <summary>
@@ -162,7 +195,7 @@ public class FedExTests : FedExTestsBase
         AssertRatesAreNotEqual(rates, oneRates);
     }
 
-    private static void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string methodCode = null)
+    private static void AssertRatesAreNotEqual(Shipment r1, Shipment r2, string? methodCode = null)
     {
         using (Assert.EnterMultipleScope())
         {
@@ -256,6 +289,15 @@ public class FedExTests : FedExTestsBase
         Assert.That(rEuro.Rates.Any(r => r.CurrencyCode != "EUR"), Is.False);
     }
 
+    [Test]
+    public void CanGetFedExServiceCodes()
+    {
+        var serviceCodes = _provider.GetServiceCodes();
+
+        Assert.That(serviceCodes, Is.Not.Null);
+        Assert.That(serviceCodes, Is.Not.Empty);
+    }
+
     private static void PrintErrorIfAny(Shipment result)
     {
         if(result.Errors.Count != 0)
@@ -268,12 +310,26 @@ public class FedExTests : FedExTestsBase
         }
     }
 
-    [Test]
-    public void CanGetFedExServiceCodes()
+    private static string CreateMismatchedAccountNumber(string? accountNumber)
     {
-        var serviceCodes = _provider.GetServiceCodes();
+        Assert.That(accountNumber, Is.Not.Null.And.Not.Empty);
 
-        Assert.That(serviceCodes, Is.Not.Null);
-        Assert.That(serviceCodes, Is.Not.Empty);
+        var chars = accountNumber!.ToCharArray();
+        var lastIndex = chars.Length - 1;
+        chars[lastIndex] = chars[lastIndex] == '9' ? '0' : (char)(chars[lastIndex] + 1);
+        return new string(chars);
+    }
+
+    private static void AssertSingleFedExError(Shipment rates, string errorNumber, string errorDescription)
+    {
+        Assert.That(rates.Errors, Has.Count.EqualTo(1));
+
+        var error = rates.Errors.FirstOrDefault();
+        Assert.That(error, Is.Not.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(error.Number, Is.EqualTo(errorNumber));
+            Assert.That(error.Description, Is.EqualTo(errorDescription));
+        }
     }
 }

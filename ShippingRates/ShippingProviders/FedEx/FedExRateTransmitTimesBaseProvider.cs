@@ -369,49 +369,7 @@ namespace ShippingRates.ShippingProviders.FedEx
 
         private void ProcessErrors(RateResultAggregator rateResult, ApiException exception)
         {
-            var msg = exception.Message;
-            if (exception is ApiException<ErrorResponseVO> typedResponseException)
-            {
-                if (typedResponseException.Result?.Errors != null)
-                {
-                    msg = string.Join(", ", typedResponseException.Result.Errors.Select(e => e.Code));
-                }
-            }
-            else if (exception is ApiException<ErrorResponseVO401> typedResponseException401)
-            {
-                if (typedResponseException401.Result?.Errors != null)
-                {
-                    msg = string.Join(", ", typedResponseException401.Result.Errors.Select(e => e.Code));
-                }
-            }
-            else if (exception is ApiException<ErrorResponseVO403> typedResponseException403)
-            {
-                if (typedResponseException403.Result?.Errors != null)
-                {
-                    msg = string.Join(", ", typedResponseException403.Result.Errors.Select(e => e.Code));
-                }
-            }
-            else if (exception is ApiException<ErrorResponseVO404> typedResponseException404)
-            {
-                if (typedResponseException404.Result?.Errors != null)
-                {
-                    msg = string.Join(", ", typedResponseException404.Result.Errors.Select(e => e.Code));
-                }
-            }
-            else if (exception is ApiException<ErrorResponseVO500> typedResponseException500)
-            {
-                if (typedResponseException500.Result?.Errors != null)
-                {
-                    msg = string.Join(", ", typedResponseException500.Result.Errors.Select(e => e.Code));
-                }
-            }
-            else if (exception is ApiException<ErrorResponseVO503> typedResponseException503)
-            {
-                if (typedResponseException503.Result?.Errors != null)
-                {
-                    msg = string.Join(", ", typedResponseException503.Result.Errors.Select(e => e.Code));
-                }
-            }
+            var msg = GetFedExErrorMessage(exception) ?? exception.Message;
 
             var err = new Error
             {
@@ -421,6 +379,51 @@ namespace ShippingRates.ShippingProviders.FedEx
             };
 
             rateResult.AddProviderError(err);
+        }
+
+        private static string? GetFedExErrorMessage(ApiException exception)
+            => exception switch
+            {
+                ApiException<ErrorResponseVO> typedResponseException => JoinMessages(
+                    typedResponseException.Result?.Errors?.Select(e => ((string?)e.Code, (string?)e.Message))),
+                ApiException<ErrorResponseVO401> typedResponseException401 => JoinMessages(
+                    typedResponseException401.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                ApiException<ErrorResponseVO403> typedResponseException403 => JoinMessages(
+                    typedResponseException403.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                ApiException<ErrorResponseVO404> typedResponseException404 => JoinMessages(
+                    typedResponseException404.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                ApiException<ErrorResponseVO500> typedResponseException500 => JoinMessages(
+                    typedResponseException500.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                ApiException<ErrorResponseVO503> typedResponseException503 => JoinMessages(
+                    typedResponseException503.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                _ => null
+            };
+
+        private static string? JoinMessages(IEnumerable<(string? code, string? message)>? errors)
+        {
+            if (errors == null)
+            {
+                return null;
+            }
+
+            var messages = errors
+                .Select(error => FormatMessage(error.code, error.message))
+                .Where(message => !string.IsNullOrWhiteSpace(message))
+                .ToArray();
+
+            return messages.Length == 0 ? null : string.Join(", ", messages);
+        }
+
+        private static string? FormatMessage(string? code, string? message)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                return string.IsNullOrWhiteSpace(message) ? null : message;
+            }
+
+            return string.IsNullOrWhiteSpace(message)
+                ? code
+                : $"{code}: {message}";
         }
     }
 }
