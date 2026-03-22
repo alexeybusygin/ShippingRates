@@ -6,6 +6,16 @@ This article summarizes notable updates by version.
 
 - ShippingRates 3.x and later
 
+## 4.0.4 (March 22, 2026)
+
+### Changed
+
+- Improved FedEx error handling
+
+### Breaking changes
+
+- None in this release
+
 ## 4.0.3 (March 7, 2026)
 
 ### Added
