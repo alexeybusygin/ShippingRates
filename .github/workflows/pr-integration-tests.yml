@@ -89,7 +89,7 @@ jobs:
           ShippingRates.DHLSiteId: ${{ secrets.DHL_SITE_ID }}
           ShippingRates.DHLPassword: ${{ secrets.DHL_PASSWORD }}
           ShippingRates.DHLAccountNumber: ${{ secrets.DHL_ACCOUNT_NUMBER }}
-        run: dotnet test --configuration Release --no-build --verbosity minimal ./ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
+        run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
 
       - name: Comment result
         if: always() && steps.pr.outcome == 'success'

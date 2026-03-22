@@ -36,7 +36,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore ./ShippingRates/ShippingRates.csproj
 
       - name: Test (Unit)
-        run: dotnet test --configuration Release --no-build --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
+        run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
 
       - name: Test (Integration)
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
@@ -56,4 +56,4 @@ jobs:
           ShippingRates.DHLSiteId: ${{ secrets.DHL_SITE_ID }}
           ShippingRates.DHLPassword: ${{ secrets.DHL_PASSWORD }}
           ShippingRates.DHLAccountNumber: ${{ secrets.DHL_ACCOUNT_NUMBER }}
-        run: dotnet test --configuration Release --no-build --verbosity minimal ./ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
+        run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
