@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Validate trigger and load PR details
         id: pr
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const association = context.payload.comment.author_association;
@@ -41,11 +41,10 @@ jobs:
             });
 
             core.setOutput('pull_number', String(pull.number));
-            core.setOutput('head_sha', pull.head.sha);
             core.setOutput('merge_ref', `refs/pull/${pull.number}/merge`);
 
       - name: Add reaction
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             await github.rest.reactions.createForIssueComment({
@@ -56,28 +55,22 @@ jobs:
             });
 
       - name: Checkout PR head
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ github.repository }}
           ref: ${{ steps.pr.outputs.merge_ref }}
           persist-credentials: false
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 9.0.x
-          cache: true
-          cache-dependency-path: |
-            ShippingRates.sln
-            ShippingRates/ShippingRates.csproj
-            ShippingRates.Tests/ShippingRates.Tests.csproj
-            ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
 
       - name: Restore
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore ./ShippingRates/ShippingRates.csproj
 
       - name: Test (Integration)
         env:
@@ -100,7 +93,7 @@ jobs:
 
       - name: Comment result
         if: always() && steps.pr.outcome == 'success'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const conclusion = '${{ job.status }}' === 'success' ? 'passed' : 'failed';

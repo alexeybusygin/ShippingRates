@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
@@ -36,15 +36,9 @@ jobs:
         fi
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 9.0.x
-        cache: true
-        cache-dependency-path: |
-          ShippingRates.sln
-          ShippingRates/ShippingRates.csproj
-          ShippingRates.Tests/ShippingRates.Tests.csproj
-          ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
 
     - name: Restore dependencies
       run: dotnet restore
@@ -82,7 +76,7 @@ jobs:
           --skip-duplicate
 
     - name: Upload NuGet package as artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: package
         path: ./nupkgs

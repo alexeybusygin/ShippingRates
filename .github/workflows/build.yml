@@ -22,24 +22,18 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 9.0.x
-          cache: true
-          cache-dependency-path: |
-            ShippingRates.sln
-            ShippingRates/ShippingRates.csproj
-            ShippingRates.Tests/ShippingRates.Tests.csproj
-            ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
 
       - name: Restore
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore ./ShippingRates/ShippingRates.csproj
 
       - name: Test (Unit)
         run: dotnet test --configuration Release --no-build --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
