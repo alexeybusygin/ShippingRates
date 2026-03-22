@@ -1,0 +1,82 @@
+name: Release
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+
+    - name: Determine package version
+      id: package_version
+      shell: bash
+      run: echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+    - name: Ensure release tag points to master
+      shell: bash
+      run: |
+        git fetch origin master --depth=1
+        if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/master; then
+          echo "Tag ${GITHUB_REF_NAME} does not point to a commit on master."
+          exit 1
+        fi
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: >
+        dotnet build --configuration Release --no-restore
+        ./ShippingRates/ShippingRates.csproj
+        -p:Version=${{ steps.package_version.outputs.value }}
+        -p:PackageVersion=${{ steps.package_version.outputs.value }}
+
+    - name: Test (Unit)
+      run: dotnet test --configuration Release --no-restore --verbosity minimal ./ShippingRates.Tests/ShippingRates.Tests.csproj
+
+    - name: Pack
+      run: >
+        dotnet pack --configuration Release --no-build --output ./nupkgs
+        ./ShippingRates/ShippingRates.csproj
+        -p:Version=${{ steps.package_version.outputs.value }}
+        -p:PackageVersion=${{ steps.package_version.outputs.value }}
+
+    - name: Push NuGet package
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      shell: bash
+      run: |
+        if [[ -z "$NUGET_API_KEY" ]]; then
+          echo "The NUGET_API_KEY secret is not configured."
+          exit 1
+        fi
+
+        dotnet nuget push "./nupkgs/*.nupkg" \
+          --api-key "$NUGET_API_KEY" \
+          --source https://api.nuget.org/v3/index.json \
+          --skip-duplicate
+
+    - name: Upload NuGet package as artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: package
+        path: ./nupkgs
