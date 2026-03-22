@@ -1,0 +1,112 @@
+name: PR Integration Tests
+
+concurrency:
+  group: pr-integration-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  integration-tests:
+    if: github.event.issue.pull_request && github.event.comment.body == '/run-integration-tests'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate trigger and load PR details
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const association = context.payload.comment.author_association;
+            const allowedAssociations = ['OWNER', 'MEMBER', 'COLLABORATOR'];
+
+            if (!allowedAssociations.includes(association)) {
+              core.setFailed(`Comment author association '${association}' is not allowed to run integration tests.`);
+              return;
+            }
+
+            const { owner, repo } = context.repo;
+            const pullNumber = context.payload.issue.number;
+            const { data: pull } = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: pullNumber,
+            });
+
+            core.setOutput('pull_number', String(pull.number));
+            core.setOutput('head_sha', pull.head.sha);
+            core.setOutput('merge_ref', `refs/pull/${pull.number}/merge`);
+
+      - name: Add reaction
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'rocket',
+            });
+
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ steps.pr.outputs.merge_ref }}
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+          cache: true
+          cache-dependency-path: |
+            ShippingRates.sln
+            ShippingRates/ShippingRates.csproj
+            ShippingRates.Tests/ShippingRates.Tests.csproj
+            ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test (Integration)
+        env:
+          ShippingRates.USPSClientId: ${{ secrets.USPS_CLIENT_ID }}
+          ShippingRates.USPSClientSecret: ${{ secrets.USPS_CLIENT_SECRET }}
+          ShippingRates.USPSUseProduction: ${{ secrets.USPS_USE_PRODUCTION }}
+          ShippingRates.USPSUserId: ${{ secrets.USPS_USER_ID }}
+          ShippingRates.UPSAccountNumber: ${{ secrets.UPS_ACCOUNT_NUMBER }}
+          ShippingRates.UPSClientId: ${{ secrets.UPS_CLIENT_ID }}
+          ShippingRates.UPSClientSecret: ${{ secrets.UPS_CLIENT_SECRET }}
+          ShippingRates.FedExClientId: ${{ secrets.FEDEX_CLIENT_ID }}
+          ShippingRates.FedExClientSecret: ${{ secrets.FEDEX_CLIENT_SECRET }}
+          ShippingRates.FedExUseProduction: ${{ secrets.FEDEX_USE_PRODUCTION }}
+          ShippingRates.FedExHubId: ${{ secrets.FEDEX_HUB_ID }}
+          ShippingRates.FedExAccountNumber: ${{ secrets.FEDEX_ACCOUNT_NUMBER }}
+          ShippingRates.DHLSiteId: ${{ secrets.DHL_SITE_ID }}
+          ShippingRates.DHLPassword: ${{ secrets.DHL_PASSWORD }}
+          ShippingRates.DHLAccountNumber: ${{ secrets.DHL_ACCOUNT_NUMBER }}
+        run: dotnet test --configuration Release --no-build --verbosity minimal ./ShippingRates.IntegrationTests/ShippingRates.IntegrationTests.csproj
+
+      - name: Comment result
+        if: always() && steps.pr.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const conclusion = '${{ job.status }}' === 'success' ? 'passed' : 'failed';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body: `Integration test run for merge ref \`${{ steps.pr.outputs.merge_ref }}\` (${conclusion}). See workflow run for details.`,
+            });
