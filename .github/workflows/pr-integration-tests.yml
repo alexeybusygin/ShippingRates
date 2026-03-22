@@ -11,7 +11,7 @@ on:
 permissions:
   contents: read
   issues: write
-  pull-requests: read
+  pull-requests: write
 
 jobs:
   integration-tests:
@@ -44,15 +44,20 @@ jobs:
             core.setOutput('merge_ref', `refs/pull/${pull.number}/merge`);
 
       - name: Add reaction
+        continue-on-error: true
         uses: actions/github-script@v8
         with:
           script: |
-            await github.rest.reactions.createForIssueComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: context.payload.comment.id,
-              content: 'rocket',
-            });
+            try {
+              await github.rest.reactions.createForIssueComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: context.payload.comment.id,
+                content: 'rocket',
+              });
+            } catch (error) {
+              core.warning(`Failed to add reaction: ${error.message}`);
+            }
 
       - name: Checkout PR head
         uses: actions/checkout@v5
@@ -93,13 +98,19 @@ jobs:
 
       - name: Comment result
         if: always() && steps.pr.outcome == 'success'
+        continue-on-error: true
         uses: actions/github-script@v8
         with:
           script: |
             const conclusion = '${{ job.status }}' === 'success' ? 'passed' : 'failed';
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.issue.number,
-              body: `Integration test run for merge ref \`${{ steps.pr.outputs.merge_ref }}\` (${conclusion}). See workflow run for details.`,
-            });
+
+            try {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                body: `Integration test run for merge ref \`${{ steps.pr.outputs.merge_ref }}\` (${conclusion}). See workflow run for details.`,
+              });
+            } catch (error) {
+              core.warning(`Failed to comment with result: ${error.message}`);
+            }
