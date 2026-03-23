@@ -10,8 +10,8 @@ namespace ShippingRates.ShippingProviders
     {
         internal static class Information
         {
-            public const string DeserializationFailed = "Unable to deserialize response.";
-            public const string UnknownError = "Unknown error '{Message}' while fetching prices: {StatusCode} {Response}";
+            internal const string DeserializationFailed = "Unable to deserialize response.";
+            internal const string UnknownError = "Unknown error '{Message}' while fetching prices: {StatusCode} {Response}";
         }
     }
 }

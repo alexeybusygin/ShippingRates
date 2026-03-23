@@ -5,7 +5,7 @@ namespace ShippingRates
 {
     public class ShipmentOptions
     {
-        public const string DefaultCurrencyCode = "USD";
+        public static readonly string DefaultCurrencyCode = "USD";
 
         /// <summary>
         /// Enable Saturday Delivery option for shipping rates
