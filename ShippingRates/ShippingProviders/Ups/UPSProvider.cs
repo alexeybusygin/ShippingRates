@@ -19,7 +19,7 @@ public class UPSProvider : AbstractShippingProvider
     readonly UPSProviderConfiguration _configuration;
     readonly ILogger<UPSProvider>? _logger;
 
-    readonly static Dictionary<string, string> _serviceCodes = new Dictionary<string, string>()
+    static readonly IReadOnlyDictionary<string, string> _serviceCodes = new Dictionary<string, string>()
     {
         { "01", "UPS Next Day Air" },
         { "02", "UPS Second Day Air" },
@@ -44,11 +44,11 @@ public class UPSProvider : AbstractShippingProvider
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
         if (string.IsNullOrEmpty(_configuration.ClientId))
-            throw new Exception("ClientId is required");
+            throw new ArgumentException("ClientId is required.", nameof(configuration));
         if (string.IsNullOrEmpty(_configuration.ClientSecret))
-            throw new Exception("ClientSecret is required");
+            throw new ArgumentException("ClientSecret is required.", nameof(configuration));
         if (string.IsNullOrEmpty(_configuration.AccountNumber))
-            throw new Exception("AccountNumber is required");
+            throw new ArgumentException("AccountNumber is required.", nameof(configuration));
     }
 
     public UPSProvider(UPSProviderConfiguration configuration, HttpClient httpClient)
@@ -180,5 +180,5 @@ public class UPSProvider : AbstractShippingProvider
         }
     }
 
-    public static IDictionary<string, string> GetServiceCodes() => _serviceCodes;
+    public static IReadOnlyDictionary<string, string> GetServiceCodes() => _serviceCodes;
 }

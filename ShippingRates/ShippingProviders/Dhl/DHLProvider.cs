@@ -22,7 +22,7 @@ namespace ShippingRates.ShippingProviders
     {
         public override string Name { get => "DHL"; }
 
-        public static Dictionary<char, string> AvailableServices => new Dictionary<char, string>
+        private static readonly IReadOnlyDictionary<char, string> _availableServices = new Dictionary<char, string>
         {
             { '1', "EXPRESS DOMESTIC 12:00" },
             { '4', "JETLINE" },
@@ -55,7 +55,9 @@ namespace ShippingRates.ShippingProviders
             { 'Y', "EXPRESS 12:00" }
         };
 
-        public const int DefaultTimeout = 10;
+        public static IReadOnlyDictionary<char, string> AvailableServices => _availableServices;
+
+        public static readonly int DefaultTimeout = 10;
 
         private readonly DHLProviderConfiguration _configuration;
 

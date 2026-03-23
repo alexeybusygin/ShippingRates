@@ -33,7 +33,7 @@ namespace ShippingRates.Models
             {
                 return _value * 0.393701m;
             }
-            throw new Exception($"Unsupported size conversion from {_unitsSystem} to {unitsSystem}");
+            throw new NotSupportedException($"Unsupported size conversion from {_unitsSystem} to {unitsSystem}");
         }
 
         public decimal GetRounded(UnitsSystem unitsSystem) => Math.Ceiling(Get(unitsSystem));

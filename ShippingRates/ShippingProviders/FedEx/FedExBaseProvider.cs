@@ -17,9 +17,9 @@ public abstract class FedExBaseProvider<T> : AbstractShippingProvider where T : 
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
         if (string.IsNullOrEmpty(_configuration.ClientId))
-            throw new Exception("ClientId is required");
+            throw new ArgumentException("ClientId is required.", nameof(configuration));
         if (string.IsNullOrEmpty(_configuration.ClientSecret))
-            throw new Exception("ClientSecret is required");
+            throw new ArgumentException("ClientSecret is required.", nameof(configuration));
     }
 
     public FedExBaseProvider(FedExProviderConfiguration configuration, HttpClient httpClient)
@@ -50,7 +50,7 @@ public abstract class FedExBaseProvider<T> : AbstractShippingProvider where T : 
     /// Gets service codes.
     /// </summary>
     /// <returns></returns>
-    public IDictionary<string, string> GetServiceCodes() => ServiceCodes;
+    public IReadOnlyDictionary<string, string> GetServiceCodes() => ServiceCodes;
 
     public static string GetRequestUri(bool isProduction)
         => $"https://{(isProduction ? "apis" : "apis-sandbox")}.fedex.com";

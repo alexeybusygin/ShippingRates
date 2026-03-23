@@ -4,10 +4,10 @@ internal static class UspsMessages
 {
     internal static class Error
     {
-        public const string DeserializationFailed = "Unable to deserialize USPS response.";
-        public const string UspsError = "USPS Error: {Message}";
-        public const string UspsErrorWithCode = "USPS Error: {Code} {Message}";
-        public const string UnknownError = "Unknown error '{Message}' while fetching USPS prices: {StatusCode} {Response}";
-        public const string ErrorOriginNotUS = "USPS supports only shipments with an origin address in the United States.";
+        internal const string DeserializationFailed = "Unable to deserialize USPS response.";
+        internal const string UspsError = "USPS Error: {Message}";
+        internal const string UspsErrorWithCode = "USPS Error: {Code} {Message}";
+        internal const string UnknownError = "Unknown error '{Message}' while fetching USPS prices: {StatusCode} {Response}";
+        internal const string ErrorOriginNotUS = "USPS supports only shipments with an origin address in the United States.";
     }
 }
