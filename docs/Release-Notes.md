@@ -1,4 +1,4 @@
-# Release Notes
+# Release notes
 
 This article summarizes notable updates by version.
 
@@ -62,7 +62,7 @@ This article summarizes notable updates by version.
 ### Breaking changes
 
 - FedEx provider initialization changed to `FedExProviderConfiguration` with OAuth credentials
-- See [Breaking Changes](Breaking-Changes.md) for migration steps
+- See [Breaking changes](Breaking-Changes.md) for migration steps
 
 ## 3.0.0 (December 7, 2025)
 
@@ -78,4 +78,4 @@ This article summarizes notable updates by version.
 ### Breaking changes
 
 - USPS initialization changed to `UspsProviderConfiguration`
-- See [Breaking Changes](Breaking-Changes.md) for migration steps
+- See [Breaking changes](Breaking-Changes.md) for migration steps
