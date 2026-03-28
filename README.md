@@ -3,32 +3,58 @@
 [![Build](https://github.com/alexeybusygin/ShippingRates/actions/workflows/build.yml/badge.svg)](https://github.com/alexeybusygin/ShippingRates/actions/workflows/build.yml)
 [![NuGet Version](https://img.shields.io/nuget/v/ShippingRates.svg?style=flat-square)](https://www.nuget.org/packages/ShippingRates)
 
-.NET wrapper for UPS, FedEx, USPS, and DHL APIs. Use it to retrieve shipping rates from these carriers.
+ShippingRates is a .NET library for retrieving shipping rates from UPS, FedEx, USPS, and DHL APIs.
 
-## FedEx Breaking Changes
+## Why Use It
 
-Version **4.0.0** includes breaking changes and now supports the modern **FedEx REST API** with OAuth 2.0.
+- Query multiple carriers through one `RateManager`
+- Work with sync or async APIs
+- Support multiple packages in a single shipment
+- Apply shipment-level options such as Saturday delivery
+- Extend returned prices with custom rate adjusters
 
-As FedEx API migration timelines approach, please review the migration guidance in the [Breaking Changes](docs/Breaking-Changes.md).
+## Supported Platforms
 
-## How to Install
+- .NET 6+
+- .NET Standard 2.0
+- .NET Framework 4.6.1+
 
-Available in the [NuGet Gallery](http://nuget.org/packages/ShippingRates):
+## Install
 
+Available on [NuGet](https://www.nuget.org/packages/ShippingRates):
+
+```powershell
+dotnet add package ShippingRates
 ```
-PM> Install-Package ShippingRates
-```
 
-## Getting Started
+## Choose Your Path
 
-```CSharp
-// Create RateManager
+- New integration: start with [Quick Start](#quick-start), then open the carrier-specific page you need in [Carrier Setup](#carrier-setup).
+- Upgrading from an older version: start with [Breaking changes](docs/Breaking-Changes.md).
+- Tuning shared shipment behavior: see [Shipment Options](#shipment-options).
+- Looking for deeper docs: open [docs/README.md](docs/README.md).
+
+## Upgrade Notes
+
+ShippingRates `4.x` includes FedEx breaking changes and uses the modern FedEx REST API with OAuth 2.0.
+
+If you are upgrading an existing integration, start with [Breaking changes](docs/Breaking-Changes.md).
+
+## Quick Start
+
+```csharp
+using System.Collections.Generic;
+using System.Net.Http;
+using ShippingRates;
+using ShippingRates.ShippingProviders.FedEx;
+using ShippingRates.ShippingProviders;
+using ShippingRates.ShippingProviders.Usps;
+
 using var httpClient = new HttpClient();
+
 var rateManager = new RateManager();
 
-// Add desired shipping providers
-// You will need an OAuth Client ID, Client Secret, and Account Number to use the UPS provider.
-var upsConfiguration = new UPSProviderConfiguration()
+var upsConfiguration = new UPSProviderConfiguration
 {
     ClientId = upsClientId,
     ClientSecret = upsClientSecret,
@@ -37,95 +63,97 @@ var upsConfiguration = new UPSProviderConfiguration()
 };
 rateManager.AddProvider(new UPSProvider(upsConfiguration, httpClient));
 
-// You will need an account # and meter # to utilize the FedEx provider.
-rateManager.AddProvider(new FedExProvider(fedexKey, fedexPassword, fedexAccountNumber, fedexMeterNumber));
-
-// You will need an OAuth Client ID and Client Secret to use the USPS provider.
-var uspsProviderConfiguration = new UspsProviderConfiguration()
+var fedExConfiguration = new FedExProviderConfiguration
 {
-    ClientId = upsClientId,
-    ClientSecret = upsClientSecret,
+    ClientId = fedexClientId,
+    ClientSecret = fedexClientSecret,
+    AccountNumber = fedexAccountNumber,
+    HubId = fedexHubId,
     UseProduction = false
 };
-rateManager.AddProvider(new UspsProvider(uspsProviderConfiguration, httpClient));
+rateManager.AddProvider(new FedExProvider(fedExConfiguration, httpClient));
 
-// You will need a Site ID and Password to use the DHL provider.
-var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: false));
+var uspsConfiguration = new UspsProviderConfiguration
+{
+    ClientId = uspsClientId,
+    ClientSecret = uspsClientSecret,
+    UseProduction = false
+};
+rateManager.AddProvider(new UspsProvider(uspsConfiguration, httpClient));
+
+var dhlConfiguration = new DHLProviderConfiguration(dhlSiteId, dhlPassword, useProduction: false);
 rateManager.AddProvider(new DHLProvider(dhlConfiguration, httpClient));
 
-// Setup package and destination/origin addresses
-var packages = new List<Package>();
-packages.Add(new Package(12, 12, 12, 35, 150));    // Package in lbs and inches
-packages.Add(new PackageKgCm(4, 4, 6, 15, 250));   // Package in kg and cm
+var packages = new List<Package>
+{
+    new Package(12, 12, 12, 35, 150),
+    new PackageKgCm(4, 4, 6, 15, 250)
+};
 
-var origin = new Address("", "", "06405", "US");
-var destination = new Address("", "", "20852", "US"); // US Address
+var origin = new Address("", "CT", "06405", "US");
+var destination = new Address("", "", "20852", "US");
 
-// Call GetRates()
 Shipment shipment = await rateManager.GetRatesAsync(origin, destination, packages);
 
-// Iterate through the rates returned
 foreach (Rate rate in shipment.Rates)
 {
     Console.WriteLine(rate);
 }
 ```
 
-See the sample app in this repository for a working example.
+The sample app in [SampleApp/Program.cs](SampleApp/Program.cs) shows a fuller end-to-end setup.
 
-## [Documentation](docs)
+## Carrier Setup
 
-* [Breaking Changes](docs/Breaking-Changes.md)
-* [Release Notes](docs/Release-Notes.md)
-* [HttpClient lifecycle](docs/HttpClient-lifecycle.md)
-* [Negotiated Rates](docs/Negotiated-Rates.md)
-* [Logging](docs/Logging.md)
-* [USPS: International Rates](docs/USPS-International-Rates.md)
-* [USPS: Extra Services](docs/USPS-Extra-Services.md)
-* [Single Rate for UPS and USPS](docs/Single-Rate-for-UPS-and-USPS.md)
-* [Rate Adjusters](docs/Rate-Adjusters.md)
+Use the carrier-specific setup pages for constructor overloads, configuration options, and examples:
 
-## Shipping Options
+- [UPS provider](docs/UPS.md)
+- [FedEx provider](docs/FedEx.md)
+- [USPS provider](docs/USPS.md)
+- [DHL provider](docs/DHL.md)
 
-Shipping options can be passed to the `GetRates` function as a `ShipmentOptions` object.
+## Shipment Options
 
-```CSHARP
-var shipment = await rateManager.GetRatesAsync(origin, destination, packages,
-    new ShipmentOptions() {
+Pass shipment-level options through `ShipmentOptions`:
+
+```csharp
+var shipment = await rateManager.GetRatesAsync(
+    origin,
+    destination,
+    packages,
+    new ShipmentOptions
+    {
         SaturdayDelivery = true,
         ShippingDate = new DateTime(2020, 7, 15),
-        PreferredCurrencyCode = "EUR",                  // For FedEx only
-        FedExOneRate = true,                            // For FedEx only
-        FedExPackagingTypeOverride = FedExPackagingType.FedExEnvelope // For FedEx only
+        PreferredCurrencyCode = "EUR",
+        FedExOneRate = true,
+        FedExPackagingTypeOverride = FedExPackagingType.FedExEnvelope
     });
 ```
 
-The following options are available:
+| Name | Default | Meaning |
+| --- | --- | --- |
+| `SaturdayDelivery` | `false` | Request Saturday delivery rates when available. |
+| `ShippingDate` | `null` | Pickup date. Uses the current date and time when omitted. |
+| `PreferredCurrencyCode` | `USD` | Preferred ISO currency code for FedEx rates. |
+| `FedExOneRate` | `false` | Enable FedEx One Rate pricing. |
+| `FedExPackagingTypeOverride` | `null` | Override the FedEx packaging type for the shipment. |
+| `FedExOneRatePackageOverride` | `null` | Legacy FedEx One Rate override. Prefer `FedExPackagingTypeOverride`. |
 
-| Name | Default Value | Meaning |
-| ---- | ------------- | ------- |
-| SaturdayDelivery | False | Enable the Saturday Delivery option for shipping rates. |
-| ShippingDate | null | Pickup date. The current date and time are used if not specified. |
-| PreferredCurrencyCode | USD | Preferred rates currency code in the ISO format. Applies to FedEx only. |
-| FedExOneRate | False | Use the FedEx One Rate pricing option. Applies to FedEx only. |
-| FedExPackagingTypeOverride | null | FedEx packaging type override for this shipment. |
-| FedExOneRatePackageOverride | null | Legacy string override for FedEx One Rate packaging. Prefer `FedExPackagingTypeOverride`. |
+If `ShipmentOptions.SaturdayDelivery` is enabled, inspect `Rate.Options.SaturdayDelivery` on returned rates:
 
-### Saturday Delivery
-
-If `ShipmentOptions.SaturdayDelivery` is set, you can expect to receive some Saturday Delivery methods. You can check it with the `Rate.Options.SaturdayDelivery` property:
-
-```CSHARP
+```csharp
 var anySaturdayDeliveryMethods = shipment.Rates.Any(r => r.Options.SaturdayDelivery);
-```    
+```
 
 ## Error Handling
 
-Normally, `RateManager.GetRates` wouldn't throw any exceptions. All errors are caught and reported in two properties: `Errors` and `InternalErrors`. `Errors` are for errors coming from APIs (incorrect address, etc.) It should be quite safe to show them to the end user. `InternalErrors` are errors that occur during API calls processing (SOAP, HTTP requests) and errors from inside the ShippingRates. They can be used for debugging and internal reporting. Iterating through Errors and InternalErrors:
+`RateManager.GetRates` and `RateManager.GetRatesAsync` aggregate provider responses into:
 
-```CSHARP
-var shipment = rateManager.GetRates(origin, destination, packages);
+- `shipment.Errors` for carrier/API errors that are generally safe to surface to end users
+- `shipment.InternalErrors` for internal processing failures and diagnostics
 
+```csharp
 foreach (var error in shipment.Errors)
 {
     Console.WriteLine(error.Number);
@@ -139,11 +167,21 @@ foreach (var error in shipment.InternalErrors)
 }
 ```
 
-#### FedEx and 556 There are no valid services available
+## Documentation
 
-This one can be tricky to debug. Start by setting at least $1 insurance for your shipment. For some reason, FedEx will not report errors like the wrong ZIP code for the origin address if no insurance is set.
+- [Documentation index](docs/README.md)
+- [UPS provider](docs/UPS.md)
+- [FedEx provider](docs/FedEx.md)
+- [USPS provider](docs/USPS.md)
+- [DHL provider](docs/DHL.md)
+- [Breaking changes](docs/Breaking-Changes.md)
+- [Release notes](docs/Release-Notes.md)
+- [HttpClient lifecycle](docs/HttpClient-lifecycle.md)
+- [Logging](docs/Logging.md)
+- [Rate adjusters](docs/Rate-Adjusters.md)
+- [Custom shipping providers](docs/Custom-Shipping-Providers.md)
+- [3rd party docs](docs/3rd-Party-Docs.md)
 
 ## Credits
 
-Originally forked from [DotNetShipping](https://github.com/kylewest/DotNetShipping) by [@kylewest](https://github.com/kylewest).
-Package icon by [Fredy Sujono](https://www.iconfinder.com/freud).
+Originally forked from [DotNetShipping](https://github.com/kylewest/DotNetShipping) by [@kylewest](https://github.com/kylewest). Package icon by [Fredy Sujono](https://www.iconfinder.com/freud).

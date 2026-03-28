@@ -1,10 +1,27 @@
-* [Breaking Changes](Breaking-Changes.md)
-* [Release Notes](Release-Notes.md)
+# Documentation
+
+## Start here
+
+* [Breaking changes](Breaking-Changes.md)
+* [Release notes](Release-Notes.md)
 * [HttpClient lifecycle](HttpClient-lifecycle.md)
-* [Negotiated Rates](Negotiated-Rates.md)
+
+## Carrier setup
+
+* [UPS provider](UPS.md)
+* [FedEx provider](FedEx.md)
+* [USPS provider](USPS.md)
+* [DHL provider](DHL.md)
+
+## Operations and diagnostics
+
 * [Logging](Logging.md)
-* [USPS: International Rates](USPS-International-Rates.md)
-* [USPS: Extra Services](USPS-Extra-Services.md)
-* [Single Rate for UPS and USPS](Single-Rate-for-UPS-and-USPS.md)
-* [Rate Adjusters](Rate-Adjusters.md)
-* [3rd Party Docs](3rd-Party-Docs.md)
+
+## Extensibility
+
+* [Rate adjusters](Rate-Adjusters.md)
+* [Custom shipping providers](Custom-Shipping-Providers.md)
+
+## External references
+
+* [3rd party docs](3rd-Party-Docs.md)

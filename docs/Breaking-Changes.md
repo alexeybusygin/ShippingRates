@@ -1,4 +1,4 @@
-# Breaking Changes
+# Breaking changes
 
 This article lists ShippingRates updates that require code changes.
 

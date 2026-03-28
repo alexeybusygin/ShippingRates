@@ -1,4 +1,4 @@
-## 3rd Party Docs
+## 3rd party docs
 
 Developer documentation is often hard to find. The links below are provided as a reference.
 
