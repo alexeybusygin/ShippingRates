@@ -131,7 +131,7 @@ public class UspsProvider : AbstractShippingProvider
 
                     if (rates.Count == 0) continue;
 
-                    var rate = rateOption.Rates[0];
+                    var rate = rates[0];
                     var totalCharges = Convert.ToDecimal(rateOption.TotalPrice, cultureInfo);
                     var deliveryDate = rateOption.Commitment?.ScheduleDeliveryDate ?? DateTime.MaxValue;
                     var rateName = !string.IsNullOrEmpty(rate.ProductName)
