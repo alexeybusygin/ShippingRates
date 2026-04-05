@@ -6,7 +6,7 @@ This article summarizes notable updates by version.
 
 - ShippingRates 3.x and later
 
-## 4.0.5 (April 5, 2026)
+## 4.0.6 (April 5, 2026)
 
 ### Changed
 
