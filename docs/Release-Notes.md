@@ -6,6 +6,16 @@ This article summarizes notable updates by version.
 
 - ShippingRates 3.x and later
 
+## 4.0.5 (April 5, 2026)
+
+### Changed
+
+- Fixed USPS rate selection when shipping options return multiple rate entries
+
+### Breaking changes
+
+- None in this release
+
 ## 4.0.4 (March 22, 2026)
 
 ### Changed
