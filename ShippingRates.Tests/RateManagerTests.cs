@@ -79,11 +79,10 @@ namespace ShippingRates.Tests
         {
             var rateManager = new RateManager();
 
-            var rate = new Rate("Provider 1", "P1", "Service 1", 100m, DateTime.Now, new RateOptions(), "USD");
+            var rate1 = new Rate("Provider 1", "P1", "Service 1", 100m, DateTime.Now, new RateOptions(), "USD");
+            var provider1 = new FakeShippingProvider("Provider 1", [rate1]);
 
-            var provider = new FakeShippingProvider("Provider 1", [rate]);
-
-            rateManager.AddProvider(provider);
+            rateManager.AddProvider(provider1);
             rateManager.AddRateAdjuster(new PercentageAdjuster(5));
             rateManager.AddRateAdjuster(new FixedAmountAdjuster(-5));
 
@@ -94,7 +93,10 @@ namespace ShippingRates.Tests
 
             rateManager = new RateManager();
 
-            rateManager.AddProvider(provider);
+            var rate2 = new Rate("Provider 2", "P2", "Service 2", 100m, DateTime.Now, new RateOptions(), "USD");
+            var provider2 = new FakeShippingProvider("Provider 2", [rate2]);
+
+            rateManager.AddProvider(provider2);
             rateManager.AddRateAdjuster(new FixedAmountAdjuster(-5));
             rateManager.AddRateAdjuster(new PercentageAdjuster(5));
 
