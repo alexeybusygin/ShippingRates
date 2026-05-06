@@ -10,9 +10,12 @@ public class FedExRateTransmitTimesBaseProviderTests
     private readonly TestFedExProvider _provider = new();
 
     [Test]
-    public void CreateRateRequest_RequestsTransitTimesWithoutSaturdayDeliveryByDefault()
+    public void CreateRateRequest_RequestsTransitTimesForDomesticShipmentWithShippingDate()
     {
-        var request = _provider.CreateRequest(CreateShipment());
+        var request = _provider.CreateRequest(CreateShipment(new ShipmentOptions
+        {
+            ShippingDate = new DateTime(2026, 4, 24)
+        }));
 
         var controlParameters = JObject.FromObject(request.RateRequestControlParameters);
 
@@ -23,6 +26,28 @@ public class FedExRateTransmitTimesBaseProviderTests
             Assert.That(controlParameters.ContainsKey("servicesNeededOnRateFailure"), Is.False);
             Assert.That(controlParameters.ContainsKey("rateSortOrder"), Is.False);
         }
+    }
+
+    [Test]
+    public void CreateRateRequest_DoesNotRequestTransitTimesForDomesticShipmentWithoutShippingDate()
+    {
+        var request = _provider.CreateRequest(CreateShipment());
+
+        Assert.That(request.RateRequestControlParameters, Is.Null);
+    }
+
+    [Test]
+    public void CreateRateRequest_DoesNotRequestTransitTimesForInternationalShipmentWithShippingDate()
+    {
+        var request = _provider.CreateRequest(CreateShipment(
+            new Address("", "", "220-8515", "JP"),
+            new Address("", "", "058357", "SG"),
+            new ShipmentOptions
+            {
+                ShippingDate = new DateTime(2026, 4, 24)
+            }));
+
+        Assert.That(request.RateRequestControlParameters, Is.Null);
     }
 
     [Test]
@@ -77,11 +102,15 @@ public class FedExRateTransmitTimesBaseProviderTests
 
     private static Shipment CreateShipment(ShipmentOptions? options = null)
     {
-        return new Shipment(
+        return CreateShipment(
             new Address("Milford", "PA", "18337", "US"),
             new Address("Houston", "TX", "77023", "US"),
-            [new Package(1, 1, 1, 1, 0)],
             options);
+    }
+
+    private static Shipment CreateShipment(Address origin, Address destination, ShipmentOptions? options = null)
+    {
+        return new Shipment(origin, destination, [new Package(1, 1, 1, 1, 0)], options);
     }
 
     private static BaseProcessOutputVO CreateReply(OperationalDetail operationalDetail, Commit? commit = null)

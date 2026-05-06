@@ -85,15 +85,18 @@ namespace ShippingRates.ShippingProviders.FedEx
                 };
             }
 
-            request.RateRequestControlParameters = new RateRequestControlParameters
+            if (ShouldReturnTransitTimes(shipment))
             {
-                ReturnTransitTimes = true
-            };
+                request.RateRequestControlParameters = new RateRequestControlParameters
+                {
+                    ReturnTransitTimes = true
+                };
 
-            if (shipment.Options.SaturdayDelivery)
-            {
-                request.RateRequestControlParameters.VariableOptions = RateRequestControlParametersVariableOptions.SATURDAY_DELIVERY;
-                request.RateRequestControlParameters.SerializeVariableOptions = true;
+                if (shipment.Options.SaturdayDelivery)
+                {
+                    request.RateRequestControlParameters.VariableOptions = RateRequestControlParametersVariableOptions.SATURDAY_DELIVERY;
+                    request.RateRequestControlParameters.SerializeVariableOptions = true;
+                }
             }
 
             SetPackageLineItems(request, shipment);
@@ -110,6 +113,14 @@ namespace ShippingRates.ShippingProviders.FedEx
             {
                 yield return RateRequestType.PREFERRED;
             }
+        }
+
+        private static bool ShouldReturnTransitTimes(Shipment shipment)
+        {
+            return shipment.Options.SaturdayDelivery ||
+                shipment.Options.ShippingDate != null &&
+                string.Equals(shipment.OriginAddress.CountryCode, "US", StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(shipment.DestinationAddress.CountryCode, "US", StringComparison.OrdinalIgnoreCase);
         }
 
         private static RequestedShipmentPickupType ToApiPickupType(FedExPickupType pickupType)
