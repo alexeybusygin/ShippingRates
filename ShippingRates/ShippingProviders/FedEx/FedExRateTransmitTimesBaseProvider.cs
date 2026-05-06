@@ -5,6 +5,7 @@ using ShippingRates.OpenApi.FedEx.RateTransitTimes;
 using ShippingRates.Services.FedEx;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -84,13 +85,18 @@ namespace ShippingRates.ShippingProviders.FedEx
                 };
             }
 
-            if (shipment.Options.SaturdayDelivery)
+            if (ShouldReturnTransitTimes(shipment))
             {
                 request.RateRequestControlParameters = new RateRequestControlParameters
                 {
-                    ReturnTransitTimes = true,
-                    VariableOptions = RateRequestControlParametersVariableOptions.SATURDAY_DELIVERY
+                    ReturnTransitTimes = true
                 };
+
+                if (shipment.Options.SaturdayDelivery)
+                {
+                    request.RateRequestControlParameters.VariableOptions = RateRequestControlParametersVariableOptions.SATURDAY_DELIVERY;
+                    request.RateRequestControlParameters.SerializeVariableOptions = true;
+                }
             }
 
             SetPackageLineItems(request, shipment);
@@ -107,6 +113,14 @@ namespace ShippingRates.ShippingProviders.FedEx
             {
                 yield return RateRequestType.PREFERRED;
             }
+        }
+
+        private static bool ShouldReturnTransitTimes(Shipment shipment)
+        {
+            return shipment.Options.SaturdayDelivery ||
+                shipment.Options.ShippingDate != null &&
+                string.Equals(shipment.OriginAddress.CountryCode, "US", StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(shipment.DestinationAddress.CountryCode, "US", StringComparison.OrdinalIgnoreCase);
         }
 
         private static RequestedShipmentPickupType ToApiPickupType(FedExPickupType pickupType)
@@ -305,27 +319,43 @@ namespace ShippingRates.ShippingProviders.FedEx
 
                     var (amount, currencyCode) = rates.OrderByDescending(r => r.amount).FirstOrDefault();
 
-                    DateTime? deliveryDate = null;
-                    if (rateReplyDetail.OperationalDetail.DeliveryDate != null)
-                    {
-                        if (DateTime.TryParse(rateReplyDetail.OperationalDetail.DeliveryDate, out DateTime parsedDate))
-                        {
-                            deliveryDate = parsedDate;
-                        }
-                    }
+                    var deliveryDate = GetDeliveryDate(rateReplyDetail) ?? DateTime.Now.AddDays(30);
 
-                    if (deliveryDate == null)
-                    {
-                        deliveryDate = DateTime.Now.AddDays(30);
-                    }
-
-                    rateResult.AddRate(key, serviceCode, amount, deliveryDate.Value, new RateOptions()
+                    rateResult.AddRate(key, serviceCode, amount, deliveryDate, new RateOptions()
                     {
                         SaturdayDelivery = rateReplyDetail.Commit?.SaturdayDelivery ?? false
                     },
                     currencyCode);
                 }
             }
+        }
+
+        private static DateTime? GetDeliveryDate(RateReplyDetail rateReplyDetail)
+        {
+            var deliveryDate = ParseFedExDate(rateReplyDetail.OperationalDetail?.DeliveryDate);
+            if (deliveryDate != null)
+            {
+                return deliveryDate;
+            }
+
+            deliveryDate = ParseFedExDate(rateReplyDetail.OperationalDetail?.CommitDate);
+            if (deliveryDate != null)
+            {
+                return deliveryDate;
+            }
+
+            return ParseFedExDate(rateReplyDetail.Commit?.DateDetail?.DayFormat);
+        }
+
+        private static DateTime? ParseFedExDate(string? value)
+        {
+            return DateTime.TryParse(
+                value,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var parsedDate)
+                ? parsedDate
+                : null;
         }
 
         private RatedShipmentDetail[] GetRateDetailsByRateType(RateReplyDetail rateReplyDetail)
