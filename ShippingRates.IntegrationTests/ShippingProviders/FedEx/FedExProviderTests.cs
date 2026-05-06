@@ -54,8 +54,12 @@ public class FedExTests : FedExTestsBase
         var from = new Address("Annapolis", "MD", "21401", "US");
         var to = new Address("Fitchburg", "WI", "53711", "US");
         var package = new Package(7, 7, 7, 6, 0);
+        var shippingDate = DateTime.Today;
 
-        var r = _rateManager.GetRates(from, to, package);
+        var r = _rateManager.GetRates(from, to, package, new ShipmentOptions()
+        {
+            ShippingDate = shippingDate
+        });
         PrintErrorIfAny(r);
 
         var fedExRates = r.Rates.ToList();
@@ -68,7 +72,11 @@ public class FedExTests : FedExTestsBase
 
         foreach (var rate in fedExRates)
         {
-            Assert.That(rate.TotalCharges, Is.GreaterThan(0));
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(rate.TotalCharges, Is.GreaterThan(0));
+                Assert.That(rate.GuaranteedDelivery, Is.LessThan(shippingDate.AddDays(15)));
+            }
         }
     }
 
