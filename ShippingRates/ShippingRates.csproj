@@ -7,7 +7,7 @@
     <Copyright>Copyright © 2026 Alexey Busygin, Kyle West</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/alexeybusygin/ShippingRates</PackageProjectUrl>
-    <PackageTags>ups fedex usps shipping rates .net .net6 .net-standard .net-core dhl dhl-ecommerce</PackageTags>
+    <PackageTags>ups fedex usps shipping rates .net .net8 .net-standard .net-core dhl dhl-ecommerce</PackageTags>
     <Version>4.0.6</Version>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <PackageIcon>icon.png</PackageIcon>

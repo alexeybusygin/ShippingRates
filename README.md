@@ -15,7 +15,7 @@ ShippingRates is a .NET library for retrieving shipping rates from UPS, FedEx, U
 
 ## Supported Platforms
 
-- .NET 6+
+- .NET 8+
 - .NET Standard 2.0
 - .NET Framework 4.6.1+
 
