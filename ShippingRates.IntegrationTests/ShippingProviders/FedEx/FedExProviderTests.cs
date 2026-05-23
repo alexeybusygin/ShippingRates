@@ -1,5 +1,4 @@
 ﻿using ShippingRates.ShippingProviders.FedEx;
-using System.Net;
 
 namespace ShippingRates.IntegrationTests.ShippingProviders.FedEx;
 
@@ -10,7 +9,7 @@ public abstract class FedExTestsBase
     protected readonly FedExProvider _provider;
     protected readonly FedExProvider _providerNegotiated;
 
-    protected FedExTestsBase(HttpClient httpClient)
+    protected FedExTestsBase()
     {
         var config = ConfigHelper.GetApplicationConfiguration(TestContext.CurrentContext.TestDirectory);
 
@@ -20,7 +19,7 @@ public abstract class FedExTestsBase
             ClientSecret = config.FedExClientSecret,
             AccountNumber = config.FedExAccountNumber,
             UseProduction = config.FedExUseProduction
-        }, httpClient);
+        });
 
         _rateManager = new RateManager();
         _rateManager.AddProvider(_provider);
@@ -32,7 +31,7 @@ public abstract class FedExTestsBase
             AccountNumber = config.FedExAccountNumber,
             UseProduction = config.FedExUseProduction,
             UseNegotiatedRates = true
-        }, httpClient);
+        });
 
         _rateManagerNegotiated = new RateManager();
         _rateManagerNegotiated.AddProvider(_providerNegotiated);
@@ -42,20 +41,18 @@ public abstract class FedExTestsBase
 [TestFixture]
 public class FedExTests : FedExTestsBase
 {
-    public FedExTests() : base(new HttpClient(new HttpClientHandler
-    {
-        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-    })) {
-    }
-
     [Test]
-    public void FedExReturnsRates()
+    public void FedExReturnsRatesAndDeliveryDate()
     {
         var from = new Address("Annapolis", "MD", "21401", "US");
         var to = new Address("Fitchburg", "WI", "53711", "US");
         var package = new Package(7, 7, 7, 6, 0);
+        var shippingDate = DateTime.Today;
 
-        var r = _rateManager.GetRates(from, to, package);
+        var r = _rateManager.GetRates(from, to, package, new ShipmentOptions()
+        {
+            ShippingDate = shippingDate
+        });
         PrintErrorIfAny(r);
 
         var fedExRates = r.Rates.ToList();
@@ -68,7 +65,11 @@ public class FedExTests : FedExTestsBase
 
         foreach (var rate in fedExRates)
         {
-            Assert.That(rate.TotalCharges, Is.GreaterThan(0));
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(rate.TotalCharges, Is.GreaterThan(0));
+                Assert.That(rate.GuaranteedDelivery, Is.LessThan(shippingDate.AddDays(15)));
+            }
         }
     }
 
@@ -104,10 +105,7 @@ public class FedExTests : FedExTestsBase
             ClientSecret = config.FedExClientSecret,
             AccountNumber = CreateMismatchedAccountNumber(config.FedExAccountNumber),
             UseProduction = config.FedExUseProduction
-        }, new HttpClient(new HttpClientHandler
-        {
-            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-        }));
+        });
 
         var rateManager = new RateManager();
         rateManager.AddProvider(provider);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 
 namespace ShippingRates.ShippingProviders.FedEx;
@@ -55,4 +56,17 @@ public abstract class FedExBaseProvider<T> : AbstractShippingProvider where T : 
     public static string GetRequestUri(bool isProduction)
         => $"https://{(isProduction ? "apis" : "apis-sandbox")}.fedex.com";
 
+    protected override HttpClient CreateInternalHttpClient()
+    {
+        var decompressionMethods = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+#if NET5_0_OR_GREATER
+        decompressionMethods |= DecompressionMethods.Brotli;
+#endif
+
+        return new HttpClient(new HttpClientHandler
+        {
+            AutomaticDecompression = decompressionMethods
+        });
+    }
 }

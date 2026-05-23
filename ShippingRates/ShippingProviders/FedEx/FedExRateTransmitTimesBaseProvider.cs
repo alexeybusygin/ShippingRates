@@ -5,6 +5,7 @@ using ShippingRates.OpenApi.FedEx.RateTransitTimes;
 using ShippingRates.Services.FedEx;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -77,20 +78,25 @@ namespace ShippingRates.ShippingProviders.FedEx
 
             if (shipment.Options.FedExOneRate)
             {
-                request.RequestedShipment.PackagingType = GetPackagingTypeForOneRate(shipment);
+                request.RequestedShipment.PackagingType = FedExRateTransmitTimesBaseProvider<T>.GetPackagingTypeForOneRate(shipment);
                 request.RequestedShipment.ShipmentSpecialServices = new RequestedShipmentSpecialServicesRequested()
                 {
                     SpecialServiceTypes = ["FEDEX_ONE_RATE"]
                 };
             }
 
-            if (shipment.Options.SaturdayDelivery)
+            if (ShouldReturnTransitTimes(shipment))
             {
                 request.RateRequestControlParameters = new RateRequestControlParameters
                 {
-                    ReturnTransitTimes = true,
-                    VariableOptions = RateRequestControlParametersVariableOptions.SATURDAY_DELIVERY
+                    ReturnTransitTimes = true
                 };
+
+                if (shipment.Options.SaturdayDelivery)
+                {
+                    request.RateRequestControlParameters.VariableOptions = RateRequestControlParametersVariableOptions.SATURDAY_DELIVERY;
+                    request.RateRequestControlParameters.SerializeVariableOptions = true;
+                }
             }
 
             SetPackageLineItems(request, shipment);
@@ -109,6 +115,14 @@ namespace ShippingRates.ShippingProviders.FedEx
             }
         }
 
+        private static bool ShouldReturnTransitTimes(Shipment shipment)
+        {
+            return shipment.Options.SaturdayDelivery ||
+                shipment.Options.ShippingDate != null &&
+                string.Equals(shipment.OriginAddress.CountryCode, "US", StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(shipment.DestinationAddress.CountryCode, "US", StringComparison.OrdinalIgnoreCase);
+        }
+
         private static RequestedShipmentPickupType ToApiPickupType(FedExPickupType pickupType)
             => pickupType switch
             {
@@ -117,7 +131,7 @@ namespace ShippingRates.ShippingProviders.FedEx
                 _ => RequestedShipmentPickupType.USE_SCHEDULED_PICKUP
             };
 
-        private string GetPackagingTypeForOneRate(Shipment shipment)
+        private static string GetPackagingTypeForOneRate(Shipment shipment)
         {
             if (shipment.Options.FedExPackagingTypeOverride.HasValue)
             {
@@ -254,7 +268,7 @@ namespace ShippingRates.ShippingProviders.FedEx
             }
             catch (ApiException e)
             {
-                ProcessErrors(resultBuilder, e);
+                FedExRateTransmitTimesBaseProvider<T>.ProcessErrors(resultBuilder, e);
             }
             catch (Exception e)
             {
@@ -305,27 +319,43 @@ namespace ShippingRates.ShippingProviders.FedEx
 
                     var (amount, currencyCode) = rates.OrderByDescending(r => r.amount).FirstOrDefault();
 
-                    DateTime? deliveryDate = null;
-                    if (rateReplyDetail.OperationalDetail.DeliveryDate != null)
-                    {
-                        if (DateTime.TryParse(rateReplyDetail.OperationalDetail.DeliveryDate, out DateTime parsedDate))
-                        {
-                            deliveryDate = parsedDate;
-                        }
-                    }
+                    var deliveryDate = GetDeliveryDate(rateReplyDetail) ?? DateTime.Now.AddDays(30);
 
-                    if (deliveryDate == null)
-                    {
-                        deliveryDate = DateTime.Now.AddDays(30);
-                    }
-
-                    rateResult.AddRate(key, serviceCode, amount, deliveryDate.Value, new RateOptions()
+                    rateResult.AddRate(key, serviceCode, amount, deliveryDate, new RateOptions()
                     {
                         SaturdayDelivery = rateReplyDetail.Commit?.SaturdayDelivery ?? false
                     },
                     currencyCode);
                 }
             }
+        }
+
+        private static DateTime? GetDeliveryDate(RateReplyDetail rateReplyDetail)
+        {
+            var deliveryDate = ParseFedExDate(rateReplyDetail.OperationalDetail?.DeliveryDate);
+            if (deliveryDate != null)
+            {
+                return deliveryDate;
+            }
+
+            deliveryDate = ParseFedExDate(rateReplyDetail.OperationalDetail?.CommitDate);
+            if (deliveryDate != null)
+            {
+                return deliveryDate;
+            }
+
+            return ParseFedExDate(rateReplyDetail.Commit?.DateDetail?.DayFormat);
+        }
+
+        private static DateTime? ParseFedExDate(string? value)
+        {
+            return DateTime.TryParse(
+                value,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var parsedDate)
+                ? parsedDate
+                : null;
         }
 
         private RatedShipmentDetail[] GetRateDetailsByRateType(RateReplyDetail rateReplyDetail)
@@ -348,26 +378,27 @@ namespace ShippingRates.ShippingProviders.FedEx
         {
             var shipmentCurrencyCode = shipment.Options.GetCurrencyCode();
 
-            if (rateDetail?.TotalNetCharge == null)
+            if (rateDetail?.TotalNetCharge == null || rateDetail?.ShipmentRateDetail == null)
                 return (0, shipmentCurrencyCode);
 
             var needCurrencyConversion = rateDetail.ShipmentRateDetail.Currency != shipmentCurrencyCode;
             if (!needCurrencyConversion)
                 return ((decimal)rateDetail.TotalNetCharge, shipmentCurrencyCode);
 
+            var currencyRate = rateDetail.ShipmentRateDetail.CurrencyExchangeRate?.Rate ?? 0;
             var canConvertCurrency = rateDetail.ShipmentRateDetail.CurrencyExchangeRate != null
                 && rateDetail.ShipmentRateDetail.Currency == rateDetail.ShipmentRateDetail.CurrencyExchangeRate.IntoCurrency
                 && shipmentCurrencyCode == rateDetail.ShipmentRateDetail.CurrencyExchangeRate.FromCurrency
-                && rateDetail.ShipmentRateDetail.CurrencyExchangeRate.Rate != 1
-                && rateDetail.ShipmentRateDetail.CurrencyExchangeRate.Rate != 0;
+                && currencyRate != 1
+                && currencyRate != 0;
 
             if (!canConvertCurrency)
                 return ((decimal)rateDetail.TotalNetCharge, rateDetail.ShipmentRateDetail.Currency);
 
-            return ((decimal)Math.Round(rateDetail.TotalNetCharge / rateDetail.ShipmentRateDetail.CurrencyExchangeRate.Rate, 2), shipmentCurrencyCode);
+            return ((decimal)Math.Round(rateDetail.TotalNetCharge / currencyRate, 2), shipmentCurrencyCode);
         }
 
-        private void ProcessErrors(RateResultAggregator rateResult, ApiException exception)
+        private static void ProcessErrors(RateResultAggregator rateResult, ApiException exception)
         {
             var msg = GetFedExErrorMessage(exception) ?? exception.Message;
 
@@ -387,15 +418,15 @@ namespace ShippingRates.ShippingProviders.FedEx
                 ApiException<ErrorResponseVO> typedResponseException => JoinMessages(
                     typedResponseException.Result?.Errors?.Select(e => ((string?)e.Code, (string?)e.Message))),
                 ApiException<ErrorResponseVO401> typedResponseException401 => JoinMessages(
-                    typedResponseException401.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                    typedResponseException401.Result?.Errors?.Select(e => ((string?)e.Code, (string?)Convert.ToString(e.Message)))),
                 ApiException<ErrorResponseVO403> typedResponseException403 => JoinMessages(
-                    typedResponseException403.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                    typedResponseException403.Result?.Errors?.Select(e => ((string?)e.Code, (string?)Convert.ToString(e.Message)))),
                 ApiException<ErrorResponseVO404> typedResponseException404 => JoinMessages(
-                    typedResponseException404.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                    typedResponseException404.Result?.Errors?.Select(e => ((string?)e.Code, (string?)Convert.ToString(e.Message)))),
                 ApiException<ErrorResponseVO500> typedResponseException500 => JoinMessages(
-                    typedResponseException500.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                    typedResponseException500.Result?.Errors?.Select(e => ((string?)e.Code, (string?)Convert.ToString(e.Message)))),
                 ApiException<ErrorResponseVO503> typedResponseException503 => JoinMessages(
-                    typedResponseException503.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                    typedResponseException503.Result?.Errors?.Select(e => ((string?)e.Code, (string?)Convert.ToString(e.Message)))),
                 _ => null
             };
 
