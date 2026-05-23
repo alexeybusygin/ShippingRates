@@ -1,7 +1,7 @@
 The recommended approach is to pass a reusable `HttpClient` instance as a parameter for shipping provider constructors:
 
 ```CSHARP
-using (var httpClient = new HttpClient())
+using var httpClient = new HttpClient();
 
 // UPS
 rateManager.AddProvider(new UPSProvider(new UPSProviderConfiguration {...}, httpClient));
