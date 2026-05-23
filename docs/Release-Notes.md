@@ -6,6 +6,21 @@ This article summarizes notable updates by version.
 
 - ShippingRates 3.x and later
 
+## 4.1.0 (May 23, 2026)
+
+### Added
+
+- Added FedEx transit time support for eligible rate requests
+
+### Changed
+
+- Updated the primary package target from .NET 6 to .NET 8
+- Improved FedEx error handling for compressed API responses
+
+### Breaking changes
+
+- The primary package target changed from `net6.0` to `net8.0`; `netstandard2.0` support remains available
+
 ## 4.0.6 (April 5, 2026)
 
 ### Changed
