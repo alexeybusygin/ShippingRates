@@ -44,13 +44,17 @@ If you are upgrading an existing integration, start with [Breaking changes](docs
 
 ```csharp
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using ShippingRates;
 using ShippingRates.ShippingProviders.FedEx;
 using ShippingRates.ShippingProviders;
 using ShippingRates.ShippingProviders.Usps;
 
-using var httpClient = new HttpClient();
+using var httpClient = new HttpClient(new HttpClientHandler
+{
+    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+});
 
 var rateManager = new RateManager();
 

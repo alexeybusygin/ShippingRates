@@ -18,6 +18,7 @@ Use `FedExProvider` for standard FedEx REST rating and `FedExSmartPostProvider` 
 ### FedEx standard rates
 
 ```csharp
+using System.Net;
 using System.Net.Http;
 using ShippingRates.ShippingProviders.FedEx;
 
@@ -29,7 +30,10 @@ var configuration = new FedExProviderConfiguration
     UseProduction = false
 };
 
-using var httpClient = new HttpClient();
+using var httpClient = new HttpClient(new HttpClientHandler
+{
+    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+});
 
 var provider = new FedExProvider(configuration, httpClient);
 ```
@@ -47,6 +51,24 @@ var smartPostConfiguration = new FedExProviderConfiguration
 };
 
 var smartPostProvider = new FedExSmartPostProvider(smartPostConfiguration, httpClient);
+```
+
+## Supplying an `HttpClient`
+
+If you pass a custom `HttpClient`, configure its handler with automatic decompression. FedEx can return compressed error bodies, and without decompression those errors may not be parsed correctly.
+
+```csharp
+using System.Net;
+using System.Net.Http;
+
+var handler = new HttpClientHandler
+{
+    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+};
+
+using var httpClient = new HttpClient(handler);
+
+var provider = new FedExProvider(configuration, httpClient);
 ```
 
 ## Constructors
@@ -172,3 +194,4 @@ FedEx also responds to shared `ShipmentOptions` values:
 - `UseNegotiatedRates` changes which FedEx rate types are selected from the response. If negotiated/account rates are unavailable, the result set can differ from list-rate expectations.
 - `FedExOneRate`, `PreferredCurrencyCode`, and packaging overrides are controlled through shared `ShipmentOptions`, not `FedExProviderConfiguration`.
 - `FedExProviderConfiguration` validates `ClientId` and `ClientSecret` during provider construction.
+- Custom `HttpClient` instances used with FedEx should enable automatic decompression so compressed FedEx responses can be parsed correctly.

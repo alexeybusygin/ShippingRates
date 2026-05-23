@@ -25,7 +25,7 @@ namespace ShippingRates.ShippingProviders.Ups
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
-        protected async Task<TResponse> PostAsync<TRequest, TResponse>(
+        protected async Task<TResponse?> PostAsync<TRequest, TResponse>(
             HttpClient httpClient,
             string token,
             Uri uri,
@@ -56,7 +56,7 @@ namespace ShippingRates.ShippingProviders.Ups
             else
             {
                 var errorResponse = JsonSerializer.Deserialize<UpsErrorResponse>(response);
-                if ((errorResponse?.Response?.Errors?.Length ?? 0) > 0)
+                if (errorResponse?.Response?.Errors != null && errorResponse.Response.Errors.Length > 0)
                 {
                     foreach (var error in errorResponse.Response.Errors)
                     {

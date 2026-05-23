@@ -78,7 +78,7 @@ namespace ShippingRates.ShippingProviders.FedEx
 
             if (shipment.Options.FedExOneRate)
             {
-                request.RequestedShipment.PackagingType = GetPackagingTypeForOneRate(shipment);
+                request.RequestedShipment.PackagingType = FedExRateTransmitTimesBaseProvider<T>.GetPackagingTypeForOneRate(shipment);
                 request.RequestedShipment.ShipmentSpecialServices = new RequestedShipmentSpecialServicesRequested()
                 {
                     SpecialServiceTypes = ["FEDEX_ONE_RATE"]
@@ -131,7 +131,7 @@ namespace ShippingRates.ShippingProviders.FedEx
                 _ => RequestedShipmentPickupType.USE_SCHEDULED_PICKUP
             };
 
-        private string GetPackagingTypeForOneRate(Shipment shipment)
+        private static string GetPackagingTypeForOneRate(Shipment shipment)
         {
             if (shipment.Options.FedExPackagingTypeOverride.HasValue)
             {
@@ -268,7 +268,7 @@ namespace ShippingRates.ShippingProviders.FedEx
             }
             catch (ApiException e)
             {
-                ProcessErrors(resultBuilder, e);
+                FedExRateTransmitTimesBaseProvider<T>.ProcessErrors(resultBuilder, e);
             }
             catch (Exception e)
             {
@@ -378,26 +378,27 @@ namespace ShippingRates.ShippingProviders.FedEx
         {
             var shipmentCurrencyCode = shipment.Options.GetCurrencyCode();
 
-            if (rateDetail?.TotalNetCharge == null)
+            if (rateDetail?.TotalNetCharge == null || rateDetail?.ShipmentRateDetail == null)
                 return (0, shipmentCurrencyCode);
 
             var needCurrencyConversion = rateDetail.ShipmentRateDetail.Currency != shipmentCurrencyCode;
             if (!needCurrencyConversion)
                 return ((decimal)rateDetail.TotalNetCharge, shipmentCurrencyCode);
 
+            var currencyRate = rateDetail.ShipmentRateDetail.CurrencyExchangeRate?.Rate ?? 0;
             var canConvertCurrency = rateDetail.ShipmentRateDetail.CurrencyExchangeRate != null
                 && rateDetail.ShipmentRateDetail.Currency == rateDetail.ShipmentRateDetail.CurrencyExchangeRate.IntoCurrency
                 && shipmentCurrencyCode == rateDetail.ShipmentRateDetail.CurrencyExchangeRate.FromCurrency
-                && rateDetail.ShipmentRateDetail.CurrencyExchangeRate.Rate != 1
-                && rateDetail.ShipmentRateDetail.CurrencyExchangeRate.Rate != 0;
+                && currencyRate != 1
+                && currencyRate != 0;
 
             if (!canConvertCurrency)
                 return ((decimal)rateDetail.TotalNetCharge, rateDetail.ShipmentRateDetail.Currency);
 
-            return ((decimal)Math.Round(rateDetail.TotalNetCharge / rateDetail.ShipmentRateDetail.CurrencyExchangeRate.Rate, 2), shipmentCurrencyCode);
+            return ((decimal)Math.Round(rateDetail.TotalNetCharge / currencyRate, 2), shipmentCurrencyCode);
         }
 
-        private void ProcessErrors(RateResultAggregator rateResult, ApiException exception)
+        private static void ProcessErrors(RateResultAggregator rateResult, ApiException exception)
         {
             var msg = GetFedExErrorMessage(exception) ?? exception.Message;
 
@@ -417,15 +418,15 @@ namespace ShippingRates.ShippingProviders.FedEx
                 ApiException<ErrorResponseVO> typedResponseException => JoinMessages(
                     typedResponseException.Result?.Errors?.Select(e => ((string?)e.Code, (string?)e.Message))),
                 ApiException<ErrorResponseVO401> typedResponseException401 => JoinMessages(
-                    typedResponseException401.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                    typedResponseException401.Result?.Errors?.Select(e => ((string?)e.Code, (string?)Convert.ToString(e.Message)))),
                 ApiException<ErrorResponseVO403> typedResponseException403 => JoinMessages(
-                    typedResponseException403.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                    typedResponseException403.Result?.Errors?.Select(e => ((string?)e.Code, (string?)Convert.ToString(e.Message)))),
                 ApiException<ErrorResponseVO404> typedResponseException404 => JoinMessages(
-                    typedResponseException404.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                    typedResponseException404.Result?.Errors?.Select(e => ((string?)e.Code, (string?)Convert.ToString(e.Message)))),
                 ApiException<ErrorResponseVO500> typedResponseException500 => JoinMessages(
-                    typedResponseException500.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                    typedResponseException500.Result?.Errors?.Select(e => ((string?)e.Code, (string?)Convert.ToString(e.Message)))),
                 ApiException<ErrorResponseVO503> typedResponseException503 => JoinMessages(
-                    typedResponseException503.Result?.Errors?.Select(e => ((string?)e.Code, Convert.ToString(e.Message)))),
+                    typedResponseException503.Result?.Errors?.Select(e => ((string?)e.Code, (string?)Convert.ToString(e.Message)))),
                 _ => null
             };
 
