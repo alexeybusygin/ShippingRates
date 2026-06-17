@@ -247,6 +247,9 @@ namespace ShippingRates.ShippingProviders.FedEx
                     {
                         BaseUrl = GetRequestUri(_configuration.UseProduction)
                     };
+
+                    _logger?.TraceJson("FedEx rate request", request);
+
                     var reply = await service.Rate_and_Transit_timesAsync(
                         request,
                         DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
@@ -258,6 +261,8 @@ namespace ShippingRates.ShippingProviders.FedEx
 
                     if (reply.Output != null)
                     {
+                        _logger?.TraceJson("FedEx rate response", reply.Output);
+
                         ProcessReply(resultBuilder, shipment, reply.Output);
                     }
                     else
