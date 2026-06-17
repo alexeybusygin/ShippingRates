@@ -51,7 +51,8 @@ namespace ShippingRates.ShippingProviders.FedEx
                         Address = new RateAddress
                         {
                             PostalCode = shipment.OriginAddress.PostalCode,
-                            CountryCode = shipment.OriginAddress.CountryCode
+                            CountryCode = shipment.OriginAddress.CountryCode,
+                            Residential = shipment.OriginAddress.IsResidential
                         }
                     },
                     Recipient = new RateParty
@@ -59,7 +60,8 @@ namespace ShippingRates.ShippingProviders.FedEx
                         Address = new RateAddress
                         {
                             PostalCode = shipment.DestinationAddress.PostalCode,
-                            CountryCode = shipment.DestinationAddress.CountryCode
+                            CountryCode = shipment.DestinationAddress.CountryCode,
+                            Residential = shipment.DestinationAddress.IsResidential
                         }
                     },
                     PickupType = ToApiPickupType(_configuration.PickupType),
