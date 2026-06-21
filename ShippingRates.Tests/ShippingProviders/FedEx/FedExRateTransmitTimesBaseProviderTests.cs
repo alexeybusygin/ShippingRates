@@ -100,6 +100,40 @@ public class FedExRateTransmitTimesBaseProviderTests
         Assert.That(result.Rates.Single().GuaranteedDelivery, Is.EqualTo(new DateTime(2026, 4, 28, 10, 30, 0)));
     }
 
+    [TestCase("FEDEX_DISTANCE_DEFERRED")]
+    [TestCase("FEDEX_FIRST_OVERNIGHT_EXTRA_HOURS")]
+    [TestCase("FEDEX_PRIORITY_OVERNIGHT_EXTRA_HOURS")]
+    [TestCase("FEDEX_STANDARD_OVERNIGHT_EXTRA_HOURS")]
+    [TestCase("EUROPE_FIRST_INTERNATIONAL_PRIORITY")]
+    public void ProcessReply_FiltersDeprecatedFedExRestServiceCodes(string serviceType)
+    {
+        var shipment = CreateShipment();
+        var reply = CreateReply(new OperationalDetail(), serviceType: serviceType);
+
+        var result = _provider.ProcessReply(shipment, reply);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Rates, Is.Empty);
+            Assert.That(result.InternalErrors, Is.Empty);
+        }
+    }
+
+    [Test]
+    public void ProcessReply_ReportsUnknownFedExRateCodes()
+    {
+        var shipment = CreateShipment();
+        var reply = CreateReply(new OperationalDetail(), serviceType: "FEDEX_UNDOCUMENTED_RATE");
+
+        var result = _provider.ProcessReply(shipment, reply);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Rates, Is.Empty);
+            Assert.That(result.InternalErrors, Is.EqualTo(["Unknown FedEx rate code: FEDEX_UNDOCUMENTED_RATE"]));
+        }
+    }
+
     private static Shipment CreateShipment(ShipmentOptions? options = null)
     {
         return CreateShipment(
@@ -113,7 +147,10 @@ public class FedExRateTransmitTimesBaseProviderTests
         return new Shipment(origin, destination, [new Package(1, 1, 1, 1, 0)], options);
     }
 
-    private static BaseProcessOutputVO CreateReply(OperationalDetail operationalDetail, Commit? commit = null)
+    private static BaseProcessOutputVO CreateReply(
+        OperationalDetail operationalDetail,
+        Commit? commit = null,
+        string serviceType = "FEDEX_GROUND")
     {
         return new BaseProcessOutputVO
         {
@@ -121,7 +158,7 @@ public class FedExRateTransmitTimesBaseProviderTests
             [
                 new RateReplyDetail
                 {
-                    ServiceType = "FEDEX_GROUND",
+                    ServiceType = serviceType,
                     OperationalDetail = operationalDetail,
                     Commit = commit,
                     RatedShipmentDetails =

@@ -15,6 +15,15 @@ namespace ShippingRates.ShippingProviders.FedEx
 {
     public abstract class FedExRateTransmitTimesBaseProvider<T> : FedExBaseProvider<T> where T: FedExRateTransmitTimesBaseProvider<T>
     {
+        private static readonly HashSet<string> DeprecatedServiceCodes =
+        [
+            "FEDEX_DISTANCE_DEFERRED",
+            "FEDEX_FIRST_OVERNIGHT_EXTRA_HOURS",
+            "FEDEX_PRIORITY_OVERNIGHT_EXTRA_HOURS",
+            "FEDEX_STANDARD_OVERNIGHT_EXTRA_HOURS",
+            "EUROPE_FIRST_INTERNATIONAL_PRIORITY"
+        ];
+
         public FedExRateTransmitTimesBaseProvider(FedExProviderConfiguration configuration) : base(configuration)
         {
         }
@@ -293,6 +302,11 @@ namespace ShippingRates.ShippingProviders.FedEx
             foreach (var rateReplyDetail in reply.RateReplyDetails)
             {
                 var key = rateReplyDetail.ServiceType;
+
+                if (DeprecatedServiceCodes.Contains(key))
+                {
+                    continue;
+                }
 
                 if (!ServiceCodes.TryGetValue(key, out var serviceCode))
                 {
