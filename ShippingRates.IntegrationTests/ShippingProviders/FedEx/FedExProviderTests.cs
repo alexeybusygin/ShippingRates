@@ -229,8 +229,7 @@ public class FedExTests : FedExTestsBase
         var to = new Address("Fitchburg", "WI", "53711", "US");
         var package = new Package(7, 7, 7, 6, 0);
 
-        var today = DateTime.Now;
-        var nextFriday = today.AddDays(12 - (int)today.DayOfWeek);
+        var nextFriday = GetNextFridayWithAvailableSaturdayDelivery(DateTime.Today);
 
         var r = await _rateManager.GetRatesAsync(from, to, package, new ShipmentOptions()
         {
@@ -316,6 +315,28 @@ public class FedExTests : FedExTestsBase
         var lastIndex = chars.Length - 1;
         chars[lastIndex] = chars[lastIndex] == '9' ? '0' : (char)(chars[lastIndex] + 1);
         return new string(chars);
+    }
+
+    private static DateTime GetNextFridayWithAvailableSaturdayDelivery(DateTime today)
+    {
+        var daysUntilFriday = ((int)DayOfWeek.Friday - (int)today.DayOfWeek + 7) % 7;
+        if (daysUntilFriday == 0)
+        {
+            daysUntilFriday = 7;
+        }
+
+        var friday = today.Date.AddDays(daysUntilFriday + 14);
+        while (IsFixedUsHoliday(friday.AddDays(1)))
+        {
+            friday = friday.AddDays(7);
+        }
+
+        return friday;
+    }
+
+    private static bool IsFixedUsHoliday(DateTime date)
+    {
+        return date is { Month: 1, Day: 1 } or { Month: 7, Day: 4 } or { Month: 12, Day: 25 };
     }
 
     private static void AssertSingleFedExError(Shipment rates, string errorNumber, string errorDescription)
