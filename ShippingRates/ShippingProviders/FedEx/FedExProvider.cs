@@ -45,6 +45,7 @@ public class FedExProvider : FedExRateTransmitTimesBaseProvider<FedExProvider>
         {"EUROPE_FIRST_INTERNATIONAL_PRIORITY", "FedEx International Priority" },
         {"FEDEX_INTERNATIONAL_PRIORITY", "FedEx International Priority" },
         {"FEDEX_INTERNATIONAL_PRIORITY_EXPRESS", "FedEx International Priority Express" },
+        {"FEDEX_INTERNATIONAL_CONNECT_PLUS", "FedEx International Connect Plus" },
         // Freight
         {"FEDEX_FIRST_FREIGHT", "FedEx First Freight" },
         {"FEDEX_1_DAY_FREIGHT", "FedEx 1 Day Freight" },
