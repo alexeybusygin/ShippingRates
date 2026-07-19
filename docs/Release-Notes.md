@@ -6,6 +6,22 @@ This article summarizes notable updates by version.
 
 - ShippingRates 3.x and later
 
+## 4.1.1 (July 20, 2026)
+
+### Added
+
+- Added FedEx International Connect Plus rate support by [@S-Andor](https://github.com/S-Andor) in [#115](https://github.com/alexeybusygin/ShippingRates/pull/115)
+
+### Changed
+
+- Improved FedEx residential rate accuracy by including residential address indicators in rate requests by [@dosisod](https://github.com/dosisod) in [#112](https://github.com/alexeybusygin/ShippingRates/pull/112)
+- Prevented deprecated FedEx services from being returned in rate results
+- Improved USPS rate reliability when API responses contain undocumented price type or destination facility values by [@jason-jepson-govx](https://github.com/jason-jepson-govx) in [#116](https://github.com/alexeybusygin/ShippingRates/pull/116)
+
+### Breaking changes
+
+- None in this release
+
 ## 4.1.0 (May 23, 2026)
 
 ### Added
