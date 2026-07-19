@@ -55,11 +55,15 @@ internal sealed class UspsRateDetails
     public string? Description { get; set; }
 
     /// <summary>
-    /// Price type: RETAIL, COMMERCIAL, etc.
+    /// Price type: RETAIL, COMMERCIAL, etc. USPS's published Domestic Prices spec
+    /// defines a fixed set (RETAIL, COMMERCIAL, COMMERCIAL_BASE, COMMERCIAL_PLUS,
+    /// CONTRACT, NSA), but the live API sometimes returns out-of-spec tokens (e.g.
+    /// "N"), which appears to be a USPS defect. Such values deserialize to null so
+    /// the rate is preserved instead of failing the whole response.
     /// </summary>
     [JsonPropertyName("priceType")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public UspsResponsePriceType PriceType { get; set; }
+    [JsonConverter(typeof(NullableEnumJsonConverter<UspsResponsePriceType>))]
+    public UspsResponsePriceType? PriceType { get; set; }
 
     /// <summary>
     /// The postage price.
@@ -138,10 +142,11 @@ internal sealed class UspsRateDetails
     public string? RateIndicator { get; set; }
 
     /// <summary>
-    /// Destination Entry Facility type.
+    /// Destination Entry Facility type. Null when USPS returns a value outside
+    /// <see cref="UspsDestinationEntryFacilityType"/>.
     /// </summary>
     [JsonPropertyName("destinationEntryFacilityType")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(NullableEnumJsonConverter<UspsDestinationEntryFacilityType>))]
     public UspsDestinationEntryFacilityType? DestinationEntryFacilityType { get; set; }
 }
 
@@ -181,11 +186,15 @@ internal sealed class UspsExtraRateDetails
     public double Price { get; set; }
 
     /// <summary>
-    /// Price type: RETAIL, COMMERCIAL, etc.
+    /// Price type: RETAIL, COMMERCIAL, etc. USPS's published Domestic Prices spec
+    /// defines a fixed set (RETAIL, COMMERCIAL, COMMERCIAL_BASE, COMMERCIAL_PLUS,
+    /// CONTRACT, NSA), but the live API sometimes returns out-of-spec tokens (e.g.
+    /// "N"), which appears to be a USPS defect. Such values deserialize to null so
+    /// the rate is preserved instead of failing the whole response.
     /// </summary>
     [JsonPropertyName("priceType")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public UspsResponsePriceType PriceType { get; set; }
+    [JsonConverter(typeof(NullableEnumJsonConverter<UspsResponsePriceType>))]
+    public UspsResponsePriceType? PriceType { get; set; }
 
     /// <summary>
     /// Extra service code (370, 813, 820, etc.).
@@ -210,6 +219,13 @@ internal sealed class UspsExtraRateDetails
 
 #region Enums
 
+/// <summary>
+/// Price types documented in USPS's Domestic and International Prices specs.
+/// USPS occasionally returns out-of-spec values (e.g. "N") that are not defined
+/// here; those are treated as null by the response converters rather than added
+/// as members, since they violate USPS's own published contract.
+/// The deprecated "NSA" value is intentionally omitted for the same reason.
+/// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum UspsResponsePriceType
 {

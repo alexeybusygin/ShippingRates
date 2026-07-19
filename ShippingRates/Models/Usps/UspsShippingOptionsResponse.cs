@@ -22,8 +22,8 @@ internal class UspsDomesticPricingOption
     [JsonPropertyName("shippingOptions")]
     public UspsDomesticOptions[]? Options { get; set; }
     [JsonPropertyName("priceType")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public UspsResponsePriceType PriceType { get; set; }
+    [JsonConverter(typeof(NullableEnumJsonConverter<UspsResponsePriceType>))]
+    public UspsResponsePriceType? PriceType { get; set; }
 }
 
 internal class UspsDomesticOptions
@@ -80,8 +80,8 @@ internal class UspsDomesticRate
     [JsonPropertyName("dimWeight")]
     public double DimWeight { get; set; }
     [JsonPropertyName("priceType")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public UspsResponsePriceType PriceType { get; set; }
+    [JsonConverter(typeof(NullableEnumJsonConverter<UspsResponsePriceType>))]
+    public UspsResponsePriceType? PriceType { get; set; }
     [JsonPropertyName("fees")]
     public List<UspsRateFee>? Fees { get; set; }
     [JsonPropertyName("productName")]
@@ -94,7 +94,7 @@ internal class UspsDomesticRate
     [JsonPropertyName("rateIndicator")]
     public string? RateIndicator { get; set; }
     [JsonPropertyName("destinationEntryFacilityType")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(NullableEnumJsonConverter<UspsDestinationEntryFacilityType>))]
     public UspsDestinationEntryFacilityType? DestinationEntryFacilityType { get; set; }
     [JsonPropertyName("mailClass")]
     public string? MailClass { get; set; }
