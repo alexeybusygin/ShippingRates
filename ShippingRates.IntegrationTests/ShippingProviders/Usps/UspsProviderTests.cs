@@ -34,7 +34,14 @@ public class UspsProviderTests : UspsProviderTestsBase
     {
         var rateManager = GetRateManagerWithUspsProvider();
 
-        var response = rateManager.GetRates(DomesticAddress1, DomesticAddress2, Package1);
+        var response = rateManager.GetRates(
+            DomesticAddress1,
+            DomesticAddress2,
+            Package1,
+            new ShipmentOptions
+            {
+                ShippingDate = DateTime.Today.AddDays(1).AddHours(10)
+            });
 
         Assert.That(response, Is.Not.Null);
         using (Assert.EnterMultipleScope())

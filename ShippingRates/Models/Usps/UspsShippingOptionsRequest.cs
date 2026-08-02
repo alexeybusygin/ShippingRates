@@ -1,4 +1,5 @@
-﻿using ShippingRates.ShippingProviders.Usps;
+﻿using ShippingRates.Helpers.Json;
+using ShippingRates.ShippingProviders.Usps;
 using System;
 using System.Text.Json.Serialization;
 
@@ -54,5 +55,6 @@ internal class UspsDomesticPackageDescription
     [JsonPropertyName("itemValue")]
     public double ItemValue { get; set; }
     [JsonPropertyName("mailingDate")]
+    [JsonConverter(typeof(NullableDateOnlyJsonConverter))]
     public DateTime? MailingDate { get; set; }
 }

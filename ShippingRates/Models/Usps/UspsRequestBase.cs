@@ -1,4 +1,5 @@
-﻿using ShippingRates.ShippingProviders.Usps;
+﻿using ShippingRates.Helpers.Json;
+using ShippingRates.ShippingProviders.Usps;
 using System;
 using System.Text.Json.Serialization;
 
@@ -11,6 +12,7 @@ internal class UspsRequestBase
     [JsonPropertyName("weight")]
     public double Weight { get; set; }
     [JsonPropertyName("mailingDate")]
+    [JsonConverter(typeof(NullableDateOnlyJsonConverter))]
     public DateTime? MailingDate { get; set; }
     [JsonPropertyName("length")]
     public double Length { get; set; }
