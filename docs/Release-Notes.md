@@ -6,6 +6,16 @@ This article summarizes notable updates by version.
 
 - ShippingRates 3.x and later
 
+## 4.1.2 (August 2, 2026)
+
+### Changed
+
+- Fixed USPS rate requests being rejected due to incorrectly formatted mailing dates
+
+### Breaking changes
+
+- None in this release
+
 ## 4.1.1 (July 20, 2026)
 
 ### Added
