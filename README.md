@@ -5,13 +5,12 @@
 
 ShippingRates is a .NET library for retrieving shipping rates from UPS, FedEx, USPS, and DHL APIs.
 
-## Why Use It
-
 - Query multiple carriers through one `RateManager`
-- Work with sync or async APIs
-- Support multiple packages in a single shipment
-- Apply shipment-level options such as Saturday delivery
-- Extend returned prices with custom rate adjusters
+- Sync and async APIs
+- Multiple packages in a single shipment
+- Shipment-level options such as Saturday delivery
+
+It is accompanied by the **[shippingrates-mcp](https://github.com/alexeybusygin/shippingrates-mcp)** server for AI assistants.
 
 ## Supported Platforms
 
@@ -27,18 +26,11 @@ Available on [NuGet](https://www.nuget.org/packages/ShippingRates):
 dotnet add package ShippingRates
 ```
 
-## Choose Your Path
-
-- New integration: start with [Quick Start](#quick-start), then open the carrier-specific page you need in [Carrier Setup](#carrier-setup).
-- Upgrading from an older version: start with [Breaking changes](docs/Breaking-Changes.md).
-- Tuning shared shipment behavior: see [Shipment Options](#shipment-options).
-- Looking for deeper docs: open [docs/README.md](docs/README.md).
-
 ## Upgrade Notes
 
 ShippingRates `4.x` includes FedEx breaking changes and uses the modern FedEx REST API with OAuth 2.0.
 
-If you are upgrading an existing integration, start with [Breaking changes](docs/Breaking-Changes.md).
+If you are upgrading an existing integration, start with [Breaking changes](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/Breaking-Changes.md).
 
 ## Quick Start
 
@@ -105,16 +97,16 @@ foreach (Rate rate in shipment.Rates)
 }
 ```
 
-The sample app in [SampleApp/Program.cs](SampleApp/Program.cs) shows a fuller end-to-end setup.
+The sample app in [SampleApp/Program.cs](https://github.com/alexeybusygin/ShippingRates/blob/master/SampleApp/Program.cs) shows a fuller end-to-end setup.
 
 ## Carrier Setup
 
 Use the carrier-specific setup pages for constructor overloads, configuration options, and examples:
 
-- [UPS provider](docs/UPS.md)
-- [FedEx provider](docs/FedEx.md)
-- [USPS provider](docs/USPS.md)
-- [DHL provider](docs/DHL.md)
+- [UPS provider](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/UPS.md)
+- [FedEx provider](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/FedEx.md)
+- [USPS provider](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/USPS.md)
+- [DHL provider](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/DHL.md)
 
 ## Shipment Options
 
@@ -173,18 +165,18 @@ foreach (var error in shipment.InternalErrors)
 
 ## Documentation
 
-- [Documentation index](docs/README.md)
-- [UPS provider](docs/UPS.md)
-- [FedEx provider](docs/FedEx.md)
-- [USPS provider](docs/USPS.md)
-- [DHL provider](docs/DHL.md)
-- [Breaking changes](docs/Breaking-Changes.md)
-- [Release notes](docs/Release-Notes.md)
-- [HttpClient lifecycle](docs/HttpClient-lifecycle.md)
-- [Logging](docs/Logging.md)
-- [Rate adjusters](docs/Rate-Adjusters.md)
-- [Custom shipping providers](docs/Custom-Shipping-Providers.md)
-- [3rd party docs](docs/3rd-Party-Docs.md)
+- [Documentation index](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/README.md)
+- [UPS provider](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/UPS.md)
+- [FedEx provider](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/FedEx.md)
+- [USPS provider](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/USPS.md)
+- [DHL provider](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/DHL.md)
+- [Breaking changes](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/Breaking-Changes.md)
+- [Release notes](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/Release-Notes.md)
+- [HttpClient lifecycle](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/HttpClient-lifecycle.md)
+- [Logging](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/Logging.md)
+- [Rate adjusters](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/Rate-Adjusters.md)
+- [Custom shipping providers](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/Custom-Shipping-Providers.md)
+- [3rd party docs](https://github.com/alexeybusygin/ShippingRates/blob/master/docs/3rd-Party-Docs.md)
 
 ## Credits
 
